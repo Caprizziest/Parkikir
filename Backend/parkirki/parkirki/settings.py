@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     
     # ditambah
     'rest_framework',
+    'App'
 ]
 
 MIDDLEWARE = [
