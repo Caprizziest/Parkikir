@@ -1,13 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class User(models.Model):
-    username = models.CharField(max_length=45, unique=True)
-    password = models.TextField()
-    email = models.EmailField(max_length=45, unique=True)
-    role = models.CharField(max_length=45)
 
-    def __str__(self):
-        return self.username
+# class User(models.Model):
+#     username = models.CharField(max_length=45, unique=True)
+#     password = models.TextField()
+#     email = models.EmailField(max_length=45, unique=True)
+#     role = models.CharField(max_length=45)
+
+#     def __str__(self):
+#         return self.username
 
 class SlotParkir(models.Model):
     slotparkirid = models.CharField(max_length=5, primary_key=True)
@@ -17,23 +19,25 @@ class SlotParkir(models.Model):
         return self.slotparkirid
 
 class Booking(models.Model):
-    userid = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     slotparkir = models.ForeignKey(SlotParkir, on_delete=models.CASCADE)
     tanggal = models.DateField()
     status = models.CharField(max_length=45)
     totalharga = models.IntegerField()
 
     def __str__(self):
-        return f"Booking {self.id} for {self.userid.username}"
+        return f"Booking {self.id} for {self.user.username}"
+
 
 class Laporan(models.Model):
-    userid = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     gambar = models.BinaryField()  # Changed BLOB to BinaryField for Django compatibility
     lokasi = models.CharField(max_length=45, null=True, blank=True)
     status = models.CharField(max_length=45)
 
     def __str__(self):
-        return f"Laporan {self.id} by {self.userid.username}"
+        return f"Laporan {self.id} by {self.user.username}"
+
 
 class Notice(models.Model):
     noticeid = models.AutoField(primary_key=True)
