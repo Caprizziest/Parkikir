@@ -13,6 +13,18 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
+
+
+# Sentry setup
+import sentry_sdk
+sentry_sdk.init(
+    dsn="https://65988eaab0c7e7fff42582badb692cf2@o4509316345102336.ingest.us.sentry.io/4509316365615104",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
