@@ -8,10 +8,8 @@ Requirement:
 ```pip install djangorestframework-simplejwt```
 ```pip install pymysql```
 
-Sentry error tracking - (https://sentry.io/)
+Sentry error tracking - (https://sentry.io/):
 ```pip install "sentry-sdk[django]"```
-
-[Here](https://sentry.io/)
 
 Run:
 ```python manage.py runserver```
