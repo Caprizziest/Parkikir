@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/login.dart';
-// import 'package:frontend/register.dart';
-// import 'package:frontend/dashboard.dart';
-
+// import 'package:frontend/view/login.dart';
+import 'package:frontend/view/report.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 
@@ -29,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Poppins',
       ),
-      home: const login(),
+      home: const report_view(),
     );
   }
 }
