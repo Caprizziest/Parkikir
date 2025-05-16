@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/main.dart';
+import 'package:frontend/routing/app_routing.dart';
+import 'package:go_router/go_router.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -13,13 +16,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Poppins',
       ),
-      home: const ParkingApp(),
+      home: const dashboard_view(),
     );
   }
 }
 
-class ParkingApp extends StatelessWidget {
-  const ParkingApp({Key? key}) : super(key: key);
+class dashboard_view extends StatelessWidget {
+  const dashboard_view({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -237,6 +240,30 @@ class ParkingApp extends StatelessWidget {
                           // Report cards row
                           Row(
                             children: [
+                              GestureDetector(
+                                onTap: () {
+                                  AppRouter.goToReport(context);
+                                },
+                                child: 
+                                Container(
+                                  height: 120,
+                                  padding: const EdgeInsets.all(16.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(0.05),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 5),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              
+
+
                               // Make a Report card
                               Expanded(
                                 child: Container(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/routing/app_routing.dart';
+import 'package:frontend/view/dashboard.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_router/go_router.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -111,7 +114,7 @@ class _report_viewState extends State<report_view> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            // Handle back button press
+            AppRouter.goBack(context);
           },
         ),
       ),
