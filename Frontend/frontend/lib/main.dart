@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/login.dart';
-// import 'package:frontend/register.dart';
-// import 'package:frontend/dashboard.dart';
-
+// import 'package:frontend/view/login.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-
-
+import 'package:frontend/view/dashboard.dart';
+import 'package:go_router/go_router.dart';
+import 'package:frontend/routing/app_routing.dart';
+import 'package:frontend/view/report_view.dart';
 
 Future<void> main() async {
   await SentryFlutter.init(
@@ -24,17 +23,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Poppins',
       ),
-      home: const login(),
+      routerConfig: AppRouter.router,
     );
   }
 }
 
-
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
+  
+//   @override
+//   Widget build(BuildContext context) {  
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       theme: ThemeData(
+//         fontFamily: 'Poppins',
+//       ),
+//       home: const dashboard_view(),
+//     );
+//   }
+// }
 
 // void main() {
 //   runApp(MaterialApp(

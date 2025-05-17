@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/login.dart';
+import 'package:frontend/view/login.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 void main() {
