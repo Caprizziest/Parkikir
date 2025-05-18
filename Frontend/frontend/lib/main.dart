@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:frontend/view/login.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:frontend/view/dashboard.dart';
-import 'package:go_router/go_router.dart';
 import 'package:frontend/routing/router.dart';
-import 'package:frontend/view/report_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
