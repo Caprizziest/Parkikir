@@ -1,96 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:frontend/view/register.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-
-void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
-  runApp(const login());
-}
-
-class login extends StatelessWidget {
-  const login({Key? key}) : super(key: key);
+import 'package:frontend/viewmodel/login_view_model.dart';
+class LoginView extends ConsumerWidget {
+  const LoginView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ParkirKi\'',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF4B4BEE),
-        scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'Poppins',
-      ),
-      home: const LoginScreen(),
-    );
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.watch(loginViewModelProvider);
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+    InputDecoration _inputDecoration({Widget? suffixIcon}) {
+      return InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF4B4BEE), width: 2.0),
+        ),
+        suffixIcon: suffixIcon,
+      );
+    }
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _obscureText = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _usernameController.addListener(_updateButtonOpacity);
-    _passwordController.addListener(_updateButtonOpacity);
-  }
-
-  @override
-  void dispose() {
-    _usernameController.removeListener(_updateButtonOpacity);
-    _passwordController.removeListener(_updateButtonOpacity);
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _updateButtonOpacity() {
-    setState(() {});
-  }
-
-  bool get _isFormValid {
-    return _usernameController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty;
-  }
-
-  InputDecoration _inputDecoration({Widget? suffixIcon}) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFF4B4BEE), width: 2.0),
-      ),
-      suffixIcon: suffixIcon,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -136,9 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               TextField(
-                controller: _usernameController,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                controller: viewModel.usernameController,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(),
               ),
               const SizedBox(height: 8),
@@ -151,24 +90,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               TextField(
-                controller: _passwordController,
-                obscureText: _obscureText,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                controller: viewModel.passwordController,
+                obscureText: viewModel.obscureText,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureText
+                      viewModel.obscureText
                           ? PhosphorIcons.eyeClosed(PhosphorIconsStyle.bold)
                           : PhosphorIcons.eye(PhosphorIconsStyle.bold),
                       size: 24,
                       color: Colors.black.withOpacity(0.6),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
+                    onPressed: viewModel.togglePasswordVisibility,
                   ),
                 ),
               ),
@@ -198,7 +132,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _isFormValid ? () {} : null,
+                  onPressed: viewModel.isFormValid
+                      ? () async {
+                          final success = await viewModel.login();
+                          if (success && context.mounted) {
+                            context.go('/');
+                            // Show success message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Login successful!'),
+                              ),
+                            );
+                          }
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4B4BEE),
                     foregroundColor: Colors.white,
@@ -210,13 +157,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Color(0xFF4B4BEE).withOpacity(0.4),
                     disabledForegroundColor: Colors.white,
                   ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: viewModel.isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -233,11 +182,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterScreen()),
-                      );
+                      // Use GoRouter to navigate to register page
+                      context.go('/register');
                     },
                     style: TextButton.styleFrom(
                       foregroundColor: const Color(0xFF4B4BEE),

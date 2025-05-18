@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/routing/app_routing.dart';
+import 'package:frontend/routing/router.dart';
 import 'package:frontend/view/dashboard.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         statusBarIconBrightness: Brightness.light,
       ),
     );
-    
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -114,7 +114,7 @@ class _report_viewState extends State<report_view> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            AppRouter.goBack(context);
+            context.pop(); // AppRouter.goBack(context);
           },
         ),
       ),
@@ -133,7 +133,7 @@ class _report_viewState extends State<report_view> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              
+
               // Topic Dropdown
               Container(
                 width: double.infinity,
@@ -146,7 +146,8 @@ class _report_viewState extends State<report_view> {
                     alignedDropdown: true,
                     child: DropdownButton<String>(
                       dropdownColor: Colors.white,
-                      icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                      icon: const Icon(Icons.keyboard_arrow_down,
+                          color: Colors.white),
                       hint: const Text(
                         'Select Topic',
                         style: TextStyle(color: Colors.white),
@@ -168,7 +169,8 @@ class _report_viewState extends State<report_view> {
                           );
                         }).toList();
                       },
-                      items: _topics.map<DropdownMenuItem<String>>((String value) {
+                      items:
+                          _topics.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -178,9 +180,9 @@ class _report_viewState extends State<report_view> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Image Upload Area
               GestureDetector(
                 onTap: _showImageSourceActionSheet,
@@ -228,9 +230,9 @@ class _report_viewState extends State<report_view> {
                         ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Description Field
               Container(
                 decoration: BoxDecoration(
@@ -252,7 +254,7 @@ class _report_viewState extends State<report_view> {
                   },
                 ),
               ),
-              
+
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
@@ -260,9 +262,9 @@ class _report_viewState extends State<report_view> {
                   style: TextStyle(color: Colors.grey),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Info Text
               const Text(
                 'Parkiri is here to help take action on parking violations that make the roads messy. Just fill out the form!',
@@ -272,9 +274,9 @@ class _report_viewState extends State<report_view> {
                   fontSize: 14,
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Submit Button
               Container(
                 width: double.infinity,
