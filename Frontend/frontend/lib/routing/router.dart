@@ -3,27 +3,36 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/view/dashboard.dart';
 import 'package:frontend/view/report_view.dart';
+import 'package:frontend/view/login_view.dart';
+import 'package:frontend/view/register_view.dart';
 
-class AppRouter {
-  static final router = GoRouter(
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const dashboard_view(),
-      ),
-      GoRoute(
-        path: '/report',
-        builder: (context, state) => const report_view(),
-      ),
-    ],
-  );
+final GoRouter appRouter = GoRouter(
+  initialLocation: '/login',
+  routes: [
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => const LoginView(),
+    ),
+    GoRoute(
+      path: '/register',
+      name: 'register',
+      builder: (context, state) => const RegisterView(),
+    ),
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const dashboard_view(),
+    ),
+    GoRoute(
+      path: '/report',
+      builder: (context, state) => const report_view(),
+    ),
+  ],
 
-  // Helper methods for navigation
-  static void goToReport(BuildContext context) {
-    context.push('/report');
-  }
-
-  static void goBack(BuildContext context) {
-    context.pop();
-  }
-}
+  // Error page
+  errorBuilder: (context, state) => Scaffold(
+    body: Center(
+      child: Text('Error: ${state.error}'),
+    ),
+  ),
+);

@@ -1,98 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:frontend/view/login.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-
-void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
-  runApp(const register());
-}
-
-class register extends StatelessWidget {
-  const register({Key? key}) : super(key: key);
+import 'package:frontend/viewmodel/register_view_model.dart';
+class RegisterView extends ConsumerWidget {
+  const RegisterView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ParkirKi\'',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF4B4BEE),
-        scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'Poppins',
-      ),
-      home: const RegisterScreen(),
-    );
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.watch(registerViewModelProvider);
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+    InputDecoration _inputDecoration({Widget? suffixIcon}) {
+      return InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF4B4BEE), width: 2.0),
+        ),
+        suffixIcon: suffixIcon,
+      );
+    }
 
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _obscureText = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _usernameController.addListener(_updateButtonOpacity);
-    _emailController.addListener(_updateButtonOpacity);
-    _passwordController.addListener(_updateButtonOpacity);
-  }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _updateButtonOpacity() {
-    setState(() {});
-  }
-
-  bool get _isFormValid {
-    return _usernameController.text.isNotEmpty &&
-        _emailController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty;
-  }
-
-  InputDecoration _inputDecoration({Widget? suffixIcon}) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFF4B4BEE), width: 2.0),
-      ),
-      suffixIcon: suffixIcon,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -101,6 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
+              // Logo
               Center(
                 child: Image.asset(
                   'logo.png',
@@ -122,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Container(
                       width: 45,
                       height: 3,
-                      color: Color(0xFF4B4BEE),
+                      color: const Color(0xFF4B4BEE),
                     ),
                   )
                 ],
@@ -134,9 +73,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               TextField(
-                controller: _usernameController,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                controller: viewModel.usernameController,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(),
               ),
               const SizedBox(height: 8),
@@ -146,9 +84,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               TextField(
-                controller: _emailController,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                controller: viewModel.emailController,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(),
               ),
               const SizedBox(height: 8),
@@ -158,24 +95,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               TextField(
-                controller: _passwordController,
-                obscureText: _obscureText,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                controller: viewModel.passwordController,
+                obscureText: viewModel.obscureText,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureText
+                      viewModel.obscureText
                           ? PhosphorIcons.eyeClosed(PhosphorIconsStyle.bold)
                           : PhosphorIcons.eye(PhosphorIconsStyle.bold),
                       size: 24,
                       color: Colors.black.withOpacity(0.6),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
+                    onPressed: viewModel.togglePasswordVisibility,
                   ),
                 ),
               ),
@@ -185,7 +117,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _isFormValid ? () {} : null,
+                  onPressed: viewModel.isFormValid
+                      ? () async {
+                          final success = await viewModel.register();
+                          if (success && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Registration successful!'),
+                              ),
+                            );
+                            // Navigate back to login
+                            context.go('/login');
+                          }
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4B4BEE),
                     foregroundColor: Colors.white,
@@ -197,10 +142,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const Color(0xFF4B4BEE).withOpacity(0.4),
                     disabledForegroundColor: Colors.white,
                   ),
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
+                  child: viewModel.isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Register',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                        ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -218,11 +165,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      );
+                      // Use GoRouter to navigate back to login page
+                      context.go('/login');
                     },
                     style: TextButton.styleFrom(
                       foregroundColor: const Color(0xFF4B4BEE),

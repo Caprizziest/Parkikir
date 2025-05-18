@@ -3,18 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:frontend/view/dashboard.dart';
 import 'package:go_router/go_router.dart';
-import 'package:frontend/routing/app_routing.dart';
+import 'package:frontend/routing/router.dart';
 import 'package:frontend/view/report_view.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   await SentryFlutter.init(
     (options) {
-      options.dsn = 'https://0b83a48effc377ba8219a49ea3e759ee@o4509316345102336.ingest.us.sentry.io/4509316481417216';
-      // Adds request headers and IP for users,
-      // visit: https://docs.sentry.io/platforms/dart/data-management/data-collected/ for more info
+      options.dsn =
+          'https://0b83a48effc377ba8219a49ea3e759ee@o4509316345102336.ingest.us.sentry.io/4509316481417216';
       options.sendDefaultPii = true;
     },
-    appRunner: () => runApp(const MyApp()),
+    appRunner: () => runApp(
+      // Wrap with ProviderScope for Riverpod
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    ),
   );
 }
 
@@ -25,35 +30,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
+      title: 'ParkirKi',
       theme: ThemeData(
+        primaryColor: const Color(0xFF4B4BEE),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
         fontFamily: 'Poppins',
       ),
-      routerConfig: AppRouter.router,
+      // Use GoRouter for navigation
+      routerConfig: appRouter,
     );
   }
 }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
-  
-//   @override
-//   Widget build(BuildContext context) {  
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       theme: ThemeData(
-//         fontFamily: 'Poppins',
-//       ),
-//       home: const dashboard_view(),
-//     );
-//   }
-// }
-
-// void main() {
-//   runApp(MaterialApp(
-//     debugShowCheckedModeBanner: false,
-//     theme: ThemeData(
-//       fontFamily: 'Poppins',
-//     ),
-//     home: const login(),
-//   ));
-// }

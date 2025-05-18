@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/main.dart';
-import 'package:frontend/routing/app_routing.dart';
+import 'package:frontend/routing/router.dart';
 import 'package:go_router/go_router.dart';
 
 class MyApp extends StatelessWidget {
@@ -44,13 +44,14 @@ class dashboard_view extends StatelessWidget {
                   painter: BackgroundPatternPainter(),
                 ),
               ),
-              
+
               // Main content
               Column(
                 children: [
                   // App bar
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -61,7 +62,6 @@ class dashboard_view extends StatelessWidget {
                           fit: BoxFit.contain,
                         ),
 
-                        
                         // Icons
                         Row(
                           children: [
@@ -81,7 +81,7 @@ class dashboard_view extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   // Greeting and availability
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -154,9 +154,9 @@ class dashboard_view extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Cards section
                   Expanded(
                     child: Container(
@@ -234,18 +234,18 @@ class dashboard_view extends StatelessWidget {
                               ],
                             ),
                           ),
-                          
+
                           const SizedBox(height: 16),
-                          
+
                           // Report cards row
                           Row(
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  AppRouter.goToReport(context);
+                                  context.push(
+                                      '/report'); // AppRouter.goToReport(context); ganti jadi pake push supaya dk perlu buat function dan bisa di pop kmebali 
                                 },
-                                child: 
-                                Container(
+                                child: Container(
                                   height: 120,
                                   padding: const EdgeInsets.all(16.0),
                                   decoration: BoxDecoration(
@@ -261,8 +261,6 @@ class dashboard_view extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              
-
 
                               // Make a Report card
                               Expanded(
@@ -287,7 +285,8 @@ class dashboard_view extends StatelessWidget {
                                         padding: const EdgeInsets.all(8.0),
                                         decoration: BoxDecoration(
                                           color: const Color(0xFFE6F7ED),
-                                          borderRadius: BorderRadius.circular(8.0),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                         ),
                                         child: Icon(
                                           Icons.warning_amber_rounded,
@@ -309,9 +308,9 @@ class dashboard_view extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              
+
                               const SizedBox(width: 16),
-                              
+
                               // Report List card
                               Expanded(
                                 child: Container(
@@ -335,7 +334,8 @@ class dashboard_view extends StatelessWidget {
                                         padding: const EdgeInsets.all(8.0),
                                         decoration: BoxDecoration(
                                           color: const Color(0xFFE6F7ED),
-                                          borderRadius: BorderRadius.circular(8.0),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                         ),
                                         child: Icon(
                                           Icons.assignment_outlined,
@@ -363,7 +363,7 @@ class dashboard_view extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   // Bottom navigation
                   Container(
                     height: 70,
@@ -464,24 +464,23 @@ class BackgroundPatternPainter extends CustomPainter {
     for (int i = 0; i < 10; i++) {
       final path = Path();
       path.moveTo(0, size.height * 0.2 + i * 20);
-      
+
       for (int j = 0; j < 10; j++) {
         path.quadraticBezierTo(
-          size.width * (j + 0.5) / 10, 
-          size.height * 0.2 + i * 20 + (j % 2 == 0 ? 15 : -15), 
-          size.width * (j + 1) / 10, 
-          size.height * 0.2 + i * 20
-        );
+            size.width * (j + 0.5) / 10,
+            size.height * 0.2 + i * 20 + (j % 2 == 0 ? 15 : -15),
+            size.width * (j + 1) / 10,
+            size.height * 0.2 + i * 20);
       }
-      
+
       canvas.drawPath(path, paint);
     }
-    
+
     // Draw some dots
     final dotPaint = Paint()
       ..color = Colors.white.withOpacity(0.1)
       ..style = PaintingStyle.fill;
-      
+
     for (int i = 0; i < 50; i++) {
       final x = (i * 17) % size.width;
       final y = (i * 19) % (size.height * 0.6);
