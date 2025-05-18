@@ -38,39 +38,32 @@ class dashboard_view extends StatelessWidget {
         child: SafeArea(
           child: Stack(
             children: [
-              // Background pattern
               Positioned.fill(
                 child: CustomPaint(
                   painter: BackgroundPatternPainter(),
                 ),
               ),
-
-              // Main content
               Column(
                 children: [
-                  // App bar
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Logo
                         Image.asset(
                           'assets/logowhite.png',
                           height: 28,
                           fit: BoxFit.contain,
                         ),
-
-                        // Icons
                         Row(
-                          children: [
-                            const Icon(
+                          children: const [
+                            Icon(
                               Icons.notifications_outlined,
                               color: Colors.white,
                               size: 24,
                             ),
-                            const SizedBox(width: 16),
-                            const Icon(
+                            SizedBox(width: 16),
+                            Icon(
                               Icons.person_outline,
                               color: Colors.white,
                               size: 24,
@@ -80,8 +73,6 @@ class dashboard_view extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  // Greeting and availability
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Column(
@@ -153,16 +144,12 @@ class dashboard_view extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // Cards section
                   Expanded(
-                    child: Container(
+                    child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Column(
                         children: [
-                          // Save your spot card
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(20.0),
@@ -197,53 +184,43 @@ class dashboard_view extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-                                Container(
-                                  width: double.infinity,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF4A3CDB),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.search,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Check Available Spot',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                                GestureDetector(
+                                  onTap: () => context.go('/booking'),
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF4A3CDB),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Icon(Icons.search, color: Colors.white, size: 20),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Check Available Spot',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Icon(
-                                        Icons.chevron_right,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                    ],
+                                        SizedBox(width: 8),
+                                        Icon(Icons.chevron_right, color: Colors.white, size: 20),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-
                           const SizedBox(height: 16),
-
-                          // Report cards row
                           Row(
                             children: [
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () {
-                                    context.push('/report');
-                                  },
+                                  onTap: () => context.push('/report'),
                                   child: Container(
                                     height: 120,
                                     padding: const EdgeInsets.all(16.0),
@@ -267,9 +244,9 @@ class dashboard_view extends StatelessWidget {
                                             color: const Color(0xFFE6F7ED),
                                             borderRadius: BorderRadius.circular(8.0),
                                           ),
-                                          child: Icon(
+                                          child: const Icon(
                                             Icons.warning_amber_rounded,
-                                            color: const Color(0xFF4A3CDB),
+                                            color: Color(0xFF4A3CDB),
                                             size: 24,
                                           ),
                                         ),
@@ -313,9 +290,9 @@ class dashboard_view extends StatelessWidget {
                                           color: const Color(0xFFE6F7ED),
                                           borderRadius: BorderRadius.circular(8.0),
                                         ),
-                                        child: Icon(
+                                        child: const Icon(
                                           Icons.assignment_outlined,
-                                          color: const Color(0xFF4A3CDB),
+                                          color: Color(0xFF4A3CDB),
                                           size: 24,
                                         ),
                                       ),
@@ -335,12 +312,11 @@ class dashboard_view extends StatelessWidget {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
                   ),
-
-                  // Bottom navigation
                   Container(
                     height: 70,
                     decoration: BoxDecoration(
@@ -362,57 +338,39 @@ class dashboard_view extends StatelessWidget {
                       children: [
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.home,
-                              color: const Color(0xFF4A3CDB),
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Home',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: const Color(0xFF4A3CDB),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                          children: const [
+                            Icon(Icons.home, color: Color(0xFF4A3CDB), size: 24),
+                            SizedBox(height: 4),
+                            Text('Home',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF4A3CDB),
+                                  fontWeight: FontWeight.w500,
+                                )),
                           ],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.qr_code_scanner,
-                              color: Colors.grey,
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Scan',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
+                          children: const [
+                            Icon(Icons.qr_code_scanner, color: Colors.grey, size: 24),
+                            SizedBox(height: 4),
+                            Text('Scan',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                )),
                           ],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.history,
-                              color: Colors.grey,
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'History',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
+                          children: const [
+                            Icon(Icons.history, color: Colors.grey, size: 24),
+                            SizedBox(height: 4),
+                            Text('History',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                )),
                           ],
                         ),
                       ],
@@ -427,7 +385,6 @@ class dashboard_view extends StatelessWidget {
     );
   }
 }
-
 
 class BackgroundPatternPainter extends CustomPainter {
   @override
