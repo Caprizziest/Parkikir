@@ -22,3 +22,28 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
         )
         return user
+
+class SlotParkirSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SlotParkir
+        fields = '__all__'
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Booking
+        fields = '__all__'
+
+class LaporanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Laporan
+        fields = '__all__'
+
+class NoticeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Notice
+        fields = '__all__'
+
+class ParkiranTertutupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ParkiranTertutup
+        fields = '__all__'
