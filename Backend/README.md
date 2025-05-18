@@ -2,7 +2,7 @@
 Backend
 Run on Django
 
-Requirement:
+### Requirement:
 - Django
 ```pip install django```
 
@@ -21,9 +21,9 @@ Requirement:
 - Sentry error tracking - (https://sentry.io/):
 ```pip install "sentry-sdk[django]"```
 
-Run:
+### Run:
 ```python manage.py runserver```
 
-Migrate:
+### Migrate:
 ```python manage.py migrate```
 ```python manage.py seed_slotparkir```
