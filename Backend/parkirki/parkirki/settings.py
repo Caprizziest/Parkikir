@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     # ditambah
     'rest_framework',
     'rest_framework_simplejwt',
-    'App'
+    'App',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
