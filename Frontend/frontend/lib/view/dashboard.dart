@@ -48,8 +48,7 @@ class dashboard_view extends StatelessWidget {
                 children: [
                   // App bar
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -292,8 +291,6 @@ class dashboard_view extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 16),
-
-                              // Report List card
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
@@ -441,6 +438,7 @@ class dashboard_view extends StatelessWidget {
     );
   }
 }
+
 
 class BackgroundPatternPainter extends CustomPainter {
   @override
