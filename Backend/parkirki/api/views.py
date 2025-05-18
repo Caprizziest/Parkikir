@@ -6,6 +6,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from django.contrib.auth.models import User
 import App.models as models
@@ -106,11 +108,26 @@ def update_slot_status(request, pk):
         slot = models.SlotParkir.objects.get(pk=pk)
     except models.SlotParkir.DoesNotExist:
         return Response(status=404)
+
     status_value = request.data.get('status')
     if status_value not in ['AVAILABLE', 'UNAVAILABLE']:
         return Response({"error": "Status must be AVAILABLE or UNAVAILABLE"}, status=400)
+
     slot.status = status_value
     slot.save()
+
+    # 🔄 Push update ke WebSocket group
+    channel_layer = get_channel_layer()
+    all_slots = list(models.SlotParkir.objects.values())  # atau pakai serializer jika perlu
+
+    async_to_sync(channel_layer.group_send)(
+        "slotparkir_group",
+        {
+            "type": "slotparkir_update",
+            "data": all_slots
+        }
+    )
+
     return Response({"status": slot.status})
 
 # Booking
