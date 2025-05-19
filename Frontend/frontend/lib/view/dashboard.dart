@@ -195,37 +195,32 @@ class dashboard_view extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-                                Container(
-                                  width: double.infinity,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF4A3CDB),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.search,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Check Available Spot',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                                GestureDetector(
+                                  onTap: () => context.go('/bookingparkir'),
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF4A3CDB),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Icon(Icons.search, color: Colors.white, size: 20),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Check Available Spot',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Icon(
-                                        Icons.chevron_right,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                    ],
+                                        SizedBox(width: 8),
+                                        Icon(Icons.chevron_right, color: Colors.white, size: 20),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -258,15 +253,13 @@ class dashboard_view extends StatelessWidget {
                                       ],
                                     ),
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.all(8.0),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFE6F7ED),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
+                                            borderRadius: BorderRadius.circular(8.0),
                                           ),
                                           child: Icon(
                                             Icons.warning_amber_rounded,
@@ -280,8 +273,7 @@ class dashboard_view extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
-                                            color:
-                                                Colors.black.withOpacity(0.8),
+                                            color: Colors.black.withOpacity(0.8),
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
@@ -294,8 +286,7 @@ class dashboard_view extends StatelessWidget {
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
-                                    context.push(
-                                        '/reportlist'); // Navigasi ke halaman /reportlist
+                                    context.push('/reportlist'); // Navigasi ke halaman /reportlist
                                   },
                                   child: Container(
                                     height: 120,
@@ -312,15 +303,13 @@ class dashboard_view extends StatelessWidget {
                                       ],
                                     ),
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.all(8.0),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFE6F7ED),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
+                                            borderRadius: BorderRadius.circular(8.0),
                                           ),
                                           child: const Icon(
                                             Icons.assignment_outlined,
@@ -334,8 +323,7 @@ class dashboard_view extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
-                                            color:
-                                                Colors.black.withOpacity(0.8),
+                                            color: Colors.black.withOpacity(0.8),
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
@@ -438,7 +426,6 @@ class dashboard_view extends StatelessWidget {
     );
   }
 }
-
 
 class BackgroundPatternPainter extends CustomPainter {
   @override

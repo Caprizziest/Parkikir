@@ -1,5 +1,6 @@
 // app_routing.dart
 import 'package:flutter/material.dart';
+import 'package:frontend/view/bookingparkir_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/view/dashboard.dart';
 import 'package:frontend/view/report_view.dart';
@@ -32,6 +33,10 @@ final GoRouter appRouter = GoRouter(
       path: '/reportlist',
       builder: (context, state) => const ReportListView(),
     ),
+    GoRoute(
+      path: '/bookingparkir',
+      builder: (context, state) => const bookingparkir(),
+      ),
   ],
 
   // Error page
