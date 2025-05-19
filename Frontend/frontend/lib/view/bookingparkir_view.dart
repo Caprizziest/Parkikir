@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class bookingparkir extends StatefulWidget {
   const bookingparkir({super.key});
@@ -21,7 +22,7 @@ class _bookingparkirState extends State<bookingparkir> {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
         onPressed: () {
-          Navigator.of(context).pop(); // or use context.pop() if using GoRouter or similar
+          context.pop();
         },
       ),
       title: const Column(
@@ -193,63 +194,131 @@ class InteractiveParkingMap extends StatefulWidget {
 class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
   // Updated parking spot positions to match the exact layout
   final Map<String, List<ParkingSpot>> parkingData = {
-    // Top row spots
-    'topLeft': [
-      ParkingSpot('A1', 0, const Offset(425, 480)),
-      ParkingSpot('A1', 0, const Offset(455, 480)),
+    // A row spots
+    'aRow': [
+      ParkingSpot('A1', 0, const Offset(370, 134)),
+      ParkingSpot('A2', 1, const Offset(401, 134)), // Red in image
+      ParkingSpot('A3', 1, const Offset(432, 134)), // Red in image
+      ParkingSpot('A4', 1, const Offset(463, 134)), // Red in image
+      ParkingSpot('A5', 1, const Offset(494, 134)), // Red in image
+      ParkingSpot('A6', 0, const Offset(525, 134)),
+      ParkingSpot('A7', 0, const Offset(556, 134)),
     ],
-    // Right vertical column spots
-    'rightSide': [
-      ParkingSpot('A1', 0, const Offset(680, 500)),
-      ParkingSpot('D1', 0, const Offset(680, 553)),
+    
+    // B row spots
+    'bRow': [
+      ParkingSpot('B1', 0, const Offset(645, 72)),
+      ParkingSpot('B2', 0, const Offset(645, 98)),
+      ParkingSpot('B3', 1, const Offset(645, 124)), // Red in image
+      ParkingSpot('B4', 1, const Offset(645, 150)), // Red in image
+      ParkingSpot('B5', 1, const Offset(645, 176)), // Red in image
+      ParkingSpot('B6', 1, const Offset(645, 202)), // Red in image
+      ParkingSpot('B7', 1, const Offset(645, 228)), // Red in image
+      ParkingSpot('B8', 1, const Offset(645, 254)), // Red in image
     ],
-    // Bottom spots on the right side
-    'bottomRight': [
-      ParkingSpot('A1', 1, const Offset(680, 600)),
-      ParkingSpot('A1', 1, const Offset(680, 630)),
-      ParkingSpot('A1', 1, const Offset(680, 660)),
+    
+    // C row spots
+    'cRow': [
+      ParkingSpot('C1', 0, const Offset(316, 179)),
+      ParkingSpot('C2', 0, const Offset(347, 179)),
+      ParkingSpot('C3', 0, const Offset(378, 179)),
+      ParkingSpot('C4', 0, const Offset(409, 179)),
+      ParkingSpot('C5', 1, const Offset(440, 179)), // Red in image
+      ParkingSpot('C6', 0, const Offset(471, 179)),
+      ParkingSpot('C7', 0, const Offset(502, 179)),
+      ParkingSpot('C8', 0, const Offset(533, 179)),
+      ParkingSpot('C9', 0, const Offset(564, 179)),
     ],
-    // Middle top row of spots
-    'middleTop': [
-      ParkingSpot('A1', 0, const Offset(515, 553)),
-      ParkingSpot('A1', 0, const Offset(545, 553)),
-      ParkingSpot('A1', 0, const Offset(575, 553)),
-      ParkingSpot('A1', 0, const Offset(605, 553)),
-      ParkingSpot('A1', 0, const Offset(635, 553)),
-      ParkingSpot('A1', 0, const Offset(665, 553)),
+    
+    // D row spots
+    'dRow': [
+      ParkingSpot('D1', 0, const Offset(235, 293)),
+      ParkingSpot('D2', 0, const Offset(266, 293)),
+      ParkingSpot('D3', 0, const Offset(297, 293)),
+      ParkingSpot('D4', 1, const Offset(328, 293)), // Red in image
+      ParkingSpot('D5', 1, const Offset(359, 293)), // Red in image
+      ParkingSpot('D6', 0, const Offset(390, 293)),
+      ParkingSpot('D7', 0, const Offset(421, 293)),
+      ParkingSpot('D8', 0, const Offset(452, 293)),
+      ParkingSpot('D9', 0, const Offset(483, 293)),
+      ParkingSpot('D10', 1, const Offset(514, 293)), // Red in image
+      ParkingSpot('D11', 1, const Offset(545, 293)), // Red in image
+      ParkingSpot('D12', 1, const Offset(576, 293)), // Red in image
+      ParkingSpot('D13', 1, const Offset(607, 293)), // Red in image
     ],
-    // Middle row of spots
-    'middle': [
-      ParkingSpot('A1', 0, const Offset(455, 580)),
-      ParkingSpot('A1', 0, const Offset(485, 580)),
-      ParkingSpot('A1', 0, const Offset(515, 580)),
-      ParkingSpot('A1', 1, const Offset(545, 580)),
-      ParkingSpot('A1', 0, const Offset(575, 580)),
-      ParkingSpot('A1', 0, const Offset(605, 580)),
-      ParkingSpot('A1', 0, const Offset(635, 580)),
-      ParkingSpot('A1', 0, const Offset(665, 580)),
+    
+    // E row spots (left diagonal)
+    'eRow': [
+      ParkingSpot('E1', 0, const Offset(324, 52)),
+      ParkingSpot('E2', 0, const Offset(304, 77)),
+      ParkingSpot('E3', 1, const Offset(284, 102)), // Red in image
+      ParkingSpot('E4', 1, const Offset(264, 127)), // Red in image
+      ParkingSpot('E5', 1, const Offset(244, 152)), // Red in image
+      ParkingSpot('E6', 1, const Offset(224, 177)), // Red in image
+      ParkingSpot('E7', 1, const Offset(204, 202)), // Red in image
+      ParkingSpot('E8', 0, const Offset(184, 227)),
+      ParkingSpot('E9', 0, const Offset(164, 252)),
+      ParkingSpot('E10', 0, const Offset(144, 277)),
+      ParkingSpot('E11', 0, const Offset(124, 302)),
+      ParkingSpot('E12', 0, const Offset(104, 327)),
+      ParkingSpot('E13', 0, const Offset(84, 352)),
+      ParkingSpot('E14', 0, const Offset(64, 377)),
     ],
-    // Bottom row of spots
-    'bottom': [
-      ParkingSpot('A1', 0, const Offset(425, 680)),
-      ParkingSpot('A1', 1, const Offset(455, 680)),
-      ParkingSpot('A1', 1, const Offset(485, 680)),
-      ParkingSpot('A1', 1, const Offset(515, 680)),
-      ParkingSpot('A1', 1, const Offset(545, 680)),
-      ParkingSpot('A1', 0, const Offset(575, 680)),
-      ParkingSpot('A1', 0, const Offset(605, 680)),
-      ParkingSpot('A1', 1, const Offset(635, 680)),
-      ParkingSpot('A1', 1, const Offset(665, 680)),
-      ParkingSpot('A1', 1, const Offset(695, 680)),
+    
+    // F row spots (left diagonal bottom)
+    'fRow': [
+      ParkingSpot('F1', 1, const Offset(80, 434)), // Red in image
+      ParkingSpot('F2', 1, const Offset(100, 459)), // Red in image
+      ParkingSpot('F3', 1, const Offset(120, 484)), // Red in image
+      ParkingSpot('F4', 1, const Offset(140, 509)), // Red in image
+      ParkingSpot('F5', 1, const Offset(160, 534)), // Red in image
+      ParkingSpot('F6', 1, const Offset(180, 559)), // Red in image
+      ParkingSpot('F7', 1, const Offset(200, 584)), // Red in image
+      ParkingSpot('F8', 0, const Offset(220, 609)),
+      ParkingSpot('F9', 0, const Offset(240, 634)),
+      ParkingSpot('F10', 0, const Offset(260, 659)),
+      ParkingSpot('F11', 0, const Offset(280, 684)),
+      ParkingSpot('F12', 0, const Offset(300, 709)),
+    ],
+    
+    // G row spots
+    'gRow': [
+      ParkingSpot('G1', 1, const Offset(323, 340)), // Red in image
+      ParkingSpot('G2', 1, const Offset(323, 370)), // Red in image
+      ParkingSpot('G3', 0, const Offset(323, 400)),
+    ],
+    
+    // H row spots (right column)
+    'hRow': [
+      ParkingSpot('H1', 1, const Offset(473, 390)), // Red in image
+      ParkingSpot('H2', 1, const Offset(473, 415)), // Red in image
+      ParkingSpot('H3', 1, const Offset(473, 440)), // Red in image
+      ParkingSpot('H4', 1, const Offset(473, 465)), // Red in image
+      ParkingSpot('H5', 1, const Offset(473, 490)), // Red in image
+      ParkingSpot('H6', 1, const Offset(473, 515)), // Red in image
+      ParkingSpot('H7', 1, const Offset(473, 540)), // Red in image
+      ParkingSpot('H8', 0, const Offset(473, 565)),
+      ParkingSpot('H9', 1, const Offset(473, 590)), // Red in image
+      ParkingSpot('H10', 0, const Offset(473, 615)),
+      ParkingSpot('H11', 0, const Offset(473, 640)),
+      ParkingSpot('H12', 0, const Offset(473, 665)),
+      ParkingSpot('H13', 0, const Offset(473, 690)),
+      ParkingSpot('H14', 0, const Offset(473, 715)),
+      ParkingSpot('H15', 0, const Offset(408, 485)),
+      ParkingSpot('H16', 0, const Offset(408, 535)),
+      ParkingSpot('H17', 0, const Offset(408, 575)),
+      ParkingSpot('H18', 0, const Offset(408, 625)),
     ],
   };
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
+  return Center(
+    child: InteractiveViewer(
+      minScale: 0.5,
+      maxScale: 2.5,
+      boundaryMargin: const EdgeInsets.all(100),
+      constrained: false, // allows free movement within the boundaryMargin
         child: Stack(
           children: [
             // Base parking layout with exact dimensions
