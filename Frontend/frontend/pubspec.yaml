@@ -45,6 +45,8 @@ dependencies:
   # state management
   flutter_riverpod: ^2.3.6
 
+  intl: ^0.20.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

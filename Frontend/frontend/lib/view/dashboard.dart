@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/main.dart';
-import 'package:frontend/routing/router.dart';
 import 'package:go_router/go_router.dart';
 
 class MyApp extends StatelessWidget {
@@ -239,6 +237,7 @@ class dashboard_view extends StatelessWidget {
                           // Report cards row
                           Row(
                             children: [
+                              // Make a Report card
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
@@ -259,13 +258,15 @@ class dashboard_view extends StatelessWidget {
                                       ],
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.all(8.0),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFE6F7ED),
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                           child: Icon(
                                             Icons.warning_amber_rounded,
@@ -279,7 +280,8 @@ class dashboard_view extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
-                                            color: Colors.black.withOpacity(0.8),
+                                            color:
+                                                Colors.black.withOpacity(0.8),
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
@@ -290,46 +292,55 @@ class dashboard_view extends StatelessWidget {
                               ),
                               const SizedBox(width: 16),
                               Expanded(
-                                child: Container(
-                                  height: 120,
-                                  padding: const EdgeInsets.all(16.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 5),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFE6F7ED),
-                                          borderRadius: BorderRadius.circular(8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    context.push(
+                                        '/reportlist'); // Navigasi ke halaman /reportlist
+                                  },
+                                  child: Container(
+                                    height: 120,
+                                    padding: const EdgeInsets.all(16.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.05),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 5),
                                         ),
-                                        child: Icon(
-                                          Icons.assignment_outlined,
-                                          color: const Color(0xFF4A3CDB),
-                                          size: 24,
+                                      ],
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE6F7ED),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          child: const Icon(
+                                            Icons.assignment_outlined,
+                                            color: Color(0xFF4A3CDB),
+                                            size: 24,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'Report List',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black.withOpacity(0.8),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          'Report List',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color:
+                                                Colors.black.withOpacity(0.8),
+                                          ),
+                                          textAlign: TextAlign.center,
                                         ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

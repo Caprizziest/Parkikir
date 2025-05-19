@@ -5,6 +5,7 @@ import 'package:frontend/view/dashboard.dart';
 import 'package:frontend/view/report_view.dart';
 import 'package:frontend/view/login_view.dart';
 import 'package:frontend/view/register_view.dart';
+import 'package:frontend/view/report_list_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
@@ -26,6 +27,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/report',
       builder: (context, state) => const report_view(),
+    ),
+    GoRoute(
+      path: '/reportlist',
+      builder: (context, state) => const ReportListView(),
     ),
   ],
 
