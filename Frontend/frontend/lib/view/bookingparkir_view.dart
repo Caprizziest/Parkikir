@@ -22,7 +22,7 @@ class _bookingparkirState extends State<bookingparkir> {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
         onPressed: () {
-          context.pop();
+          context.go('/');
         },
       ),
       title: const Column(
@@ -191,8 +191,12 @@ class InteractiveParkingMap extends StatefulWidget {
   State<InteractiveParkingMap> createState() => _InteractiveParkingMapState();
 }
 
+// E row is roughly how it should but still need fixing
+// row A - D, F - H need fixing
+// row B is out of bounds
+// use 2 or 5 at increment of 20 for both X and Y axis
+// - 20 for X, + 20 for Y
 class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
-  // Updated parking spot positions to match the exact layout
   final Map<String, List<ParkingSpot>> parkingData = {
     // A row spots
     'aRow': [
@@ -249,20 +253,20 @@ class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
     
     // E row spots (left diagonal)
     'eRow': [
-      ParkingSpot('E1', 0, const Offset(324, 52)),
-      ParkingSpot('E2', 0, const Offset(304, 77)),
-      ParkingSpot('E3', 1, const Offset(284, 102)), // Red in image
-      ParkingSpot('E4', 1, const Offset(264, 127)), // Red in image
-      ParkingSpot('E5', 1, const Offset(244, 152)), // Red in image
-      ParkingSpot('E6', 1, const Offset(224, 177)), // Red in image
-      ParkingSpot('E7', 1, const Offset(204, 202)), // Red in image
-      ParkingSpot('E8', 0, const Offset(184, 227)),
-      ParkingSpot('E9', 0, const Offset(164, 252)),
-      ParkingSpot('E10', 0, const Offset(144, 277)),
-      ParkingSpot('E11', 0, const Offset(124, 302)),
-      ParkingSpot('E12', 0, const Offset(104, 327)),
-      ParkingSpot('E13', 0, const Offset(84, 352)),
-      ParkingSpot('E14', 0, const Offset(64, 377)),
+      ParkingSpot('E1', 0, const Offset(282, 22)),
+      ParkingSpot('E2', 0, const Offset(262, 42)),
+      ParkingSpot('E3', 1, const Offset(242, 62)), // Red in image
+      ParkingSpot('E4', 1, const Offset(222, 82)), // Red in image
+      ParkingSpot('E5', 1, const Offset(202, 102)), // Red in image
+      ParkingSpot('E6', 1, const Offset(182, 122)), // Red in image
+      ParkingSpot('E7', 1, const Offset(162, 142)), // Red in image
+      ParkingSpot('E8', 0, const Offset(142, 162)),
+      ParkingSpot('E9', 0, const Offset(122, 182)),
+      ParkingSpot('E10', 0, const Offset(102, 202)),
+      ParkingSpot('E11', 0, const Offset(82, 222)),
+      ParkingSpot('E12', 0, const Offset(62, 242)),
+      ParkingSpot('E13', 0, const Offset(42, 262)),
+      ParkingSpot('E14', 0, const Offset(22, 282)),
     ],
     
     // F row spots (left diagonal bottom)
@@ -344,14 +348,17 @@ class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
                 return Positioned(
                   left: spot.position.dx,
                   top: spot.position.dy,
-                  child: GestureDetector(
-                    onTap: () {
-                      if (spot.status == 0 || isSelected) {
-                        widget.onSpotSelected(spot.id);
-                      }
-                    },
+                  child: Transform.rotate(
+                    angle: (entry.key == 'eRow' || entry.key == 'fRow') ? 0.715584 : 0,
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (spot.status == 0 || isSelected) {
+                          widget.onSpotSelected(spot.id);
+                        }
+                      },
                     child: Container(
-                      width: 28,
+                      width: 36,
                       height: 24,
                       decoration: BoxDecoration(
                         color: spotColor,
@@ -369,6 +376,7 @@ class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
                       ),
                     ),
                   ),
+                )
                 );
               });
             }).toList(),
