@@ -191,127 +191,122 @@ class InteractiveParkingMap extends StatefulWidget {
   State<InteractiveParkingMap> createState() => _InteractiveParkingMapState();
 }
 
-// E row is roughly how it should but still need fixing
-// row A - D, F - H need fixing
-// row B is out of bounds
-// use 2 or 5 at increment of 20 for both X and Y axis
-// - 20 for X, + 20 for Y
 class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
   final Map<String, List<ParkingSpot>> parkingData = {
     // A row spots
     'aRow': [
-      ParkingSpot('A1', 0, const Offset(370, 134)),
-      ParkingSpot('A2', 1, const Offset(401, 134)), // Red in image
-      ParkingSpot('A3', 1, const Offset(432, 134)), // Red in image
-      ParkingSpot('A4', 1, const Offset(463, 134)), // Red in image
-      ParkingSpot('A5', 1, const Offset(494, 134)), // Red in image
-      ParkingSpot('A6', 0, const Offset(525, 134)),
-      ParkingSpot('A7', 0, const Offset(556, 134)),
+      ParkingSpot('A1', 0, const Offset(339.6, 90.6)),
+      ParkingSpot('A2', 1, const Offset(366.7, 90.6)), // Red in image
+      ParkingSpot('A3', 1, const Offset(393.8, 90.6)), // Red in image
+      ParkingSpot('A4', 1, const Offset(421, 90.6)), // Red in image
+      ParkingSpot('A5', 1, const Offset(448.1, 90.6)), // Red in image
+      ParkingSpot('A6', 0, const Offset(475.2, 90.6)),
+      ParkingSpot('A7', 0, const Offset(502.3, 90.6)),
     ],
     
     // B row spots
     'bRow': [
-      ParkingSpot('B1', 0, const Offset(645, 72)),
-      ParkingSpot('B2', 0, const Offset(645, 98)),
-      ParkingSpot('B3', 1, const Offset(645, 124)), // Red in image
-      ParkingSpot('B4', 1, const Offset(645, 150)), // Red in image
-      ParkingSpot('B5', 1, const Offset(645, 176)), // Red in image
-      ParkingSpot('B6', 1, const Offset(645, 202)), // Red in image
-      ParkingSpot('B7', 1, const Offset(645, 228)), // Red in image
-      ParkingSpot('B8', 1, const Offset(645, 254)), // Red in image
+      ParkingSpot('B1', 0, const Offset(593.6, 41.4)),
+      ParkingSpot('B2', 0, const Offset(593.6, 66)),
+      ParkingSpot('B3', 1, const Offset(593.6, 90.6)), // Red in image
+      ParkingSpot('B4', 1, const Offset(593.6, 115.2)), // Red in image
+      ParkingSpot('B5', 1, const Offset(593.6, 139.8)), // Red in image
+      ParkingSpot('B6', 1, const Offset(593.6, 164.3)), // Red in image
+      ParkingSpot('B7', 1, const Offset(593.6, 188.9)), // Red in image
+      ParkingSpot('B8', 1, const Offset(593.6, 213.5)), // Red in image
     ],
     
     // C row spots
     'cRow': [
-      ParkingSpot('C1', 0, const Offset(316, 179)),
-      ParkingSpot('C2', 0, const Offset(347, 179)),
-      ParkingSpot('C3', 0, const Offset(378, 179)),
-      ParkingSpot('C4', 0, const Offset(409, 179)),
-      ParkingSpot('C5', 1, const Offset(440, 179)), // Red in image
-      ParkingSpot('C6', 0, const Offset(471, 179)),
-      ParkingSpot('C7', 0, const Offset(502, 179)),
-      ParkingSpot('C8', 0, const Offset(533, 179)),
-      ParkingSpot('C9', 0, const Offset(564, 179)),
+      ParkingSpot('C1', 0, const Offset(285.4, 135.9)),
+      ParkingSpot('C2', 0, const Offset(312.5, 135.9)),
+      ParkingSpot('C3', 0, const Offset(339.6, 135.9)),
+      ParkingSpot('C4', 0, const Offset(366.7, 135.9)),
+      ParkingSpot('C5', 1, const Offset(393.9, 135.9)), // Red in image
+      ParkingSpot('C6', 0, const Offset(421, 135.9)),
+      ParkingSpot('C7', 0, const Offset(448.1, 135.9)),
+      ParkingSpot('C8', 0, const Offset(475.2, 135.9)),
+      ParkingSpot('C9', 0, const Offset(502.3, 135.9)),
     ],
     
     // D row spots
     'dRow': [
-      ParkingSpot('D1', 0, const Offset(235, 293)),
-      ParkingSpot('D2', 0, const Offset(266, 293)),
-      ParkingSpot('D3', 0, const Offset(297, 293)),
-      ParkingSpot('D4', 1, const Offset(328, 293)), // Red in image
-      ParkingSpot('D5', 1, const Offset(359, 293)), // Red in image
-      ParkingSpot('D6', 0, const Offset(390, 293)),
-      ParkingSpot('D7', 0, const Offset(421, 293)),
-      ParkingSpot('D8', 0, const Offset(452, 293)),
-      ParkingSpot('D9', 0, const Offset(483, 293)),
-      ParkingSpot('D10', 1, const Offset(514, 293)), // Red in image
-      ParkingSpot('D11', 1, const Offset(545, 293)), // Red in image
-      ParkingSpot('D12', 1, const Offset(576, 293)), // Red in image
-      ParkingSpot('D13', 1, const Offset(607, 293)), // Red in image
+      ParkingSpot('D1', 0, const Offset(204.1, 247.2)),
+      ParkingSpot('D2', 0, const Offset(231.2, 247.2)),
+      ParkingSpot('D3', 0, const Offset(258.3, 247.2)),
+      ParkingSpot('D4', 1, const Offset(285.4, 247.2)), // Red in image
+      ParkingSpot('D5', 1, const Offset(312.5, 247.2)), // Red in image
+      ParkingSpot('D6', 0, const Offset(339.6, 247.2)),
+      ParkingSpot('D7', 0, const Offset(366.7, 247.2)),
+      ParkingSpot('D8', 0, const Offset(393.9, 247.2)),
+      ParkingSpot('D9', 0, const Offset(421, 247.2)),
+      ParkingSpot('D10', 1, const Offset(448.1, 247.2)), // Red in image
+      ParkingSpot('D11', 1, const Offset(475.2, 247.2)), // Red in image
+      ParkingSpot('D12', 1, const Offset(502.3, 247.2)), // Red in image
+      ParkingSpot('D13', 1, const Offset(529.4, 247.2)), // Red in image
     ],
     
     // E row spots (left diagonal)
     'eRow': [
-      ParkingSpot('E1', 0, const Offset(282, 22)),
-      ParkingSpot('E2', 0, const Offset(262, 42)),
-      ParkingSpot('E3', 1, const Offset(242, 62)), // Red in image
-      ParkingSpot('E4', 1, const Offset(222, 82)), // Red in image
-      ParkingSpot('E5', 1, const Offset(202, 102)), // Red in image
-      ParkingSpot('E6', 1, const Offset(182, 122)), // Red in image
-      ParkingSpot('E7', 1, const Offset(162, 142)), // Red in image
-      ParkingSpot('E8', 0, const Offset(142, 162)),
-      ParkingSpot('E9', 0, const Offset(122, 182)),
-      ParkingSpot('E10', 0, const Offset(102, 202)),
-      ParkingSpot('E11', 0, const Offset(82, 222)),
-      ParkingSpot('E12', 0, const Offset(62, 242)),
-      ParkingSpot('E13', 0, const Offset(42, 262)),
-      ParkingSpot('E14', 0, const Offset(22, 282)),
+      ParkingSpot('E1', 0, const Offset(287.1, 10.8)),
+      ParkingSpot('E2', 0, const Offset(268.1, 28.3)),
+      ParkingSpot('E3', 1, const Offset(249.0, 45.8)), // Red in image
+      ParkingSpot('E4', 1, const Offset(230.0, 63.4)), // Red in image
+      ParkingSpot('E5', 1, const Offset(211.0, 80.9)), // Red in image
+      ParkingSpot('E6', 1, const Offset(192.0, 98.4)), // Red in image
+      ParkingSpot('E7', 1, const Offset(172.9, 115.9)), // Red in image
+      ParkingSpot('E8', 0, const Offset(153.9, 133.4)),
+      ParkingSpot('E9', 0, const Offset(134.9, 150.9)),
+      ParkingSpot('E10', 0, const Offset(115.9, 168.5)),
+      ParkingSpot('E11', 0, const Offset(96.8, 186.0)),
+      ParkingSpot('E12', 0, const Offset(77.0, 203.5)),
+      ParkingSpot('E13', 0, const Offset(57.1, 221)),
+      ParkingSpot('E14', 0, const Offset(37.3, 238.6)),
     ],
     
     // F row spots (left diagonal bottom)
     'fRow': [
-      ParkingSpot('F1', 1, const Offset(80, 434)), // Red in image
-      ParkingSpot('F2', 1, const Offset(100, 459)), // Red in image
-      ParkingSpot('F3', 1, const Offset(120, 484)), // Red in image
-      ParkingSpot('F4', 1, const Offset(140, 509)), // Red in image
-      ParkingSpot('F5', 1, const Offset(160, 534)), // Red in image
-      ParkingSpot('F6', 1, const Offset(180, 559)), // Red in image
-      ParkingSpot('F7', 1, const Offset(200, 584)), // Red in image
-      ParkingSpot('F8', 0, const Offset(220, 609)),
-      ParkingSpot('F9', 0, const Offset(240, 634)),
-      ParkingSpot('F10', 0, const Offset(260, 659)),
-      ParkingSpot('F11', 0, const Offset(280, 684)),
-      ParkingSpot('F12', 0, const Offset(300, 709)),
+      ParkingSpot('F1', 1, const Offset(47.1, 291.2)), // Red in image
+      ParkingSpot('F2', 1, const Offset(64.2, 309.3)), // Red in image
+      ParkingSpot('F3', 1, const Offset(82, 327.9)), // Red in image
+      ParkingSpot('F4', 1, const Offset(99.7, 346.5)), // Red in image
+      ParkingSpot('F5', 1, const Offset(117.4, 365)), // Red in image
+      ParkingSpot('F6', 1, const Offset(135.6, 384.3)), // Red in image
+      ParkingSpot('F7', 1, const Offset(153.3, 402.9)), // Red in image
+      ParkingSpot('F8', 0, const Offset(171, 421.5)),
+      ParkingSpot('F9', 0, const Offset(188.8, 440.1)),
+      ParkingSpot('F10', 0, const Offset(231, 456.8)),
+      ParkingSpot('F11', 0, const Offset(256.1, 456.8)),
+      ParkingSpot('F12', 0, const Offset(281.2, 456.8)),
     ],
     
     // G row spots
     'gRow': [
-      ParkingSpot('G1', 1, const Offset(323, 340)), // Red in image
-      ParkingSpot('G2', 1, const Offset(323, 370)), // Red in image
-      ParkingSpot('G3', 0, const Offset(323, 400)),
+      ParkingSpot('G1', 1, const Offset(274, 301.5)), // Red in image
+      ParkingSpot('G2', 1, const Offset(274, 326.1)), // Red in image
+      ParkingSpot('G3', 0, const Offset(274, 350.7)),
     ],
     
     // H row spots (right column)
     'hRow': [
-      ParkingSpot('H1', 1, const Offset(473, 390)), // Red in image
-      ParkingSpot('H2', 1, const Offset(473, 415)), // Red in image
-      ParkingSpot('H3', 1, const Offset(473, 440)), // Red in image
-      ParkingSpot('H4', 1, const Offset(473, 465)), // Red in image
-      ParkingSpot('H5', 1, const Offset(473, 490)), // Red in image
-      ParkingSpot('H6', 1, const Offset(473, 515)), // Red in image
-      ParkingSpot('H7', 1, const Offset(473, 540)), // Red in image
-      ParkingSpot('H8', 0, const Offset(473, 565)),
-      ParkingSpot('H9', 1, const Offset(473, 590)), // Red in image
-      ParkingSpot('H10', 0, const Offset(473, 615)),
-      ParkingSpot('H11', 0, const Offset(473, 640)),
-      ParkingSpot('H12', 0, const Offset(473, 665)),
-      ParkingSpot('H13', 0, const Offset(473, 690)),
-      ParkingSpot('H14', 0, const Offset(473, 715)),
-      ParkingSpot('H15', 0, const Offset(408, 485)),
-      ParkingSpot('H16', 0, const Offset(408, 535)),
-      ParkingSpot('H17', 0, const Offset(408, 575)),
-      ParkingSpot('H18', 0, const Offset(408, 625)),
+      ParkingSpot('H1', 1, const Offset(425.2, 349.4)), // Red in image
+      ParkingSpot('H2', 1, const Offset(425.2, 374)), // Red in image
+      ParkingSpot('H3', 1, const Offset(425.2, 398.6)), // Red in image
+      ParkingSpot('H4', 1, const Offset(425.2, 423.1)), // Red in image
+      ParkingSpot('H5', 1, const Offset(425.2, 447.7)), // Red in image
+      ParkingSpot('H6', 1, const Offset(425.2, 472.3)), // Red in image
+      ParkingSpot('H7', 1, const Offset(425.2, 496.9)), // Red in image
+      ParkingSpot('H8', 0, const Offset(425.2, 521.5)),
+      ParkingSpot('H9', 1, const Offset(425.2, 546.1)), // Red in image
+      ParkingSpot('H10', 0, const Offset(425.2, 570.7)),
+      ParkingSpot('H11', 0, const Offset(425.2, 595.2)),
+      ParkingSpot('H12', 0, const Offset(425.2, 619.8)),
+      ParkingSpot('H13', 0, const Offset(425.2, 644.4)),
+      ParkingSpot('H14', 0, const Offset(425.2, 669)),
+      ParkingSpot('H15', 0, const Offset(331.1, 434.8)),
+      ParkingSpot('H16', 0, const Offset(331.1, 480.1)),
+      ParkingSpot('H17', 0, const Offset(331.1, 525.4)),
+      ParkingSpot('H18', 0, const Offset(331.1, 570.7)),
     ],
   };
 
@@ -349,7 +344,20 @@ class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
                   left: spot.position.dx,
                   top: spot.position.dy,
                   child: Transform.rotate(
-                    angle: (entry.key == 'eRow' || entry.key == 'fRow') ? 0.715584 : 0,
+                    angle: () {
+                      if (entry.key == 'eRow') return 41.8 * (3.1415926535 / 180); // convert to radians      
+                      if (entry.key == 'fRow') {
+                        final idNum = int.tryParse(spot.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+                        if (idNum >= 1 && idNum <= 9) return -38.1 * (3.1415926535 / 180);
+                        if (idNum >= 10 && idNum <= 12) return 90 * (3.1415926535 / 180);
+                      }
+                      if (entry.key == 'aRow' || entry.key == 'cRow' || entry.key == 'dRow') return 90 * (3.1415926535 / 180);
+                      if (entry.key == 'hRow') {
+                        final idNum = int.tryParse(spot.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+                        if (idNum >= 15 && idNum <= 18) return 90 * (3.1415926535 / 180);
+                      }
+                      return 0.0;
+                    } (),
                     alignment: Alignment.center,
                     child: GestureDetector(
                       onTap: () {
@@ -358,7 +366,7 @@ class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
                         }
                       },
                     child: Container(
-                      width: 36,
+                      width: 44,
                       height: 24,
                       decoration: BoxDecoration(
                         color: spotColor,
