@@ -20,10 +20,19 @@ jobs:
         flutter-version: '3.24.3' # Change to your desired Flutter version
 
     - name: Install dependencies
-      run: flutter pub get
+      run: |
+        cd Frontend
+        cd frontend
+        flutter pub get
 
     - name: Analyze code
-      run: flutter analyze
-
+      run: |
+        cd Frontend
+        cd frontend
+        flutter analyze
+        
     - name: Run tests
-      run: flutter test
+      run: |
+        cd Frontend
+        cd frontend
+        flutter test
