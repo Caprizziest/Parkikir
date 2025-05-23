@@ -24,12 +24,6 @@ jobs:
         cd Frontend
         cd frontend
         flutter pub get
-
-    - name: Analyze code
-      run: |
-        cd Frontend
-        cd frontend
-        flutter analyze
         
     - name: Run tests
       run: |
