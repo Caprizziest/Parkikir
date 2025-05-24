@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/model/register_model.dart';
+import '../services/register_service.dart';
+
 // Register ViewModel
 class RegisterViewModel extends ChangeNotifier {
   final TextEditingController usernameController = TextEditingController();
@@ -8,6 +10,11 @@ class RegisterViewModel extends ChangeNotifier {
   final TextEditingController passwordController = TextEditingController();
   bool obscureText = true;
   bool isLoading = false;
+  final RegisterService _service =
+      RegisterService(baseUrl: 'http://127.0.0.1:8000/api');
+  String? usernameError;
+  String? emailError;
+  String? passwordError;
 
   RegisterViewModel() {
     // Add listeners for text changes to update form validity
@@ -30,29 +37,71 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> register() async {
-    if (!isFormValid) return false;
+  Future<String?> register() async {
+    if (!isFormValid) return 'Please fill all fields.';
 
     try {
       isLoading = true;
       notifyListeners();
 
-      // Create register model
       final registerData = RegisterModel(
         username: usernameController.text,
         email: emailController.text,
         password: passwordController.text,
       );
 
-      // Here you would normally call your registration service
-      // For now, we'll just simulate a delay
-      await Future.delayed(const Duration(seconds: 1));
-
-      // For demo, always return success
-      return true;
+      final result = await _service.register(registerData);
+      if (result['success'] == true) {
+        // Clear error fields
+        usernameError = null;
+        emailError = null;
+        passwordError = null;
+        notifyListeners();
+        return null; // success
+      } else {
+        // result['message'] bisa String atau Map, handle keduanya
+        final msg = result['message'];
+        // Reset error fields
+        usernameError = null;
+        emailError = null;
+        passwordError = null;
+        if (msg is Map) {
+          // Cek dan ambil error per field
+          if (msg['username'] != null &&
+              msg['username'] is List &&
+              msg['username'].isNotEmpty) {
+            usernameError = msg['username'][0].toString();
+          }
+          if (msg['email'] != null &&
+              msg['email'] is List &&
+              msg['email'].isNotEmpty) {
+            emailError = msg['email'][0].toString();
+          }
+          if (msg['password'] != null &&
+              msg['password'] is List &&
+              msg['password'].isNotEmpty) {
+            passwordError = msg['password'][0].toString();
+          }
+          // Gabungkan semua pesan error untuk snackbar
+          final allErrors = [
+            if (usernameError != null) usernameError,
+            if (emailError != null) emailError,
+            if (passwordError != null) passwordError,
+          ];
+          notifyListeners();
+          return allErrors.isNotEmpty
+              ? allErrors.join('\n')
+              : 'Registration failed.';
+        }
+        if (msg is String) {
+          notifyListeners();
+          return msg;
+        }
+        notifyListeners();
+        return 'Registration failed.';
+      }
     } catch (e) {
-      // Handle any errors
-      return false;
+      return 'Error: ${e.toString()}';
     } finally {
       isLoading = false;
       notifyListeners();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/model/login_model.dart';
+
 // Login ViewModel
 class LoginViewModel extends ChangeNotifier {
   final TextEditingController usernameController = TextEditingController();

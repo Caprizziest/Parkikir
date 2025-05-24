@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:frontend/viewmodel/register_view_model.dart';
+
 class RegisterView extends ConsumerWidget {
   const RegisterView({Key? key}) : super(key: key);
 
@@ -14,7 +15,8 @@ class RegisterView extends ConsumerWidget {
       return InputDecoration(
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
@@ -74,10 +76,19 @@ class RegisterView extends ConsumerWidget {
               ),
               TextField(
                 controller: viewModel.usernameController,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(),
               ),
-              const SizedBox(height: 8),
+              SizedBox(
+                height: 20,
+                child: viewModel.usernameError != null
+                    ? Text(
+                        viewModel.usernameError!,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      )
+                    : null,
+              ),
               // Email
               const Text(
                 'Email',
@@ -85,10 +96,19 @@ class RegisterView extends ConsumerWidget {
               ),
               TextField(
                 controller: viewModel.emailController,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(),
               ),
-              const SizedBox(height: 8),
+              SizedBox(
+                height: 20,
+                child: viewModel.emailError != null
+                    ? Text(
+                        viewModel.emailError!,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      )
+                    : null,
+              ),
               // Password
               const Text(
                 'Password',
@@ -97,7 +117,8 @@ class RegisterView extends ConsumerWidget {
               TextField(
                 controller: viewModel.passwordController,
                 obscureText: viewModel.obscureText,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -111,6 +132,7 @@ class RegisterView extends ConsumerWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
               const Spacer(),
               // Register button
               SizedBox(
@@ -119,15 +141,31 @@ class RegisterView extends ConsumerWidget {
                 child: ElevatedButton(
                   onPressed: viewModel.isFormValid
                       ? () async {
-                          final success = await viewModel.register();
-                          if (success && context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Registration successful!'),
-                              ),
-                            );
-                            // Navigate back to login
-                            context.go('/login');
+                          try {
+                            final errorMsg = await viewModel.register();
+                            if (errorMsg == null && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Registration successful!',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Poppins',
+                                      )),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 204, 252, 10),
+                                ),
+                              );
+                              context.go('/login');
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Error: ${e.toString()}'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                           }
                         }
                       : null,
@@ -146,7 +184,8 @@ class RegisterView extends ConsumerWidget {
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
                           'Register',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600),
                         ),
                 ),
               ),
