@@ -116,9 +116,9 @@ def update_slot_status(request, pk):
     slot.status = status_value
     slot.save()
 
-    # 🔄 Push update ke WebSocket group
+    # Push update ke WebSocket group
     channel_layer = get_channel_layer()
-    all_slots = list(models.SlotParkir.objects.values())  # atau pakai serializer jika perlu
+    all_slots = list(models.SlotParkir.objects.values())
 
     async_to_sync(channel_layer.group_send)(
         "slotparkir_group",
