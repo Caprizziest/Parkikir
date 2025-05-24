@@ -14,6 +14,20 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: parkirki
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     strategy:
       max-parallel: 4
       matrix:
@@ -21,17 +35,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
 
-        
     - name: Install dependencies
       run: |
         cd Backend
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Wait for MySQL to be ready
+      run: |
+        for i in {1..30}; do
+          if mysqladmin ping -h127.0.0.1 -uroot -proot --silent; then
+            break
+          fi
+          sleep 1
+        done
+
+    - name: Run migrations
+      run: |
+        cd Backend/parkirki
+        python manage.py migrate
 
     - name: Run tests
       run: |
