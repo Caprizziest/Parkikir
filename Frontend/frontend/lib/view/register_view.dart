@@ -85,7 +85,11 @@ class RegisterView extends ConsumerWidget {
                 child: viewModel.usernameError != null
                     ? Text(
                         viewModel.usernameError!,
-                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                        ),
                       )
                     : null,
               ),
@@ -105,7 +109,11 @@ class RegisterView extends ConsumerWidget {
                 child: viewModel.emailError != null
                     ? Text(
                         viewModel.emailError!,
-                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                        ),
                       )
                     : null,
               ),
