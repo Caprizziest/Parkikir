@@ -143,7 +143,6 @@ class _bookingparkirState extends State<bookingparkir> {
             ),
           ),
 
-          // Payment Button
           Container(
             width: double.infinity,
             height: 56,
@@ -152,7 +151,11 @@ class _bookingparkirState extends State<bookingparkir> {
             child: ElevatedButton(
               onPressed: selectedSpot != null
                   ? () {
-                      context.go('/pembayaran');
+                      // Pass data menggunakan extra parameter
+                      context.go('/pembayaran', extra: {
+                        'selectedSpot': selectedSpot!,
+                        'price': spotPrice,
+                      });
                     }
                   : null,
               style: ElevatedButton.styleFrom(

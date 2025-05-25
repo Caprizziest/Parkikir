@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class pembayaran extends StatelessWidget {
-  const pembayaran({super.key});
+  final Map<String, dynamic>? bookingData;
+  
+  const pembayaran({super.key, this.bookingData});
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +15,16 @@ class pembayaran extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Poppins',
       ),
-      home: const PaymentMethodScreen(),
+      home: PaymentMethodScreen(bookingData: bookingData),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class PaymentMethodScreen extends StatefulWidget {
-  const PaymentMethodScreen({super.key});
+  final Map<String, dynamic>? bookingData;
+  
+  const PaymentMethodScreen({super.key, this.bookingData});
 
   @override
   State<PaymentMethodScreen> createState() => _PaymentMethodScreenState();
@@ -28,6 +32,15 @@ class PaymentMethodScreen extends StatefulWidget {
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   String selectedPaymentMethod = '';
+
+  // Get data from previous screen
+  String get selectedSpot => widget.bookingData?['selectedSpot'] ?? 'N/A';
+  double get price => widget.bookingData?['price']?.toDouble() ?? 0.0;
+  
+  // Format price to Rupiah
+  String get formattedPrice {
+    return 'Rp ${price.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +55,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           child: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            systemOverlayStyle: SystemUiOverlayStyle.light,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () {
                 context.go('/bookingparkir');
               },
@@ -125,9 +137,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 2),
-                                const Text(
-                                  '123456',
-                                  style: TextStyle(
+                                Text(
+                                  'PK001234',
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     color: Colors.black87,
                                     fontWeight: FontWeight.w600,
@@ -167,9 +179,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 2),
-                                const Text(
-                                  'Spot Name',
-                                  style: TextStyle(
+                                Text(
+                                  selectedSpot,
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     color: Colors.black87,
                                     fontWeight: FontWeight.w600,
@@ -209,9 +221,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 2),
-                                const Text(
-                                  'Rp 5,000',
-                                  style: TextStyle(
+                                Text(
+                                  formattedPrice,
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     color: Colors.black87,
                                     fontWeight: FontWeight.w600,
@@ -270,7 +282,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   // Handle continue action
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Selected payment method: $selectedPaymentMethod'),
+                      content: Text('Payment confirmed for $selectedSpot with $selectedPaymentMethod'),
                       backgroundColor: const Color(0xFF3C39F2),
                     ),
                   );
