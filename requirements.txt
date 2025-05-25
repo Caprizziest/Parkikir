@@ -1,8 +1,0 @@
-Django
-djangorestframework
-djangorestframework-simplejwt
-pymysql
-channels
-daphne
-drf-yasg
-django-cors-headers
