@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -55,6 +56,19 @@ def login(request):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     })
+
+@swagger_auto_schema(
+    method='post',
+    request_body=LogoutSerializer,
+    operation_description="Logout user by blacklisting the refresh token"
+)
+@api_view(['POST'])
+def logout(request):
+    serializer = LogoutSerializer(data=request.data, context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Slot Parkir
 @swagger_auto_schema(methods=['post'], request_body=SlotParkirSerializer)

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # ditambah
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'App',
     'drf_yasg',
     'corsheaders',

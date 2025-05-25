@@ -5,6 +5,7 @@ urlpatterns = [
     path('users/', views.getData, name='get_users'),
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
+    path('logout/', views.logout, name="logout"),
 
     path('slotparkir/', views.slotparkir_list_create, name='slotparkir-list-create'),
     path('slotparkir/<str:pk>/', views.slotparkir_detail, name='slotparkir-detail'),
