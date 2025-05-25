@@ -102,36 +102,64 @@ class _bookingparkirState extends State<bookingparkir> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Selected Spot :',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Row(
+                  children: [
+                    const Text(
+                      'Selected Spot : ',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    if (selectedSpot != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3C39F2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          selectedSpot!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
-                  selectedSpot != null ? 'Rp. ${spotPrice.toStringAsFixed(0)}' : 'Rp. -',
+                  selectedSpot != null
+                      ? 'Rp. ${spotPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}'
+                      : 'Rp. -',
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: selectedSpot != null ? 20 : 16,
+                    fontSize: selectedSpot != null ? 22 : 16,
                   ),
                 ),
               ],
             ),
           ),
-          
-          // Payment Button
+
           Container(
             width: double.infinity,
             height: 56,
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton(
-              onPressed: selectedSpot != null ? () {} : null,
+              onPressed: selectedSpot != null
+                  ? () {
+                      // Pass data menggunakan extra parameter
+                      context.go('/pembayaran', extra: {
+                        'selectedSpot': selectedSpot!,
+                        'price': spotPrice,
+                      });
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: selectedSpot != null ? Colors.blue : Colors.grey.shade300,
+                backgroundColor: selectedSpot != null ? const Color(0xFF3C39F2) : Colors.grey.shade300,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -333,7 +361,7 @@ class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
 
                 Color spotColor;
                 if (isSelected) {
-                  spotColor = Colors.blue;
+                  spotColor = Color(0xFF3C39F2);
                 } else if (spot.status == 0) {
                   spotColor = Colors.grey.shade800;
                 } else {
