@@ -46,6 +46,7 @@ dependencies:
   flutter_riverpod: ^2.3.6
 
   intl: ^0.20.2
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -91,9 +92,9 @@ flutter:
           weight: 600
         - asset: fonts/poppins.bold.ttf
           weight: 700
-    - family: Phosphor
-      fonts:
-        - asset: packages/phosphor_flutter/fonts/phosphor.ttf
+    # - family: Phosphor
+    #   fonts:
+    #     - asset: packages/phosphor_flutter/fonts/phosphor.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
