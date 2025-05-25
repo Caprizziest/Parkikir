@@ -15,6 +15,10 @@ class TestUrls(SimpleTestCase):
     def test_urls_login(self):
         url = reverse('login')
         self.assertEqual(resolve(url).func, views.login)
+        
+    def test_urls_logout(self):
+        url = reverse('logout')
+        self.assertEqual(resolve(url).func, views.logout)
 
     def test_urls_slotparkir_list_create(self):
         url = reverse('slotparkir-list-create')
