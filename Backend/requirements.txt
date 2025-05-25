@@ -6,3 +6,4 @@ channels==4.2.2
 daphne==3.0.2
 drf-yasg==1.21.10
 sentry-sdk[django]==2.28.0
+django-cors-headers==4.7.0
