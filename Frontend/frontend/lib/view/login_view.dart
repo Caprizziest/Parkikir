@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:frontend/viewmodel/login_view_model.dart';
+
 class LoginView extends ConsumerWidget {
   const LoginView({Key? key}) : super(key: key);
 
@@ -14,7 +15,8 @@ class LoginView extends ConsumerWidget {
       return InputDecoration(
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
@@ -77,10 +79,11 @@ class LoginView extends ConsumerWidget {
               ),
               TextField(
                 controller: viewModel.usernameController,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 20),
               // Password Field
               const Text(
                 'Password',
@@ -92,7 +95,8 @@ class LoginView extends ConsumerWidget {
               TextField(
                 controller: viewModel.passwordController,
                 obscureText: viewModel.obscureText,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                 decoration: _inputDecoration(
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -106,25 +110,39 @@ class LoginView extends ConsumerWidget {
                   ),
                 ),
               ),
-              // Forgot Password
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                    foregroundColor: const Color(0xFF4B4BEE),
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(50, 30),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    alignment: Alignment.centerRight,
-                  ),
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      fontSize: 14,
+              // Forgot Password and Error Message Row
+              // Forgot Password and Error Message Row
+              Row(
+                children: [
+                  if (viewModel.errorMessage != null)
+                    Expanded(
+                      child: Text(
+                        viewModel.errorMessage!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    )
+                  else
+                    const Spacer(),
+                  TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFF4B4BEE),
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(50, 30),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
               const Spacer(),
               // Login Button
@@ -132,15 +150,20 @@ class LoginView extends ConsumerWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: viewModel.isFormValid
+                  onPressed: viewModel.isFormValid && !viewModel.isLoading
                       ? () async {
                           final success = await viewModel.login();
                           if (success && context.mounted) {
                             context.go('/');
-                            // Show success message
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Login successful!'),
+                                content: Text('Login successful!',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Poppins',
+                                    )),
+                                backgroundColor:
+                                    Color.fromARGB(255, 204, 252, 10),
                               ),
                             );
                           }

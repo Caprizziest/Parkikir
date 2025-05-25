@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/model/login_model.dart';
-// Login ViewModel
+import 'package:frontend/services/token_service.dart';
+import '../model/login_model.dart';
+import '../repository/login_repository.dart';
+import '../services/login_service.dart';
+
 class LoginViewModel extends ChangeNotifier {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final LoginRepository _repository;
   bool obscureText = true;
   bool isLoading = false;
+  String? errorMessage;
 
-  LoginViewModel() {
-    // Add listeners for text changes to update form validity
+  LoginViewModel()
+      : _repository = LoginRepository(
+          service: LoginService(baseUrl: 'http://127.0.0.1:8000/api'),
+        ) {
     usernameController.addListener(_updateFormState);
     passwordController.addListener(_updateFormState);
   }
@@ -17,9 +24,7 @@ class LoginViewModel extends ChangeNotifier {
   bool get isFormValid =>
       usernameController.text.isNotEmpty && passwordController.text.isNotEmpty;
 
-  void _updateFormState() {
-    notifyListeners();
-  }
+  void _updateFormState() => notifyListeners();
 
   void togglePasswordVisibility() {
     obscureText = !obscureText;
@@ -31,22 +36,27 @@ class LoginViewModel extends ChangeNotifier {
 
     try {
       isLoading = true;
+      errorMessage = null;
       notifyListeners();
 
-      // Create login model
       final loginData = LoginModel(
         username: usernameController.text,
         password: passwordController.text,
       );
 
-      // Here you would normally call your authentication service
-      // For now, we'll just simulate a delay
-      await Future.delayed(const Duration(seconds: 1));
+      final result = await _repository.login(loginData);
 
-      // For demo, always return success
-      return true;
+      // if success simpan token , else tampilkan error
+      if (result['success'] == true) {
+        await TokenService.saveAccessToken(result['access_token']);
+        await TokenService.saveRefreshToken(result['refresh_token']);
+        return true;
+      } else {
+        errorMessage = "Invalid username or password";
+        return false;
+      }
     } catch (e) {
-      // Handle any errors
+      errorMessage = 'System error occurred';
       return false;
     } finally {
       isLoading = false;
@@ -56,15 +66,12 @@ class LoginViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    usernameController.removeListener(_updateFormState);
-    passwordController.removeListener(_updateFormState);
     usernameController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 }
 
-// Riverpod provider for LoginViewModel
 final loginViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
   return LoginViewModel();
 });

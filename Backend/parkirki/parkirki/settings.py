@@ -57,7 +57,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'App',
     'drf_yasg',
+    'corsheaders',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 ASGI_APPLICATION = 'parkirki.asgi.application'
 
@@ -85,6 +88,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'parkirki.urls'
@@ -115,7 +119,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'parkirki',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'root',
         'HOST': '127.0.0.1',
         'PORT': '3306'
     }
@@ -176,3 +180,4 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
