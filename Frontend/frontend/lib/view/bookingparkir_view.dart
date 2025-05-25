@@ -143,7 +143,6 @@ class _bookingparkirState extends State<bookingparkir> {
             ),
           ),
 
-          
           // Payment Button
           Container(
             width: double.infinity,
@@ -151,9 +150,13 @@ class _bookingparkirState extends State<bookingparkir> {
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton(
-              onPressed: selectedSpot != null ? () {} : null,
+              onPressed: selectedSpot != null
+                  ? () {
+                      context.go('/pembayaran');
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: selectedSpot != null ? Color(0xFF3C39F2) : Colors.grey.shade300,
+                backgroundColor: selectedSpot != null ? const Color(0xFF3C39F2) : Colors.grey.shade300,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -355,7 +358,7 @@ class _InteractiveParkingMapState extends State<InteractiveParkingMap> {
 
                 Color spotColor;
                 if (isSelected) {
-                  spotColor = Colors.blue;
+                  spotColor = Color(0xFF3C39F2);
                 } else if (spot.status == 0) {
                   spotColor = Colors.grey.shade800;
                 } else {
