@@ -5,3 +5,4 @@ pymysql
 channels
 daphne
 drf-yasg
+django-cors-headers

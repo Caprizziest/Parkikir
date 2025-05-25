@@ -92,9 +92,9 @@ flutter:
           weight: 600
         - asset: fonts/poppins.bold.ttf
           weight: 700
-    - family: Phosphor
-      fonts:
-        - asset: packages/phosphor_flutter/fonts/phosphor.ttf
+    # - family: Phosphor
+    #   fonts:
+    #     - asset: packages/phosphor_flutter/fonts/phosphor.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
