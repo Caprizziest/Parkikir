@@ -3,8 +3,12 @@ name: Flutter CI
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'Frontend/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'Frontend/**'
 
 jobs:
   build:

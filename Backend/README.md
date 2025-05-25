@@ -3,6 +3,9 @@ Backend
 Run on Django
 
 ### Requirement:
+- Install all run
+```pip install -r requirements.txt```
+
 - Django
 ```pip install django```
 
