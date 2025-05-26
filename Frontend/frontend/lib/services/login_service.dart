@@ -4,18 +4,24 @@ import '../model/login_model.dart';
 
 class LoginService {
   final String baseUrl;
+  final http.Client client;
 
-  LoginService({required this.baseUrl});
+  LoginService({
+    required this.baseUrl, 
+    http.Client? client
+  }) : client = client ?? http.Client();
+
 
   Future<Map<String, dynamic>> login(LoginModel model) async {
     final url = Uri.parse('$baseUrl/login/');
 
-    try {
-      final response = await http.post(
+   try {
+      final response = await client.post(  
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(model.toJson()),
       );
+
 
       // Check if the response is successful
       if (response.statusCode == 200) {
