@@ -9,14 +9,20 @@ class LoginViewModel extends ChangeNotifier {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final LoginRepository _repository;
+  final TokenService _tokenService;
+
+  // State variables
   bool obscureText = true;
   bool isLoading = false;
   String? errorMessage;
+  bool _disposed = false;
 
-  LoginViewModel()
-      : _repository = LoginRepository(
-          service: LoginService(baseUrl: 'http://127.0.0.1:8000/api'),
-        ) {
+  LoginViewModel({LoginRepository? repository, TokenService? tokenService})
+      : _repository = repository ??
+            LoginRepository(
+              service: LoginService(baseUrl: 'http://127.0.0.1:8000/api'),
+            ),
+        _tokenService = tokenService ?? TokenService() {
     usernameController.addListener(_updateFormState);
     passwordController.addListener(_updateFormState);
   }
@@ -48,11 +54,12 @@ class LoginViewModel extends ChangeNotifier {
 
       // if success simpan token , else tampilkan error
       if (result['success'] == true) {
-        await TokenService.saveAccessToken(result['access_token']);
-        await TokenService.saveRefreshToken(result['refresh_token']);
+        await _tokenService.saveAccessToken(result['access_token']);
+        await _tokenService.saveRefreshToken(result['refresh_token']);
         return true;
       } else {
         errorMessage = "Invalid username or password";
+        notifyListeners();
         return false;
       }
     } catch (e) {
@@ -66,12 +73,15 @@ class LoginViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
     usernameController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 }
 
-final loginViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
+final loginViewModelProvider =
+    ChangeNotifierProvider.autoDispose<LoginViewModel>((ref) {
   return LoginViewModel();
 });
