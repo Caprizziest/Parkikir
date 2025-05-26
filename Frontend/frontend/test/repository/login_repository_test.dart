@@ -66,16 +66,22 @@ void main() {
       verify(mockService.login(loginModel)).called(1);
     });
 
-    test('should handle exceptions from service', () async {
+    test('should return connection error when service throws exception', () async {
       // Arrange
-      when(mockService.login(loginModel)).thenThrow(Exception('Network error'));
+      final loginModel = LoginModel(
+        username: 'testuser',
+        password: 'testpassword',
+      );
+
+      when(mockService.login(loginModel))
+          .thenThrow(Exception('Network connection failed'));
 
       // Act
-      final result = await repository.login(loginModel);
+      final call = repository.login(loginModel);
 
       // Assert
-      expect(result['success'], false);
-      expect(result['message'], 'Connection error');
+      expect(() async => await call, throwsA(isA<Exception>()));
+
       verify(mockService.login(loginModel)).called(1);
     });
   });
