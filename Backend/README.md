@@ -18,6 +18,9 @@ Run on Django
 - MySQL connection
 ```pip install pymysql```
 
+- Django Cors
+```pip install django-cors-headers```
+
 - Django Channels
 ```pip install channels```
 ```pip install daphne```

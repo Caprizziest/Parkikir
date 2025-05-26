@@ -4,7 +4,9 @@ import api.views as views
 urlpatterns = [
     path('users/', views.getData, name='get_users'),
     path('register/', views.register, name='register'),
+    path('email-verify/', views.verify_email, name="email-verify"),
     path('login/', views.login, name='login'),
+    path('logout/', views.logout, name="logout"),
 
     path('slotparkir/', views.slotparkir_list_create, name='slotparkir-list-create'),
     path('slotparkir/<str:pk>/', views.slotparkir_detail, name='slotparkir-detail'),

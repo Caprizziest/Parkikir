@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
 from App import models
 from rest_framework import status
 from datetime import date
@@ -7,6 +8,9 @@ from datetime import date
 class TestViews(APITestCase):
     def setUp(self):
             self.user = User.objects.create_user(username='testuser', password='testpass')
+            self.refresh = RefreshToken.for_user(self.user)
+            self.access_token = str(self.refresh.access_token)
+            self.refresh_token = str(self.refresh)
             self.slot = models.SlotParkir.objects.create(slotparkirid='A1', status='AVAILABLE')
 
 # Autentikasi
@@ -31,6 +35,14 @@ class TestViews(APITestCase):
         response = self.client.post('/api/login/', data)
         self.assertEqual(response.status_code, 200)
         self.assertIn('access', response.data)
+    
+    def test_views_logout_user(self):
+        data = {
+            "refresh": self.refresh_token
+        }
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+        response = self.client.post('/api/logout/', data)
+        self.assertEqual(response.status_code, 204)
 
 # Slot Parkir
     def test_views_slotparkir_get(self):

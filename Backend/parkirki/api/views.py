@@ -1,13 +1,19 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *
+from .utils import Util
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from django.conf import settings
+import jwt
 
 from django.contrib.auth.models import User
 import App.models as models
@@ -20,15 +26,72 @@ def getData(request):
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
-@swagger_auto_schema(method='post', request_body=RegisterSerializer, operation_description="Register new user")
+@swagger_auto_schema(
+    method='post',
+    request_body=RegisterSerializer,
+    operation_description="Register new user and send email verification link"
+)
 @api_view(['POST'])
 def register(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
+        user_data = serializer.data
+        user = User.objects.get(email=user_data['email'])
+        token = RefreshToken.for_user(user).access_token
+
+        current_site = get_current_site(request).domain
+        relative_link = reverse('email-verify')
+        absurl = 'http://' + current_site + relative_link + "?token=" + str(token)
+
+        email_body = f"""
+        Halo {user.username},
+
+        Selamat datang di ParkirKi'! 🎉
+
+        Akun kamu berhasil dibuat. Untuk mengaktifkan akun dan mulai menggunakan fitur-fitur ParkirKi', silakan verifikasi email kamu dengan mengklik tautan di bawah ini:
+
+        {absurl}
+
+        Jika kamu tidak merasa mendaftar di ParkirKi', abaikan email ini.
+
+        Terima kasih telah bergabung!
+        Tim ParkirKi'
+        """
+        data = {
+            'email_body': email_body,
+            'to_email': user.email,
+            'email_subject': 'Verify your email'
+        }
+
+        Util.send_email(data)
+        return Response(user_data, status=status.HTTP_201_CREATED)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+token_param_config = openapi.Parameter(
+    'token',
+    in_=openapi.IN_QUERY,
+    description='JWT token untuk verifikasi email',
+    type=openapi.TYPE_STRING
+)
+
+@swagger_auto_schema(method='get', manual_parameters=[token_param_config])
+@api_view(['GET'])
+def verify_email(request):
+    token = request.GET.get('token')
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        user = User.objects.get(id=payload['user_id'])
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+        return Response({'email': 'Successfully activated'}, status=status.HTTP_200_OK)
+    except jwt.ExpiredSignatureError:
+        return Response({'error': 'Activation link expired'}, status=status.HTTP_400_BAD_REQUEST)
+    except jwt.DecodeError:
+        return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+    
 @swagger_auto_schema(method='post', request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
@@ -55,6 +118,19 @@ def login(request):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     })
+
+@swagger_auto_schema(
+    method='post',
+    request_body=LogoutSerializer,
+    operation_description="Logout user by blacklisting the refresh token"
+)
+@api_view(['POST'])
+def logout(request):
+    serializer = LogoutSerializer(data=request.data, context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Slot Parkir
 @swagger_auto_schema(methods=['post'], request_body=SlotParkirSerializer)
