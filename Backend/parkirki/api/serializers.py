@@ -56,21 +56,73 @@ class SlotParkirSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class BookingSerializer(serializers.ModelSerializer):
+    STATUS_CHOICES = (
+        ('ACTIVE', 'ACTIVE'),
+        ('INACTIVE', 'INACTIVE'),
+    )
+    
+    status = serializers.ChoiceField(choices=STATUS_CHOICES)
+
     class Meta:
         model = models.Booking
-        fields = '__all__'
+        fields = '__all__'   
+    
+    def validate_totalharga(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Total harga tidak boleh negatif.")
+        return value
 
+         
 class LaporanSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Laporan
         fields = '__all__'
+
+    def validate_status(self, value):
+        if value not in ['DONE', 'UNDONE']:
+            raise serializers.ValidationError("Status must be DONE or UNDONE")
+        return value
+
+    def validate_lokasi(self, value):
+        if not value:
+            raise serializers.ValidationError("Lokasi tidak boleh kosong")
+        return value
 
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notice
         fields = '__all__'
 
+    def validate_tanggal(self, value):
+        if not value:
+            raise serializers.ValidationError("Tanggal wajib diisi.")
+        return value
+
+    def validate_event(self, value):
+        if not value or len(value.strip()) < 3:
+            raise serializers.ValidationError("Event terlalu pendek atau kosong.")
+        return value
+
+    def validate_judul(self, value):
+        if not value or len(value.strip()) < 3:
+            raise serializers.ValidationError("Judul terlalu pendek atau kosong.")
+        return value
+
 class ParkiranTertutupSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ParkiranTertutup
         fields = '__all__'
+
+    def validate_slotparkir(self, value):
+        if not value:
+            raise serializers.ValidationError("Slot parkir wajib diisi.")
+        if not models.SlotParkir.objects.filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Slot parkir tidak ditemukan di database.")
+        return value
+
+    def validate_notice(self, value):
+        if not value:
+            raise serializers.ValidationError("Notice wajib diisi.")
+        if not models.Notice.objects.filter(pk=value.pk).exists():
+            raise serializers.ValidationError("Notice tidak ditemukan di database.")
+        return value

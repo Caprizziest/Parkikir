@@ -92,33 +92,46 @@ def verify_email(request):
     except jwt.DecodeError:
         return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
     
-@swagger_auto_schema(method='post', request_body=openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    properties={
-        'username': openapi.Schema(type=openapi.TYPE_STRING),
-        'password': openapi.Schema(type=openapi.TYPE_STRING),
-    },
-    required=['username', 'password']
-), operation_description="Login and obtain JWT")
+@swagger_auto_schema(
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'username': openapi.Schema(type=openapi.TYPE_STRING),
+            'password': openapi.Schema(type=openapi.TYPE_STRING),
+        },
+        required=['username', 'password']
+    ),
+    operation_description="Login and obtain JWT"
+)
 @api_view(['POST'])
 def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
 
+    if not username or not password:
+        return Response(
+            {"detail": "Username and password are required."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
-        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
+        return Response(
+            {'detail': 'Invalid credentials'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
     if not check_password(password, user.password):
-        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
+        return Response(
+            {'detail': 'Invalid credentials'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
     refresh = RefreshToken.for_user(user)
     return Response({
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     })
-
+    
 @swagger_auto_schema(
     method='post',
     request_body=LogoutSerializer,

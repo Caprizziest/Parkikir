@@ -44,18 +44,55 @@ class TestViews(APITestCase):
         response = self.client.post('/api/logout/', data)
         self.assertEqual(response.status_code, 204)
 
+    def test_views_register_user_invalid(self):
+        data = {
+            "username": "invaliduser",
+            "email": "user@example.com"
+        }
+        response = self.client.post('/api/register/', data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("password", response.data)
+
+    def test_views_login_user_invalid(self):
+        data = {
+            "username": "testuser",
+            "password": "wrongpass"
+        }
+        response = self.client.post('/api/login/', data)
+        self.assertEqual(response.status_code, 401)
+
+    def test_views_login_user_no_username(self):
+        data = {
+            "password": "somepass"
+        }
+        response = self.client.post('/api/login/', data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("required", response.data["detail"].lower())
+
+    def test_views_logout_user_invalid(self):
+        data = {
+            "refresh": ""
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='')
+        response = self.client.post('/api/logout/', data)
+        self.assertEqual(response.status_code, 400)
+
+
 # Slot Parkir
     def test_views_slotparkir_get(self):
         response = self.client.get('/api/slotparkir/')
         self.assertEqual(response.status_code, 200)
 
     def test_views_slotparkir_create(self):
-        data = {
-            "slotparkirid": "A2",
-            "status": "UNAVAILABLE"
-        }
+        data = {"slotparkirid": "A2", "status": "UNAVAILABLE"}
         response = self.client.post('/api/slotparkir/', data)
         self.assertEqual(response.status_code, 201)
+
+    def test_views_slotparkir_create_invalid(self):
+        data = {"slotparkirid": ""}
+        response = self.client.post('/api/slotparkir/', data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("status", response.data)
 
     def test_views_slotparkir_detail_get(self):
         slot = models.SlotParkir.objects.create(slotparkirid='A3', status='AVAILABLE')
@@ -68,15 +105,28 @@ class TestViews(APITestCase):
         response = self.client.put(f'/api/slotparkir/{slot.slotparkirid}/', data)
         self.assertEqual(response.status_code, 200)
 
+    def test_views_slotparkir_detail_update_invalid(self):
+        slot = models.SlotParkir.objects.create(slotparkirid='A4', status='AVAILABLE')
+        data = {"slotparkirid": "", "status": "X"}
+        response = self.client.put(f'/api/slotparkir/{slot.slotparkirid}/', data)
+        self.assertEqual(response.status_code, 400)
+
     def test_views_slotparkir_detail_delete(self):
         slot = models.SlotParkir.objects.create(slotparkirid='A5', status='AVAILABLE')
         response = self.client.delete(f'/api/slotparkir/{slot.slotparkirid}/')
         self.assertEqual(response.status_code, 204)
 
     def test_views_slotparkir_patch_status(self):
-        response = self.client.patch(f'/api/slotparkir/{self.slot.slotparkirid}/status/', {'status': 'UNAVAILABLE'})
+        slot = models.SlotParkir.objects.create(slotparkirid='A6', status='AVAILABLE')
+        response = self.client.patch(f'/api/slotparkir/{slot.slotparkirid}/status/', {'status': 'UNAVAILABLE'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['status'], 'UNAVAILABLE')
+
+    def test_views_slotparkir_patch_status_invalid(self):
+        slot = models.SlotParkir.objects.create(slotparkirid='A7', status='AVAILABLE')
+        response = self.client.patch(f'/api/slotparkir/{slot.slotparkirid}/status/', {'status': 'WRONGVALUE'})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.data)
 
 # Booking
     def test_views_booking_get(self):
@@ -133,6 +183,41 @@ class TestViews(APITestCase):
         )
         response = self.client.delete(f'/api/booking/{booking.id}/')
         self.assertEqual(response.status_code, 204)
+        
+    def test_views_booking_create_invalid_missing_fields(self):
+        data = {
+            "user": self.user.id
+        }
+        response = self.client.post('/api/booking/', data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("slotparkir", response.data)
+        self.assertIn("tanggal", response.data)
+        self.assertIn("status", response.data)
+        self.assertIn("totalharga", response.data)
+
+    def test_views_booking_create_invalid_status(self):
+        data = {
+            "user": self.user.id,
+            "slotparkir": self.slot.slotparkirid,
+            "tanggal": str(date.today()),
+            "status": "INVALID_STATUS",
+            "totalharga": 5000
+        }
+        response = self.client.post('/api/booking/', data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("status", response.data)
+
+    def test_views_booking_create_invalid_totalharga(self):
+        data = {
+            "user": self.user.id,
+            "slotparkir": self.slot.slotparkirid,
+            "tanggal": str(date.today()),
+            "status": "ACTIVE",
+            "totalharga": -5000
+        }
+        response = self.client.post('/api/booking/', data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("totalharga", response.data)
 
 # Laporan
     def test_views_laporan_get(self):
@@ -147,7 +232,7 @@ class TestViews(APITestCase):
             "status": "UNDONE"
         }
         response = self.client.post('/api/laporan/', data)
-        self.assertIn(response.status_code, [201, 400])  # tergantung validasi gambar
+        self.assertIn(response.status_code, [201, 400])
 
     def test_views_laporan_patch_status(self):
         laporan = models.Laporan.objects.create(user=self.user, gambar=b"abc", status="UNDONE")
@@ -183,3 +268,26 @@ class TestViews(APITestCase):
         }
         response = self.client.post('/api/tertutup/', data)
         self.assertEqual(response.status_code, 201)
+
+    def test_views_notice_create_invalid(self):
+        data = {
+            "tanggal": "", 
+            "event": "x",   
+            "judul": "",    
+            "description": "test"
+        }
+        response = self.client.post('/api/notice/', data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("tanggal", response.data)
+        self.assertIn("event", response.data)
+        self.assertIn("judul", response.data)
+
+    def test_views_tertutup_create_invalid(self):
+        data = {
+            "slotparkir": "", 
+            "notice": ""    
+        }
+        response = self.client.post('/api/tertutup/', data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("slotparkir", response.data)
+        self.assertIn("notice", response.data)
