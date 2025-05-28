@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+import sys
 
 
 # Sentry setup
@@ -115,16 +116,38 @@ WSGI_APPLICATION = 'parkirki.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'parkirki',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '3306'
+if 'test' in sys.argv or 'pytest' in sys.modules:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
-}
+    class DisableMigrations:
+        def __contains__(self, item):
+            return True
+        def __getitem__(self, item):
+            return None
+    
+    MIGRATION_MODULES = DisableMigrations()
+    
+    import logging
+    logging.disable(logging.CRITICAL)
+    
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'parkirki',
+            'USER': 'root',
+            'PASSWORD': 'root',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
+    }
 
 
 # Password validation
