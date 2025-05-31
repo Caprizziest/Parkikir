@@ -13,7 +13,7 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (context, state) => const dashboard_view(),
+              builder: (context, state) => const DashboardView(),
             ),
             GoRoute(
               path: '/bookingparkir',
@@ -92,25 +92,17 @@ void main() {
       expect(find.byIcon(Icons.history), findsOneWidget);
     });
 
-    testWidgets('should have correct styling and colors', (WidgetTester tester) async {
+    testWidgets('should display Dashboard3.png correctly', (WidgetTester tester) async {
       // Arrange & Act
       await tester.pumpWidget(createTestableWidget());
 
-      // Assert - Check for gradient background
-      final container = tester.widget<Container>(
-        find.descendant(
-          of: find.byType(Scaffold),
-          matching: find.byType(Container),
-        ).first,
-      );
+      // Assert - Check for Dashboard3.png image
+      final dashboardImage = find.byWidgetPredicate((widget) =>
+          widget is Image &&
+          widget.image is AssetImage &&
+          (widget.image as AssetImage).assetName == 'assets/Dashboard3.png');
       
-      expect(container.decoration, isA<BoxDecoration>());
-      final decoration = container.decoration as BoxDecoration;
-      expect(decoration.gradient, isA<LinearGradient>());
-      
-      final gradient = decoration.gradient as LinearGradient;
-      expect(gradient.colors, contains(const Color(0xFF4A3CDB)));
-      expect(gradient.colors, contains(const Color(0xFF6A5AE0)));
+      expect(dashboardImage, findsOneWidget);
     });
 
     testWidgets('should navigate to booking page when Check Available Spot is tapped', 
@@ -233,4 +225,6 @@ void main() {
       expect(find.byType(SizedBox), findsAtLeastNWidgets(5));
     });
   });
+
+
 }
