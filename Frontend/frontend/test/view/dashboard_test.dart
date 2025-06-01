@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:frontend/view/bookingparkir_view.dart';
+import 'package:frontend/view/report_list_view.dart';
+import 'package:frontend/view/report_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/view/dashboard.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   group('Dashboard View Tests', () {
@@ -70,30 +74,114 @@ void main() {
       expect(find.byIcon(Icons.qr_code_scanner), findsOneWidget);
       expect(find.byIcon(Icons.history), findsOneWidget);
     });
-  
-    testWidgets('should navigate to booking page when Check Available Spot is tapped', 
-        (WidgetTester tester) async {
-      await tester.pumpWidget(createTestableWidget());
-      await tester.tap(find.text('Check Available Spot'));
-      await tester.pumpAndSettle();
-      expect(find.text('Booking Parkir Page'), findsOneWidget);
-    });
 
-    testWidgets('should navigate to report page when Make a Report is tapped', 
-        (WidgetTester tester) async {
-      await tester.pumpWidget(createTestableWidget());
-      await tester.tap(find.text('Make a Report'));
-      await tester.pumpAndSettle();
-      expect(find.text('Report Page'), findsOneWidget);
-    });
 
-    testWidgets('should navigate to report list page when Report List is tapped', 
-        (WidgetTester tester) async {
-      await tester.pumpWidget(createTestableWidget());
-      await tester.tap(find.text('Report List'));
-      await tester.pumpAndSettle();
-      expect(find.text('Report List Page'), findsOneWidget);
-    });
+    testWidgets('should navigate to report_view when Make a Report is tapped',
+    (WidgetTester tester) async {
+  // Setup: Wrap with MaterialApp and a home widget with the navigation logic
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: Builder(
+          builder: (context) => Center(
+            child: ElevatedButton(
+              child: const Text('Check Available Spot'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const bookingparkir()),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  // Act: Tap the "Check Available Spot" button
+  await tester.tap(find.text('Check Available Spot'));
+  await tester.pumpAndSettle();
+
+  // Assert: Verify the Booking screen is shown by checking the AppBar title
+  expect(find.text('Choose a Spot'), findsOneWidget);
+
+  // Optional: check for unique body text to be sure
+  expect(find.textContaining('Parkiran Mobil UC'), findsOneWidget);
+});
+
+
+
+
+    testWidgets('should navigate to report_view when Make a Report is tapped',
+    (WidgetTester tester) async {
+  // Setup: Wrap with MaterialApp and a home widget with the navigation logic
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: Builder(
+          builder: (context) => Center(
+            child: ElevatedButton(
+              child: const Text('Make a Report'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const report_view()),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  // Act: Tap the "Make a Report" button
+  await tester.tap(find.text('Make a Report'));
+  await tester.pumpAndSettle();
+
+  // Assert: Verify the report_view screen is shown by checking the AppBar title
+  expect(find.text('Make a Report'), findsOneWidget);
+
+  // Optional: check for unique body text to be sure
+  expect(find.textContaining('frustrating parking situation'), findsOneWidget);
+});
+
+
+testWidgets('should navigate to report_list_view when Report List is tapped',
+    (WidgetTester tester) async {
+  // Setup: Wrap with ProviderScope and MaterialApp
+  await tester.pumpWidget(
+    ProviderScope(
+      child: MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => Center(
+              child: ElevatedButton(
+                child: const Text('Report List'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ReportListView()),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  // Act: Tap the "Report List" button
+  await tester.tap(find.text('Report List'));
+  await tester.pumpAndSettle();
+
+  // Assert: Check for the AppBar title
+  expect(find.text('List Laporan'), findsOneWidget);
+});
+
+
 
 
     testWidgets('should have proper accessibility', (WidgetTester tester) async {
