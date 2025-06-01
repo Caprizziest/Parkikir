@@ -112,7 +112,7 @@ class _report_viewState extends State<report_view> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            context.pop(); // AppRouter.goBack(context);
+            context.go('/');
           },
         ),
       ),
@@ -135,50 +135,50 @@ class _report_viewState extends State<report_view> {
               // Topic Dropdown
               Container(
                 width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: const Color(0xFF4338CA),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                      dropdownColor: Colors.white,
-                      icon: const Icon(Icons.keyboard_arrow_down,
-                          color: Colors.white),
-                      hint: const Text(
-                        'Select Topic',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      value: _selectedTopic,
-                      isExpanded: true,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedTopic = newValue;
-                        });
-                      },
-                      selectedItemBuilder: (BuildContext context) {
-                        return _topics.map<Widget>((String item) {
-                          return Center(
-                            child: Text(
-                              'Select Topic',
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          );
-                        }).toList();
-                      },
-                      items:
-                          _topics.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+                  child: DropdownButton<String>(
+                    key: const Key('topicDropdown'),
+                    dropdownColor: Colors.white,
+                    icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                    hint: const Text(
+                      'Select Topic',
+                      style: TextStyle(color: Colors.white),
                     ),
+                    value: _selectedTopic,
+                    isExpanded: true,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedTopic = newValue;
+                      });
+                    },
+                    selectedItemBuilder: (BuildContext context) {
+                      return _topics.map<Widget>((String item) {
+                        return Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            item,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        );
+                      }).toList();
+                    },
+                    items: _topics.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: const TextStyle(color: Colors.black), // visible in white dropdown
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
-
               const SizedBox(height: 16),
 
               // Image Upload Area

@@ -10,7 +10,7 @@
   import 'package:frontend/view/report_list_view.dart';
 
   final GoRouter appRouter = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/login',
