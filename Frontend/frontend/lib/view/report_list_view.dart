@@ -26,35 +26,31 @@ class ReportListView extends ConsumerWidget {
                 height: 56, // Fixed height for app bar
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center, // Center the row content
-                  children: [
-                    Positioned(
-                      left: 0,
-                      child: GestureDetector(
-                        onTap: () => context.pop(),
-                        child: const Icon(
-                          Icons.chevron_left,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                    const Expanded(
-                      child: Center(
-                        child: Text(
-                          'List Laporan',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 32), // Balance for back button
-                  ],
-                ),
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    GestureDetector(  // Directly use GestureDetector without Positioned
+      onTap: () => context.pop(),
+      child: const Icon(
+        Icons.chevron_left,
+        color: Colors.white,
+        size: 32,
+      ),
+    ),
+    const Expanded(
+      child: Center(
+        child: Text(
+          'List Laporan',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ),
+    const SizedBox(width: 32), // This balances the back button space
+  ],
+)
               ),
             ),
           ),
