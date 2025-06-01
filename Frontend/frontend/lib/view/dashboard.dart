@@ -43,122 +43,126 @@ class dashboard_view extends StatelessWidget {
                 ),
               ),
 
-              // Main content
-              Column(
-                children: [
-                  // App bar
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Logo
-                        Image.asset(
-                          'assets/logowhite.png',
-                          height: 28,
-                          fit: BoxFit.contain,
-                        ),
-
-                        // Icons
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.notifications_outlined,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                            const SizedBox(width: 16),
-                            const Icon(
-                              Icons.person_outline,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Greeting and availability
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        Text(
-                          'Hello User',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 18,
+              // Main content wrapped with SingleChildScrollView to prevent overflow
+              SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 70), // leave space for bottom nav
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // App bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Logo
+                          Image.asset(
+                            'assets/logowhite.png',
+                            height: 28,
+                            fit: BoxFit.contain,
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Text(
-                              '15',
-                              style: TextStyle(
+
+                          // Icons
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.notifications_outlined,
                                 color: Colors.white,
-                                fontSize: 80,
-                                fontWeight: FontWeight.bold,
+                                size: 24,
                               ),
-                            ),
-                            Text(
-                              '/50',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 30,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              'Slots available',
-                              style: TextStyle(
+                              SizedBox(width: 16),
+                              Icon(
+                                Icons.person_outline,
                                 color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                size: 24,
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(
-                              Icons.location_on,
-                              color: Colors.white.withOpacity(0.8),
-                              size: 14,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Parkiran UC Makassar',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.directions_car,
-                              color: Colors.white.withOpacity(0.8),
-                              size: 14,
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 20),
-
-                  // Cards section
-                  Expanded(
-                    child: Container(
+                    // Greeting and availability
+                    Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text(
+                            'Hello User',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                '15',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 80,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                '/50',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Text(
+                                'Slots available',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.white.withOpacity(0.8),
+                                size: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Parkiran UC Makassar',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.directions_car,
+                                color: Colors.white.withOpacity(0.8),
+                                size: 14,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Cards section wrapped with IntrinsicHeight to avoid overflow in Row
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           // Save your spot card
                           Container(
@@ -177,6 +181,7 @@ class dashboard_view extends StatelessWidget {
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
                                   'Save your spot!',
@@ -337,87 +342,92 @@ class dashboard_view extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
+                  ],
+                ),
+              ),
 
-                  // Bottom navigation
-                  Container(
-                    height: 70,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+              // Bottom navigation fixed at bottom
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  height: 70,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, -5),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -5),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.home,
-                              color: const Color(0xFF4A3CDB),
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Home',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: const Color(0xFF4A3CDB),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.qr_code_scanner,
-                              color: Colors.grey,
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Scan',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.history,
-                              color: Colors.grey,
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'History',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
-                ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.home,
+                            color: const Color(0xFF4A3CDB),
+                            size: 24,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Home',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: const Color(0xFF4A3CDB),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.qr_code_scanner,
+                            color: Colors.grey,
+                            size: 24,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Scan',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.history,
+                            color: Colors.grey,
+                            size: 24,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'History',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

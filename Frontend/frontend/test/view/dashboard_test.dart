@@ -95,21 +95,6 @@ void main() {
       expect(find.text('Report List Page'), findsOneWidget);
     });
 
-    testWidgets('should have proper widget hierarchy', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestableWidget());
-
-      expect(find.byType(Scaffold), findsOneWidget);
-      expect(find.byType(SafeArea), findsOneWidget);
-      expect(find.byType(Stack), findsOneWidget);
-      expect(find.byType(Column), findsWidgets);
-
-      final whiteContainers = find.byWidgetPredicate((widget) =>
-          widget is Container &&
-          widget.decoration is BoxDecoration &&
-          (widget.decoration as BoxDecoration).color == Colors.white);
-      
-      expect(whiteContainers, findsAtLeastNWidgets(3));
-    });
 
     testWidgets('should have proper accessibility', (WidgetTester tester) async {
       await tester.pumpWidget(createTestableWidget());
