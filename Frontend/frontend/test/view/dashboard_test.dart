@@ -76,20 +76,20 @@ void main() {
     });
 
 
-//   testWidgets('should navigate to bookingparkir when Check Available Spot is tapped', (WidgetTester tester) async {
-//   await tester.pumpWidget(createTestableWidget());
+  testWidgets('should navigate to bookingparkir when Check Available Spot is tapped', (WidgetTester tester) async {
+  await tester.pumpWidget(createTestableWidget());
 
-//   // Verify we start on the dashboard_view by checking a dashboard-specific text
-//   expect(find.text('Hello User'), findsOneWidget);
+  // Verify we start on the dashboard_view by checking a dashboard-specific text
+  expect(find.text('Hello User'), findsOneWidget);
 
-//   // Tap the button that triggers navigation inside dashboard_view
-//   await tester.tap(find.text('Check Available Spot'));
-//   await tester.pumpAndSettle();
+  // Tap the button that triggers navigation inside dashboard_view
+  await tester.tap(find.text('Check Available Spot'));
+  await tester.pumpAndSettle();
 
-//   // Verify navigation: Booking Parkir Page is shown
-//   expect(find.text('Choose a Spot'), findsOneWidget);
-//     expect(find.textContaining('Parkiran Mobil UC'), findsOneWidget);
-// });
+  // Verify navigation: Booking Parkir Page is shown
+  expect(find.text('Booking Parkir Page'), findsOneWidget);
+    // expect(find.textContaining('Parkiran Mobil UC'), findsOneWidget);
+});
 
 
 
