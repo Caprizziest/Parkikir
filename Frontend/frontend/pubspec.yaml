@@ -47,6 +47,8 @@ dependencies:
 
   intl: ^0.20.2
   shared_preferences: ^2.5.3
+  mocktail: ^1.0.4
+  provider: ^6.1.5
 
 dev_dependencies:
   flutter_test:
