@@ -76,6 +76,26 @@ void main() {
     });
 
 
+//   testWidgets('should navigate to bookingparkir when Check Available Spot is tapped', (WidgetTester tester) async {
+//   await tester.pumpWidget(createTestableWidget());
+
+//   // Verify we start on the dashboard_view by checking a dashboard-specific text
+//   expect(find.text('Hello User'), findsOneWidget);
+
+//   // Tap the button that triggers navigation inside dashboard_view
+//   await tester.tap(find.text('Check Available Spot'));
+//   await tester.pumpAndSettle();
+
+//   // Verify navigation: Booking Parkir Page is shown
+//   expect(find.text('Choose a Spot'), findsOneWidget);
+//     expect(find.textContaining('Parkiran Mobil UC'), findsOneWidget);
+// });
+
+
+
+
+
+
     testWidgets('should navigate to report_view when Make a Report is tapped',
     (WidgetTester tester) async {
   // Setup: Wrap with MaterialApp and a home widget with the navigation logic

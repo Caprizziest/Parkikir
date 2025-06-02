@@ -45,7 +45,7 @@ class dashboard_view extends StatelessWidget {
 
               // Main content wrapped with SingleChildScrollView to prevent overflow
               SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 70), // leave space for bottom nav
+                padding: const EdgeInsets.only(bottom: 90), // Adjusted padding to match bottom nav height + some margin
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -120,7 +120,8 @@ class dashboard_view extends StatelessWidget {
                               ),
                             ],
                           ),
-                          Row(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
                                 'Slots available',
@@ -130,25 +131,32 @@ class dashboard_view extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Icon(
-                                Icons.location_on,
-                                color: Colors.white.withOpacity(0.8),
-                                size: 14,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Parkiran UC Makassar',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.8),
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Icon(
-                                Icons.directions_car,
-                                color: Colors.white.withOpacity(0.8),
-                                size: 14,
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Colors.white.withOpacity(0.8),
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      'Parkiran UC Makassar',
+                                      style: TextStyle(
+                                        color: Colors.white.withOpacity(0.8),
+                                        fontSize: 14,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.directions_car,
+                                    color: Colors.white.withOpacity(0.8),
+                                    size: 14,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -167,7 +175,7 @@ class dashboard_view extends StatelessWidget {
                           // Save your spot card
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.all(16.0), // Reduced padding
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.0),
@@ -186,7 +194,7 @@ class dashboard_view extends StatelessWidget {
                                 Text(
                                   'Save your spot!',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18, // Slightly smaller
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black.withOpacity(0.8),
                                   ),
@@ -195,16 +203,16 @@ class dashboard_view extends StatelessWidget {
                                 Text(
                                   'Reserve your slot while it\'s still available.',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13, // Slightly smaller
                                     color: Colors.black.withOpacity(0.6),
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 12), // Reduced spacing
                                 GestureDetector(
                                   onTap: () => context.go('/bookingparkir'),
                                   child: Container(
                                     width: double.infinity,
-                                    height: 50,
+                                    height: 45, // Slightly smaller height
                                     decoration: BoxDecoration(
                                       color: const Color(0xFF4A3CDB),
                                       borderRadius: BorderRadius.circular(8.0),
@@ -212,18 +220,18 @@ class dashboard_view extends StatelessWidget {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: const [
-                                        Icon(Icons.search, color: Colors.white, size: 20),
+                                        Icon(Icons.search, color: Colors.white, size: 18),
                                         SizedBox(width: 8),
                                         Text(
                                           'Check Available Spot',
                                           style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 16,
+                                            fontSize: 15, // Slightly smaller
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                         SizedBox(width: 8),
-                                        Icon(Icons.chevron_right, color: Colors.white, size: 20),
+                                        Icon(Icons.chevron_right, color: Colors.white, size: 18),
                                       ],
                                     ),
                                   ),
@@ -244,8 +252,8 @@ class dashboard_view extends StatelessWidget {
                                     context.push('/report');
                                   },
                                   child: Container(
-                                    height: 120,
-                                    padding: const EdgeInsets.all(16.0),
+                                    height: 100, // Reduced height
+                                    padding: const EdgeInsets.all(12.0), // Reduced padding
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(16.0),
@@ -272,11 +280,11 @@ class dashboard_view extends StatelessWidget {
                                             size: 24,
                                           ),
                                         ),
-                                        const SizedBox(height: 12),
+                                        const SizedBox(height: 8), // Reduced spacing
                                         Text(
                                           'Make a Report',
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 13, // Smaller font
                                             fontWeight: FontWeight.w500,
                                             color: Colors.black.withOpacity(0.8),
                                           ),
@@ -294,8 +302,8 @@ class dashboard_view extends StatelessWidget {
                                     context.push('/reportlist'); // Navigasi ke halaman /reportlist
                                   },
                                   child: Container(
-                                    height: 120,
-                                    padding: const EdgeInsets.all(16.0),
+                                    height: 100, // Reduced height
+                                    padding: const EdgeInsets.all(12.0), // Reduced padding
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(16.0),
@@ -322,11 +330,11 @@ class dashboard_view extends StatelessWidget {
                                             size: 24,
                                           ),
                                         ),
-                                        const SizedBox(height: 12),
+                                        const SizedBox(height: 8), // Reduced spacing
                                         Text(
                                           'Report List',
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 13, // Smaller font
                                             fontWeight: FontWeight.w500,
                                             color: Colors.black.withOpacity(0.8),
                                           ),

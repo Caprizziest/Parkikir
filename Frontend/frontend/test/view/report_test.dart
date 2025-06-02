@@ -21,7 +21,6 @@ void main() {
     expect(find.text('Description (Optional)'), findsOneWidget);
     expect(find.text('Submit'), findsOneWidget);
 
-    // ========== UPDATED DROPDOWN TEST SECTION ==========
     // Tap the dropdown via Key
     await tester.tap(find.byKey(const Key('topicDropdown')));
     await tester.pumpAndSettle();
@@ -39,7 +38,6 @@ void main() {
 
     // Verify selection
     expect(find.text('Parkir paralel'), findsOneWidget);
-    // ========== END OF UPDATED SECTION ==========
 
     final descriptionField = find.byType(TextField);
     expect(descriptionField, findsOneWidget);
@@ -51,6 +49,7 @@ void main() {
     final textField = tester.widget<TextField>(descriptionField);
     expect(textField.controller?.text, testText);
     expect(find.text('${testText.length}/50'), findsOneWidget);
+    expect(find.text('26/50'), findsOneWidget);
 
     const longText = 'This is a very long description that exceeds the maximum character limit of 50';
     await tester.enterText(descriptionField, longText);

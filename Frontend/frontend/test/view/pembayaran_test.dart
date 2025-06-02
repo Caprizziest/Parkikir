@@ -29,7 +29,6 @@ void main() {
     expect(find.text('A1'), findsOneWidget);
     expect(find.text('Rp 15.000'), findsOneWidget);
 
-    // Initially, CONTINUE button is disabled
     final Finder continueButton = find.text('CONTINUE');
     ElevatedButton buttonWidget = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(buttonWidget.onPressed, isNull);
