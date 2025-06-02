@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:frontend/view/report_view.dart';
 
-class MockGoRouter extends Mock implements GoRouter {}
-
 void main() {
-  late MockGoRouter mockRouter;
 
-  setUp(() {
-    mockRouter = MockGoRouter();
-  });
 
   testWidgets('Test dropdown, description, and submit button', (WidgetTester tester) async {
     await tester.pumpWidget(
