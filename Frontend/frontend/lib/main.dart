@@ -7,7 +7,7 @@ Future<void> main() async {
   await SentryFlutter.init(
     (options) {
       options.dsn =
-          'https://0b83a48effc377ba8219a49ea3e759ee@o4509316345102336.ingest.us.sentry.io/4509316481417216';
+          'https://0b83a48effc377ba8219a49ea3e75 9ee@o4509316345102336.ingest.us.sentry.io/4509316481417216';
       options.sendDefaultPii = true;
     },
     appRunner: () => runApp(
