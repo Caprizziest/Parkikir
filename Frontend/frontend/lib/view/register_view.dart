@@ -40,7 +40,7 @@ class RegisterView extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               // Logo
               Center(
                 child: Image.asset(
@@ -48,7 +48,7 @@ class RegisterView extends ConsumerWidget {
                   height: 120,
                 ),
               ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               // Create Account title
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,7 +231,7 @@ class RegisterView extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
             ],
           ),
         ),

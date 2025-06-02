@@ -40,15 +40,15 @@ class LoginView extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               // Logo
               Center(
                 child: Image.asset(
-                  'logo.png',
+                  'assets/logo.png',
                   height: 120,
                 ),
               ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               // Log In Title with underline
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,7 +224,7 @@ class LoginView extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
             ],
           ),
         ),
