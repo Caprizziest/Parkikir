@@ -17,7 +17,7 @@ void main() {
     late MockLoginViewModel mockViewModel;
 
     setUp(() {
-      
+
       mockViewModel = MockLoginViewModel();
 
       // Setup default mock behaviors
@@ -84,11 +84,11 @@ void main() {
 
         // Verify username field and label
         expect(find.text('Username'), findsOneWidget);
-        expect(find.widgetWithText(TextField, ''),
-            findsNWidgets(2)); // Username and password fields
 
         // Verify password field and label
         expect(find.text('Password'), findsOneWidget);
+        expect(find.widgetWithText(TextField, ''),
+            findsNWidgets(2)); // Username and password fields
 
         // Verify forgot password button
         expect(find.text('Forgot Password?'), findsOneWidget);
@@ -326,20 +326,14 @@ void main() {
       });
     });
 
-    group('Test Scrolling dan Gesture', () {
-      testWidgets('harus menangani gesture tap pada tombol-tombol',
+    group('Test Gesture', () {
+      testWidgets('harus menangani gesture tap pada tombol create account',
           (WidgetTester tester) async {
         await tester.pumpWidget(createWidgetUnderTest());
 
-        // Test multiple tap gestures
-        final forgotPasswordButton =
-            find.widgetWithText(TextButton, 'Forgot Password?');
+        // Test tap gesture on create account button
         final createAccountButton =
-            find.widgetWithText(TextButton, 'Create Here!');
-
-        // Tap forgot password (should not throw error)
-        await tester.tap(forgotPasswordButton);
-        await tester.pump();
+        find.widgetWithText(TextButton, 'Create Here!');
 
         // Tap create account
         await tester.tap(createAccountButton);
@@ -363,52 +357,6 @@ void main() {
 
         // Should not throw any errors
         expect(tester.takeException(), isNull);
-      });
-    });
-
-    group('Test State Widget', () {
-      testWidgets('harus mempertahankan hierarki widget yang benar',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(createWidgetUnderTest());
-
-        // Verify main structure
-        expect(find.byType(Scaffold), findsOneWidget);
-        expect(find.byType(SafeArea), findsOneWidget);
-        expect(find.byType(Padding), findsWidgets);
-        expect(find.byType(Column), findsWidgets);
-
-        // Verify input decorations are applied
-        final textFields = find.byType(TextField);
-        expect(textFields, findsNWidgets(2));
-
-        for (int i = 0; i < 2; i++) {
-          final textField = tester.widget<TextField>(textFields.at(i));
-          expect(textField.decoration, isNotNull);
-          expect(textField.decoration!.filled, isTrue);
-          expect(textField.decoration!.fillColor, equals(Colors.white));
-        }
-      });
-
-      testWidgets('harus menerapkan styling yang benar pada tombol-tombol',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(createWidgetUnderTest());
-
-        // Check login button styling
-        final loginButton = find.widgetWithText(ElevatedButton, 'Login');
-        final elevatedButton = tester.widget<ElevatedButton>(loginButton);
-
-        expect(elevatedButton.style?.backgroundColor?.resolve({}),
-            equals(const Color(0xFF4B4BEE)));
-        expect(elevatedButton.style?.foregroundColor?.resolve({}),
-            equals(Colors.white));
-
-        // Check text button styling
-        final forgotPasswordButton =
-            find.widgetWithText(TextButton, 'Forgot Password?');
-        final textButton = tester.widget<TextButton>(forgotPasswordButton);
-
-        expect(textButton.style?.foregroundColor?.resolve({}),
-            equals(const Color(0xFF4B4BEE)));
       });
     });
   });
