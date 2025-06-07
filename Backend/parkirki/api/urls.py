@@ -20,4 +20,6 @@ urlpatterns = [
 
     path('notice/', views.notice_list_create, name='notice-list-create'),
     path('tertutup/', views.tertutup_list_create, name='tertutup-list-create'),
+
+    path('payment/create/', views.create_payment, name='create_payment'),
 ]
