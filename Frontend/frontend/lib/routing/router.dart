@@ -1,6 +1,7 @@
   // app_routing.dart
   import 'package:flutter/material.dart';
   import 'package:frontend/view/bookingparkir_view.dart';
+import 'package:frontend/view/notice_list_view.dart';
   import 'package:frontend/view/pembayaran_view.dart';
   import 'package:go_router/go_router.dart';
   import 'package:frontend/view/dashboard.dart';
@@ -33,6 +34,10 @@
       GoRoute(
         path: '/reportlist',
         builder: (context, state) => const ReportListView(),
+      ),
+      GoRoute(
+        path: '/noticelist',
+        builder: (context, state) => const NoticeListView(),
       ),
       GoRoute(
         path: '/bookingparkir',
