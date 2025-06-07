@@ -34,6 +34,7 @@ class Laporan(models.Model):
     gambar = models.BinaryField()  # Changed BLOB to BinaryField for Django compatibility
     lokasi = models.CharField(max_length=45, null=True, blank=True)
     status = models.CharField(max_length=45)
+    tanggal = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Laporan {self.id} by {self.user.username}"

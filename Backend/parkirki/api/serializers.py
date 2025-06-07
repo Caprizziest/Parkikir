@@ -91,6 +91,7 @@ class LaporanSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Laporan
         fields = '__all__'
+        read_only_fields = ['tanggal']
 
     def validate_status(self, value):
         if value not in ['DONE', 'UNDONE']:
