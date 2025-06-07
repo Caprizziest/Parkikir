@@ -45,13 +45,16 @@ class dashboard_view extends StatelessWidget {
 
               // Main content wrapped with SingleChildScrollView to prevent overflow
               SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 90), // Adjusted padding to match bottom nav height + some margin
+                padding: const EdgeInsets.only(
+                    bottom:
+                        90), // Adjusted padding to match bottom nav height + some margin
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // App bar
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 10.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -64,14 +67,19 @@ class dashboard_view extends StatelessWidget {
 
                           // Icons
                           Row(
-                            children: const [
-                              Icon(
-                                Icons.notifications_outlined,
-                                color: Colors.white,
-                                size: 24,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  context.push('/noticelist');
+                                },
+                                child: const Icon(
+                                  Icons.notifications_outlined,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
                               ),
-                              SizedBox(width: 16),
-                              Icon(
+                              const SizedBox(width: 16),
+                              const Icon(
                                 Icons.person_outline,
                                 color: Colors.white,
                                 size: 24,
@@ -175,7 +183,8 @@ class dashboard_view extends StatelessWidget {
                           // Save your spot card
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(16.0), // Reduced padding
+                            padding:
+                                const EdgeInsets.all(16.0), // Reduced padding
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.0),
@@ -218,9 +227,11 @@ class dashboard_view extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: const [
-                                        Icon(Icons.search, color: Colors.white, size: 18),
+                                        Icon(Icons.search,
+                                            color: Colors.white, size: 18),
                                         SizedBox(width: 8),
                                         Text(
                                           'Check Available Spot',
@@ -231,7 +242,8 @@ class dashboard_view extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(width: 8),
-                                        Icon(Icons.chevron_right, color: Colors.white, size: 18),
+                                        Icon(Icons.chevron_right,
+                                            color: Colors.white, size: 18),
                                       ],
                                     ),
                                   ),
@@ -253,7 +265,8 @@ class dashboard_view extends StatelessWidget {
                                   },
                                   child: Container(
                                     height: 100, // Reduced height
-                                    padding: const EdgeInsets.all(12.0), // Reduced padding
+                                    padding: const EdgeInsets.all(
+                                        12.0), // Reduced padding
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(16.0),
@@ -266,13 +279,15 @@ class dashboard_view extends StatelessWidget {
                                       ],
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.all(8.0),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFE6F7ED),
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                           child: Icon(
                                             Icons.warning_amber_rounded,
@@ -280,13 +295,15 @@ class dashboard_view extends StatelessWidget {
                                             size: 24,
                                           ),
                                         ),
-                                        const SizedBox(height: 8), // Reduced spacing
+                                        const SizedBox(
+                                            height: 8), // Reduced spacing
                                         Text(
                                           'Make a Report',
                                           style: TextStyle(
                                             fontSize: 13, // Smaller font
                                             fontWeight: FontWeight.w500,
-                                            color: Colors.black.withOpacity(0.8),
+                                            color:
+                                                Colors.black.withOpacity(0.8),
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
@@ -299,11 +316,13 @@ class dashboard_view extends StatelessWidget {
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
-                                    context.push('/reportlist'); // Navigasi ke halaman /reportlist
+                                    context.push(
+                                        '/reportlist'); // Navigasi ke halaman /reportlist
                                   },
                                   child: Container(
                                     height: 100, // Reduced height
-                                    padding: const EdgeInsets.all(12.0), // Reduced padding
+                                    padding: const EdgeInsets.all(
+                                        12.0), // Reduced padding
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(16.0),
@@ -316,13 +335,15 @@ class dashboard_view extends StatelessWidget {
                                       ],
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.all(8.0),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFE6F7ED),
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                           child: const Icon(
                                             Icons.assignment_outlined,
@@ -330,13 +351,15 @@ class dashboard_view extends StatelessWidget {
                                             size: 24,
                                           ),
                                         ),
-                                        const SizedBox(height: 8), // Reduced spacing
+                                        const SizedBox(
+                                            height: 8), // Reduced spacing
                                         Text(
                                           'Report List',
                                           style: TextStyle(
                                             fontSize: 13, // Smaller font
                                             fontWeight: FontWeight.w500,
-                                            color: Colors.black.withOpacity(0.8),
+                                            color:
+                                                Colors.black.withOpacity(0.8),
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
