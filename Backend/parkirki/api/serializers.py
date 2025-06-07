@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 import App.models as models
+import base64
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -72,8 +73,21 @@ class BookingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Total harga tidak boleh negatif.")
         return value
 
+class Base64BinaryField(serializers.Field):
+    def to_internal_value(self, data):
+        try:
+            return base64.b64decode(data)
+        except Exception:
+            raise serializers.ValidationError("Invalid base64-encoded data.")
+
+    def to_representation(self, value):
+        if value:
+            return base64.b64encode(value).decode('utf-8')
+        return None
          
 class LaporanSerializer(serializers.ModelSerializer):
+    gambar = Base64BinaryField()
+
     class Meta:
         model = models.Laporan
         fields = '__all__'
@@ -87,6 +101,7 @@ class LaporanSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError("Lokasi tidak boleh kosong")
         return value
+
 
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
