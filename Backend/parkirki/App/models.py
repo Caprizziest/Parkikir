@@ -31,6 +31,7 @@ class Booking(models.Model):
 
 class Laporan(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.CharField(max_length=45, default="Parkir Sembarangan")
     gambar = models.BinaryField()  # Changed BLOB to BinaryField for Django compatibility
     lokasi = models.CharField(max_length=45, null=True, blank=True)
     status = models.CharField(max_length=45)
