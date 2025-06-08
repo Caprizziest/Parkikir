@@ -28,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password'],
         )
-        user.is_active = False
+        # user.is_active = False
         user.save()
         return user
 
@@ -142,3 +142,22 @@ class ParkiranTertutupSerializer(serializers.ModelSerializer):
         if not models.Notice.objects.filter(pk=value.pk).exists():
             raise serializers.ValidationError("Notice tidak ditemukan di database.")
         return value
+    
+class PaymentSerializer(serializers.Serializer):
+    booking_id = serializers.IntegerField(required=True)
+    user_id = serializers.IntegerField(required=True)
+
+    def validate(self, data):
+        booking_id = data['booking_id']
+        user_id = data['user_id']
+
+        try:
+            booking = models.Booking.objects.get(id=booking_id, user_id=user_id)
+        except models.Booking.DoesNotExist:
+            raise serializers.ValidationError("Booking not found or does not belong to the user.")
+
+        if booking.status != 'ACTIVE':
+            raise serializers.ValidationError("Only active bookings can be paid.")
+
+        data['booking'] = booking
+        return data
