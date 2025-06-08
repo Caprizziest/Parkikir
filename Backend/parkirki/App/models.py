@@ -56,3 +56,19 @@ class ParkiranTertutup(models.Model):
 
     def __str__(self):
         return f"ParkiranTertutup for Slot {self.slotparkir.slotparkirid} with Notice {self.notice.noticeid}"
+
+
+class Payment(models.Model):
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=100, unique=True)  # e.g., BOOKING-1
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    gross_amount = models.IntegerField()
+    snap_token = models.CharField(max_length=200, blank=True, null=True)
+    redirect_url = models.URLField(blank=True, null=True)
+    status = models.CharField(max_length=50, default='pending')  # pending, success, failed
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Payment for {self.order_id}"

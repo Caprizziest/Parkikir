@@ -15,9 +15,13 @@ from django.urls import reverse
 from django.conf import settings
 import jwt
 import midtransclient
+import time
+
 
 from django.contrib.auth.models import User
 import App.models as models
+from App.models import Payment, Booking
+
 
 # Autentikasi
 @swagger_auto_schema(method='get', operation_description="Get all user")
@@ -353,9 +357,21 @@ def create_payment(request):
     transaction = snap.create_transaction(param)
     transaction_token = transaction['token']
 
+    # Save payment to database
+    payment = Payment.objects.create(
+    booking=booking,
+    user=booking.user,
+    order_id=f"BOOKING-{booking.id}",
+    snap_token=transaction_token,
+    redirect_url=transaction['redirect_url'],
+    gross_amount=booking.totalharga
+)
+
     return Response({
         'token': transaction_token,
         'redirect_url': transaction['redirect_url'],
         'order_id': booking.id,
         'totalharga': booking.totalharga
     })
+
+# SB-Mid-server-mnT8ku5J6oJftbGOe1fadh4f

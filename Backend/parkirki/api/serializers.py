@@ -28,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password'],
         )
-        user.is_active = False
+        # user.is_active = False
         user.save()
         return user
 
