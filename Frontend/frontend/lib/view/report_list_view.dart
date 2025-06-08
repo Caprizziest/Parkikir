@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/report_list_view_model.dart';
-import '../model/report_list_model.dart';
+import '../model/report_model.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,42 +15,35 @@ class ReportListView extends ConsumerWidget {
     return Scaffold(
       body: Column(
         children: [
-          // Custom app bar with blue background (without status bar)
+          // Custom app bar with blue background
           Container(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top,
-            ),
             color: const Color(0xFF4040FF),
             child: SafeArea(
               child: Container(
-                height: 56, // Fixed height for app bar
+                height: 56, // Standard app bar height
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    GestureDetector(  // Directly use GestureDetector without Positioned
-      onTap: () => context.pop(),
-      child: const Icon(
-        Icons.chevron_left,
-        color: Colors.white,
-        size: 32,
-      ),
-    ),
-    const Expanded(
-      child: Center(
-        child: Text(
-          'List Laporan',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    ),
-    const SizedBox(width: 32), // This balances the back button space
-  ],
-)
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: const Icon(
+                        Icons.chevron_left,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                    const Text(
+                      'List Laporan',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 32), // Balance the back button
+                  ],
+                ),
               ),
             ),
           ),
@@ -106,58 +99,65 @@ class ReportListView extends ConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    report.title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: report.isSolved ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    report.userName,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: report.isSolved ? Colors.grey : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    report.description ?? '-',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: report.isSolved ? Colors.grey : Colors.black54,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16), // Added space between content and time
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center, // Center vertically
               children: [
                 Text(
-                  report.title,
+                  timeText,
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: report.isSolved ? Colors.grey : Colors.black,
+                    fontSize: 14,
+                    color:
+                        report.isSolved ? Colors.grey : const Color(0xFF3C39F2),
                   ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      timeText,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: report.isSolved
-                            ? Colors.grey
-                            : const Color(0xFF3C39F2),
-                      ),
+                if (report.isSolved)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.grey,
                     ),
-                    if (report.isSolved)
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Icon(
-                          Icons.check,
-                          color: Colors.grey,
-                        ),
-                      ),
-                  ],
-                ),
+                  ),
               ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              report.userName,
-              style: TextStyle(
-                fontSize: 14,
-                color: report.isSolved ? Colors.grey : Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              report.description ?? '-',
-              style: TextStyle(
-                fontSize: 16,
-                color: report.isSolved ? Colors.grey : Colors.black54,
-              ),
             ),
           ],
         ),

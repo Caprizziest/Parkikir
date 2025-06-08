@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../model/report_list_model.dart';
+import '../model/report_model.dart';
 
 // Provider for the ReportListViewModel
 final reportListViewModelProvider =
