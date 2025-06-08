@@ -1,16 +1,20 @@
+import "parkiran_tertutup_model.dart";
+
 class NoticeModel {
   final int noticeId;
   final String tanggal;
   final String event;
   final String judul;
-  final String? description;
+  final String description;
+  final List<ParkiranTertutup>? parkiranTertutup;
 
   NoticeModel({
     required this.noticeId,
     required this.tanggal,
     required this.event,
     required this.judul,
-    this.description,
+    required this.description,
+    this.parkiranTertutup,
   });
 
   factory NoticeModel.fromJson(Map<String, dynamic> json) {
@@ -19,7 +23,12 @@ class NoticeModel {
       tanggal: json['tanggal'] as String,
       event: json['event'] as String,
       judul: json['judul'] as String,
-      description: json['description'] as String?,
+      description: json['description'] ?? '',
+      parkiranTertutup: json['parkiran_tertutup'] != null
+          ? (json['parkiran_tertutup'] as List)
+              .map((item) => ParkiranTertutup.fromJson(item))
+              .toList()
+          : null,
     );
   }
 
@@ -30,8 +39,13 @@ class NoticeModel {
       'event': event,
       'judul': judul,
       'description': description,
+      'parkiran_tertutup':
+          parkiranTertutup?.map((item) => item.toJson()).toList(),
     };
   }
+
+  bool get hasClosedParking =>
+      parkiranTertutup != null && parkiranTertutup!.isNotEmpty;
 
   // Helper method untuk parsing tanggal jika diperlukan
   DateTime? get parsedDate {
