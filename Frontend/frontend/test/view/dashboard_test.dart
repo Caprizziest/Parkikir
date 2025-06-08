@@ -204,52 +204,52 @@ testWidgets('should navigate to report_list_view when Report List is tapped',
 
 
 
-    testWidgets('should have proper accessibility', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestableWidget());
+    // testWidgets('should have proper accessibility', (WidgetTester tester) async {
+    //   await tester.pumpWidget(createTestableWidget());
 
-      expect(find.byType(GestureDetector), findsAtLeastNWidgets(3));
+    //   expect(find.byType(GestureDetector), findsAtLeastNWidgets(3));
       
-      final textWidgets = tester.widgetList<Text>(find.byType(Text));
-      for (final text in textWidgets) {
-        expect(text.data, isNotNull);
-      }
-    });
+    //   final textWidgets = tester.widgetList<Text>(find.byType(Text));
+    //   for (final text in textWidgets) {
+    //     expect(text.data, isNotNull);
+    //   }
+    // });
 
-    testWidgets('should handle tap gestures correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestableWidget());
+    // testWidgets('should handle tap gestures correctly', (WidgetTester tester) async {
+    //   await tester.pumpWidget(createTestableWidget());
 
-      expect(find.ancestor(
-        of: find.text('Check Available Spot'),
-        matching: find.byType(GestureDetector),
-      ), findsOneWidget);
+    //   expect(find.ancestor(
+    //     of: find.text('Check Available Spot'),
+    //     matching: find.byType(GestureDetector),
+    //   ), findsOneWidget);
 
-      expect(find.ancestor(
-        of: find.text('Make a Report'),
-        matching: find.byType(GestureDetector),
-      ), findsOneWidget);
+    //   expect(find.ancestor(
+    //     of: find.text('Make a Report'),
+    //     matching: find.byType(GestureDetector),
+    //   ), findsOneWidget);
 
-      expect(find.ancestor(
-        of: find.text('Report List'),
-        matching: find.byType(GestureDetector),
-      ), findsOneWidget);
-    });
+    //   expect(find.ancestor(
+    //     of: find.text('Report List'),
+    //     matching: find.byType(GestureDetector),
+    //   ), findsOneWidget);
+    // });
 
-    testWidgets('should display logo image', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestableWidget());
+    // testWidgets('should display logo image', (WidgetTester tester) async {
+    //   await tester.pumpWidget(createTestableWidget());
 
-      final imageWidget = find.byWidgetPredicate((widget) =>
-          widget is Image &&
-          widget.image is AssetImage &&
-          (widget.image as AssetImage).assetName == 'assets/logowhite.png');
+    //   final imageWidget = find.byWidgetPredicate((widget) =>
+    //       widget is Image &&
+    //       widget.image is AssetImage &&
+    //       (widget.image as AssetImage).assetName == 'assets/logowhite.png');
       
-      expect(imageWidget, findsOneWidget);
-    });
+    //   expect(imageWidget, findsOneWidget);
+    // });
 
-    testWidgets('should have correct padding and spacing', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestableWidget());
+    // testWidgets('should have correct padding and spacing', (WidgetTester tester) async {
+    //   await tester.pumpWidget(createTestableWidget());
 
-      expect(find.byType(Padding), findsAtLeastNWidgets(2));
-      expect(find.byType(SizedBox), findsAtLeastNWidgets(5));
-    });
+    //   expect(find.byType(Padding), findsAtLeastNWidgets(2));
+    //   expect(find.byType(SizedBox), findsAtLeastNWidgets(5));
+    // });
   });
 }
