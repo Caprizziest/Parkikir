@@ -1,8 +1,6 @@
 // app_routing.dart
 import 'package:flutter/material.dart';
 import 'package:frontend/view/bookingparkir_view.dart';
-import 'package:frontend/view/notice_list_view.dart';
-import 'package:frontend/view/notice_detail_view.dart';
 import 'package:frontend/view/pembayaran_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/view/dashboard.dart';
@@ -10,6 +8,8 @@ import 'package:frontend/view/report_view.dart';
 import 'package:frontend/view/login_view.dart';
 import 'package:frontend/view/register_view.dart';
 import 'package:frontend/view/report_list_view.dart';
+import 'package:frontend/view/notice_list_view.dart';
+import 'package:frontend/view/notice_detail_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -53,12 +53,13 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const bookingparkir(),
     ),
     GoRoute(
-        path: '/pembayaran',
-        builder: (context, state) {
-          // Receive the extra data passed from previous screen
-          final bookingData = state.extra as Map<String, dynamic>?;
-          return pembayaran(bookingData: bookingData);
-        }),
+      path: '/pembayaran',
+      builder: (context, state) {
+        // Receive the extra data passed from previous screen
+        final bookingData = state.extra as Map<String, dynamic>?;
+        return pembayaran(bookingData: bookingData);
+      },
+    ),
   ],
 
   // Error page
