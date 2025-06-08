@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/notice_list_view_model.dart';
-import '../model/notice\_model.dart';
-import 'package:intl/intl.dart';
+import '../model/notice_model.dart';
 import 'package:go_router/go_router.dart';
 
 class NoticeListView extends ConsumerWidget {
@@ -78,62 +77,84 @@ class NoticeListView extends ConsumerWidget {
   }
 
   Widget _buildNoticeCard(BuildContext context, NoticeModel notice) {
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFE8E8E8),
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // Ikon megaphone/speaker
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF4040FF),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.campaign,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 16),
-            
-            // Konten teks
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notice.tanggal,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    notice.description ?? 'Parkiran ditutup sementara',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
+    return GestureDetector(
+      // Tambahkan onTap untuk navigasi ke detail
+      onTap: () {
+        // Navigasi ke detail hanya dengan noticeId
+        context.push('/noticedetail/${notice.noticeId}');
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFFE8E8E8),
+            width: 1,
+          ),
+          // Tambahkan shadow untuk efek tap
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 1),
             ),
           ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // Ikon megaphone/speaker
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4040FF),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.campaign,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              // Konten teks
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      notice.tanggal,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      notice.description ?? 'Parkiran ditutup sementara',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Tambahkan ikon chevron right untuk indikasi bisa di-tap
+              const Icon(
+                Icons.chevron_right,
+                color: Colors.grey,
+                size: 24,
+              ),
+            ],
+          ),
         ),
       ),
     );

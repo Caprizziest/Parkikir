@@ -20,28 +20,30 @@ class NoticeListViewModel extends StateNotifier<AsyncValue<List<NoticeModel>>> {
       // Simulate API call with a delay
       await Future.delayed(const Duration(seconds: 1));
 
-      // Mock data sesuai dengan gambar
+      // Optimized mock data - satu data utama dengan detail yang lengkap
       final notices = [
         NoticeModel(
           noticeId: 1,
-          tanggal: '15 - 19 Mei 2025',
-          event: 'Parkir Ditutup',
-          judul: 'Penutupan Parkiran Sementara',
-          description: 'Parkiran ditutup sementara',
+          tanggal: '15 Mei 2025',
+          event: 'Event Pertandingan Basket',
+          judul: 'Parkiran Ditutup Sementara',
+          description:
+              'Sehubungan dengan diselenggarakannya pertandingan basket kampus, sebagian area parkiran akan ditutup sementara.',
         ),
         NoticeModel(
           noticeId: 2,
-          tanggal: '2 - 5 Mei 2024',
-          event: 'Parkir Ditutup',
-          judul: 'Penutupan Parkiran Sementara',
-          description: 'Parkiran ditutup sementara',
+          tanggal: '20 Mei 2025',
+          event: 'Renovasi Gedung Kampus',
+          judul: 'Penutupan Area Parkir untuk Renovasi',
+          description:
+              'Area parkir akan ditutup untuk keperluan renovasi gedung kampus selama 2 minggu.',
         ),
         NoticeModel(
           noticeId: 3,
-          tanggal: '30 April 2024',
-          event: 'Pembersihan Parkir',
-          judul: 'Pembersihan Area Parkir',
-          description: 'Mohon mengosongkan parkiran',
+          tanggal: '25 Mei 2025',
+          event: 'Pembersihan Area Parkir',
+          judul: 'Pembersihan Menyeluruh Area Parkir',
+          description: 'Pembersihan dan perawatan fasilitas parkir kampus.',
         ),
       ];
 
@@ -78,5 +80,29 @@ class NoticeListViewModel extends StateNotifier<AsyncValue<List<NoticeModel>>> {
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }
+  }
+
+  // Method untuk mencari notice berdasarkan ID
+  NoticeModel? getNoticeById(int noticeId) {
+    return state.when(
+      data: (notices) {
+        try {
+          return notices.firstWhere((notice) => notice.noticeId == noticeId);
+        } catch (e) {
+          return null;
+        }
+      },
+      loading: () => null,
+      error: (_, __) => null,
+    );
+  }
+
+  // Method untuk mendapatkan notice count
+  int get noticeCount {
+    return state.when(
+      data: (notices) => notices.length,
+      loading: () => 0,
+      error: (_, __) => 0,
+    );
   }
 }

@@ -36,7 +36,7 @@ final GoRouter appRouter = GoRouter(
       path: '/reportlist',
       builder: (context, state) => const ReportListView(),
     ),
-        GoRoute(
+    GoRoute(
       path: '/noticelist',
       builder: (context, state) => const NoticeListView(),
     ),
@@ -53,12 +53,13 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const bookingparkir(),
     ),
     GoRoute(
-        path: '/pembayaran',
-        builder: (context, state) {
-          // Receive the extra data passed from previous screen
-          final bookingData = state.extra as Map<String, dynamic>?;
-          return pembayaran(bookingData: bookingData);
-        }),
+      path: '/pembayaran',
+      builder: (context, state) {
+        // Receive the extra data passed from previous screen
+        final bookingData = state.extra as Map<String, dynamic>?;
+        return pembayaran(bookingData: bookingData);
+      },
+    ),
   ],
 
   // Error page
