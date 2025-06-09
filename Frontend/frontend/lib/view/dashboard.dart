@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -25,200 +26,275 @@ class dashboard_view extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF4A3CDB), Color(0xFF6A5AE0)],
+          image: DecorationImage(
+            image: AssetImage('assets/bg_dashboard1.png'),
+            fit: BoxFit.cover,
           ),
         ),
         child: SafeArea(
           child: Stack(
             children: [
-              // Background pattern
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: BackgroundPatternPainter(),
+              // Background decoration bird image
+              Positioned(
+                top: 10,
+                left: 160,
+                child: Opacity(
+                  opacity: 0.8,
+                  child: Image.asset(
+                    'assets/burung.png',
+                    width: 140,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
-
-              // Main content
-              Column(
-                children: [
-                  // App bar
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Logo
-                        Image.asset(
-                          'assets/logowhite.png',
-                          height: 28,
-                          fit: BoxFit.contain,
-                        ),
-
-                        // Icons
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.notifications_outlined,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                            const SizedBox(width: 16),
-                            const Icon(
-                              Icons.person_outline,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              // Background decoration car image
+              Positioned(
+                top: 225,
+                right: 30,
+                child: Opacity(
+                  opacity: 0.2,
+                  child: Image.asset(
+                    'assets/mobil.png',
+                    width: 80,
+                    fit: BoxFit.contain,
                   ),
-
-                  // Greeting and availability
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        Text(
-                          'Hello User',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 18,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.zero, // Original layout padding
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // App bar
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0, right: 15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Logo
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12.0),
+                            child: Image.asset(
+                              'assets/logowhite.png',
+                              height: 35,
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Text(
-                              '15',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 80,
-                                fontWeight: FontWeight.bold,
-                              ),
+
+                          // Icons
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12.0),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    context.push('/noticelist');
+                                  },
+                                  child: const Icon(
+                                    Icons.notifications,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  child: const Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                    size: 25,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              '/50',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 30,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              'Slots available',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(
-                              Icons.location_on,
-                              color: Colors.white.withOpacity(0.8),
-                              size: 14,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Parkiran UC Makassar',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.directions_car,
-                              color: Colors.white.withOpacity(0.8),
-                              size: 14,
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    // Greeting and availability
+                    const SizedBox(height: 12),
 
-                  const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Hello User - centered
+                          RichText(
+                            text: const TextSpan(
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              children: [
+                                TextSpan(text: 'Hello '),
+                                TextSpan(
+                                  text: 'User',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 18),
 
-                  // Cards section
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          // Large number display - centered
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              const Text(
+                                '15',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 130,
+                                  fontWeight: FontWeight.w700,
+                                  height: 0.8,
+                                  letterSpacing: -4,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              Text(
+                                '/50',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.7),
+                                  fontSize: 43,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.0,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Slots available text - centered
+                          const Text(
+                            'Slots available',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+
+                          // Location - centered
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.white.withOpacity(0.8),
+                                size: 18,
+                              ),
+                              Text(
+                                'Parkiran Mobil UC',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 50),
+
+                    // Cards section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Column(
                         children: [
                           // Save your spot card
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.all(24.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(16.0),
+                              borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
+                                  color: Colors.black.withOpacity(0.08),
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 8),
                                 ),
                               ],
                             ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
+                                const Text(
                                   'Save your spot!',
                                   style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black.withOpacity(0.8),
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF1F2937),
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 8),
                                 Text(
                                   'Reserve your slot while it\'s still available.',
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
                                     color: Colors.black.withOpacity(0.6),
+                                    height: 1.4,
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 24),
                                 GestureDetector(
                                   onTap: () => context.go('/bookingparkir'),
                                   child: Container(
                                     width: double.infinity,
-                                    height: 50,
+                                    height: 56,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF4A3CDB),
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: const Color(0xFF4B4BEE),
+                                      borderRadius: BorderRadius.circular(12.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xFF4B4BEE)
+                                              .withOpacity(0.3),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: const [
-                                        Icon(Icons.search, color: Colors.white, size: 20),
+                                        Icon(
+                                          Icons.map_outlined,
+                                          color: Colors.white,
+                                          size: 24,
+                                        ),
                                         SizedBox(width: 8),
                                         Text(
                                           'Check Available Spot',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
                                         SizedBox(width: 8),
-                                        Icon(Icons.chevron_right, color: Colors.white, size: 20),
+                                        Icon(
+                                          Icons.arrow_forward,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -227,7 +303,7 @@ class dashboard_view extends StatelessWidget {
                             ),
                           ),
 
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 15),
 
                           // Report cards row
                           Row(
@@ -239,41 +315,45 @@ class dashboard_view extends StatelessWidget {
                                     context.push('/report');
                                   },
                                   child: Container(
-                                    height: 120,
-                                    padding: const EdgeInsets.all(16.0),
+                                    height: 155,
+                                    padding: const EdgeInsets.all(20.0),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16.0),
+                                      borderRadius: BorderRadius.circular(12.0),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.05),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 5),
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 24,
+                                          offset: const Offset(0, 8),
                                         ),
                                       ],
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.all(8.0),
+                                          width: 56,
+                                          height: 56,
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFFE6F7ED),
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            color: const Color(0xFF4B4BEE),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
-                                          child: Icon(
-                                            Icons.warning_amber_rounded,
-                                            color: const Color(0xFF4A3CDB),
-                                            size: 24,
+                                          child: const Icon(
+                                            Icons.warning_rounded,
+                                            color: Colors.white,
+                                            size: 28,
                                           ),
                                         ),
                                         const SizedBox(height: 12),
-                                        Text(
+                                        const Text(
                                           'Make a Report',
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w500,
-                                            color: Colors.black.withOpacity(0.8),
+                                            letterSpacing: -0.5,
+                                            color: Color(0xFF1F2937),
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
@@ -282,48 +362,56 @@ class dashboard_view extends StatelessWidget {
                                   ),
                                 ),
                               ),
+
                               const SizedBox(width: 16),
+
+                              // Report List card
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
-                                    context.push('/reportlist'); // Navigasi ke halaman /reportlist
+                                    context.push('/reportlist');
                                   },
                                   child: Container(
-                                    height: 120,
-                                    padding: const EdgeInsets.all(16.0),
+                                    height: 155,
+                                    padding: const EdgeInsets.all(20.0),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16.0),
+                                      borderRadius: BorderRadius.circular(12.0),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.05),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 5),
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 24,
+                                          offset: const Offset(0, 8),
                                         ),
                                       ],
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.all(8.0),
+                                          width: 56,
+                                          height: 56,
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFFE6F7ED),
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            color: const Color(0xFF4B4BEE),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
-                                          child: const Icon(
-                                            Icons.assignment_outlined,
-                                            color: Color(0xFF4A3CDB),
-                                            size: 24,
+                                          child: Icon(
+                                            PhosphorIcons.clipboardText(
+                                                PhosphorIconsStyle.fill),
+                                            color: Colors.white,
+                                            size: 28,
                                           ),
                                         ),
                                         const SizedBox(height: 12),
-                                        Text(
+                                        const Text(
                                           'Report List',
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w500,
-                                            color: Colors.black.withOpacity(0.8),
+                                            letterSpacing: -0.5,
+                                            color: Color(0xFF1F2937),
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
@@ -337,134 +425,103 @@ class dashboard_view extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
-
-                  // Bottom navigation
-                  Container(
-                    height: 70,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -5),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.home,
-                              color: const Color(0xFF4A3CDB),
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Home',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: const Color(0xFF4A3CDB),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.qr_code_scanner,
-                              color: Colors.grey,
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Scan',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.history,
-                              color: Colors.grey,
-                              size: 24,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'History',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
         ),
       ),
+      bottomNavigationBar: ClipRRect(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 24,
+                offset: const Offset(0, -8),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: Container(
+              height: 75,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 48.0, vertical: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Home tab - active
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        PhosphorIcons.house(PhosphorIconsStyle.fill),
+                        color: Color(0xFF4B4BEE),
+                        size: 28,
+                      ),
+                      const Text(
+                        'Home',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF4B4BEE),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Scan tab
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.qr_code_scanner_outlined,
+                        color: Colors.grey.shade400,
+                        size: 28,
+                      ),
+                      Text(
+                        'Scan',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // History tab
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.history,
+                        color: Colors.grey.shade400,
+                        size: 28,
+                      ),
+                      Text(
+                        'History',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
-  }
-}
-
-class BackgroundPatternPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-
-    // Draw some wavy lines for the background pattern
-    for (int i = 0; i < 10; i++) {
-      final path = Path();
-      path.moveTo(0, size.height * 0.2 + i * 20);
-
-      for (int j = 0; j < 10; j++) {
-        path.quadraticBezierTo(
-            size.width * (j + 0.5) / 10,
-            size.height * 0.2 + i * 20 + (j % 2 == 0 ? 15 : -15),
-            size.width * (j + 1) / 10,
-            size.height * 0.2 + i * 20);
-      }
-
-      canvas.drawPath(path, paint);
-    }
-
-    // Draw some dots
-    final dotPaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
-      ..style = PaintingStyle.fill;
-
-    for (int i = 0; i < 50; i++) {
-      final x = (i * 17) % size.width;
-      final y = (i * 19) % (size.height * 0.6);
-      canvas.drawCircle(Offset(x, y), 1.0, dotPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
   }
 }
