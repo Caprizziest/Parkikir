@@ -10,6 +10,7 @@ import 'package:frontend/view/register_view.dart';
 import 'package:frontend/view/report_list_view.dart';
 import 'package:frontend/view/notice_list_view.dart';
 import 'package:frontend/view/notice_detail_view.dart';
+import 'package:frontend/view/report_detail_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -35,6 +36,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/reportlist',
       builder: (context, state) => const ReportListView(),
+    ),
+    GoRoute(
+      path: '/reportdetail/:reportId',
+      name: 'reportDetail',
+      builder: (context, state) {
+        final reportId = int.parse(state.pathParameters['reportId']!);
+        return ReportDetailView(reportId: reportId);
+      },
     ),
     GoRoute(
       path: '/noticelist',

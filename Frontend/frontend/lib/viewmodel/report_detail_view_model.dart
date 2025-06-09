@@ -1,16 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../model/report_model.dart';
 
-// Provider for the ReportListViewModel
-final reportListViewModelProvider =
-    StateNotifierProvider<ReportListViewModel, AsyncValue<List<ReportModel>>>(
-        (ref) {
-  return ReportListViewModel();
+// Provider for the ReportDetailViewModel
+final reportDetailViewModelProvider = StateNotifierProvider.family<
+    ReportDetailViewModel, AsyncValue<ReportModel?>, int>((ref, reportId) {
+  return ReportDetailViewModel(reportId);
 });
 
-class ReportListViewModel extends StateNotifier<AsyncValue<List<ReportModel>>> {
-  // Mock user data mapping
-  final Map<int, String> _mockUsers = {
+// Provider for username by user ID
+final usernameByIdProvider = Provider.family<String, int>((ref, userId) {
+  final mockUsers = {
     1: 'john_doe',
     2: 'jane_smith',
     3: 'mike_wilson',
@@ -19,30 +18,31 @@ class ReportListViewModel extends StateNotifier<AsyncValue<List<ReportModel>>> {
     6: 'lisa_davis',
     7: 'tom_anderson',
   };
+  return mockUsers[userId] ?? 'Unknown User';
+});
 
-  ReportListViewModel() : super(const AsyncValue.loading()) {
-    fetchReports();
-  }
-  // Method to get username by user ID
-  String getUsernameById(int userId) {
-    return _mockUsers[userId] ?? 'Unknown User';
+// Provider for anonymized username
+final anonymizedUsernameProvider = Provider.family<String, int>((ref, userId) {
+  final username = ref.watch(usernameByIdProvider(userId));
+  return _anonymizeUsername(username);
+});
+
+class ReportDetailViewModel extends StateNotifier<AsyncValue<ReportModel?>> {
+  final int reportId;
+
+  ReportDetailViewModel(this.reportId) : super(const AsyncValue.loading()) {
+    fetchReportById(reportId);
   }
 
-  // Method to get anonymized username by user ID
-  String getAnonymizedUsernameById(int userId) {
-    final username = getUsernameById(userId);
-    return _anonymizeUsername(username);
-  }
-
-  Future<void> fetchReports() async {
+  Future<void> fetchReportById(int id) async {
     try {
       state = const AsyncValue.loading();
 
       // Simulate API call with a delay
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(milliseconds: 500));
 
-      // Mock data
-      final reports = [
+      // Mock data - same as in ReportListViewModel
+      final allReports = [
         ReportModel(
           id: 1,
           user: 1,
@@ -107,34 +107,45 @@ class ReportListViewModel extends StateNotifier<AsyncValue<List<ReportModel>>> {
           tanggal: DateTime.parse('2025-04-14'),
         ),
       ];
-      state = AsyncValue.data(reports);
+
+      // Find the specific report by ID
+      final report = allReports.firstWhere(
+        (r) => r.id == id,
+        orElse: () => allReports.first, // Fallback to first report if not found
+      );
+
+      state = AsyncValue.data(report);
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }
   }
 
-  // Helper function to anonymize username
-  String _anonymizeUsername(String username) {
-    if (username.isEmpty) return 'Anonymous';
+  Future<void> refreshReport() async {
+    await fetchReportById(reportId);
+  }
+}
 
-    final parts = username.split('_');
-    if (parts.length >= 2) {
-      final firstName = parts[0];
-      final lastName = parts[1];
+// Helper function to anonymize username
+String _anonymizeUsername(String username) {
+  if (username.isEmpty) return 'Anonymous';
 
-      final anonymizedFirst = firstName.isNotEmpty
-          ? '${firstName[0].toUpperCase()}${'*' * (firstName.length - 1)}'
-          : '***';
+  final parts = username.split('_');
+  if (parts.length >= 2) {
+    final firstName = parts[0];
+    final lastName = parts[1];
 
-      final anonymizedLast = lastName.isNotEmpty
-          ? '${lastName[0].toUpperCase()}${'*' * (lastName.length - 1)}'
-          : '***';
+    final anonymizedFirst = firstName.isNotEmpty
+        ? '${firstName[0].toUpperCase()}${'*' * (firstName.length - 1)}'
+        : '***';
 
-      return '$anonymizedFirst $anonymizedLast';
-    } else {
-      return username.isNotEmpty
-          ? '${username[0].toUpperCase()}${'*' * (username.length - 1)}'
-          : 'Anonymous';
-    }
+    final anonymizedLast = lastName.isNotEmpty
+        ? '${lastName[0].toUpperCase()}${'*' * (lastName.length - 1)}'
+        : '***';
+
+    return '$anonymizedFirst $anonymizedLast';
+  } else {
+    return username.isNotEmpty
+        ? '${username[0].toUpperCase()}${'*' * (username.length - 1)}'
+        : 'Anonymous';
   }
 }

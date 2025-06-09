@@ -33,12 +33,16 @@ class ReportListView extends ConsumerWidget {
                         size: 32,
                       ),
                     ),
-                    const Text(
-                      'List Laporan',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                    const Expanded(
+                      child: Text(
+                        'Report Details',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 32), // Balance the back button
@@ -60,7 +64,7 @@ class ReportListView extends ConsumerWidget {
                 itemCount: reports.length,
                 itemBuilder: (context, index) {
                   final report = reports[index];
-                  return _buildReportCard(context, report);
+                  return _buildReportCard(context, ref, report);
                 },
               ),
             ),
@@ -70,96 +74,113 @@ class ReportListView extends ConsumerWidget {
     );
   }
 
-  Widget _buildReportCard(BuildContext context, ReportModel report) {
-    final bool isToday = report.timestamp.day == DateTime.now().day &&
-        report.timestamp.month == DateTime.now().month &&
-        report.timestamp.year == DateTime.now().year;
+  Widget _buildReportCard(
+      BuildContext context, WidgetRef ref, ReportModel report) {
+    final viewModel = ref.read(reportListViewModelProvider.notifier);
+    final reportDate = report.tanggal ?? DateTime.now();
+
+    final bool isToday = reportDate.day == DateTime.now().day &&
+        reportDate.month == DateTime.now().month &&
+        reportDate.year == DateTime.now().year;
 
     String timeText;
     if (isToday) {
-      final diff = DateTime.now().difference(report.timestamp);
+      final diff = DateTime.now().difference(reportDate);
       if (diff.inMinutes < 60) {
         timeText = '${diff.inMinutes} mins ago';
       } else {
         timeText = '${diff.inHours} hours ago';
       }
     } else {
-      timeText = DateFormat('dd-MM-yyyy').format(report.timestamp);
+      timeText = DateFormat('dd-MM-yyyy').format(reportDate);
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFE8E8E8),
-          width: 2,
+    return GestureDetector(
+      onTap: () {
+        context.push('/reportdetail/${report.id}');
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFFE8E8E8),
+            width: 1.5,
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      report.topic,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: report.status == "DONE"
+                            ? Colors.grey
+                            : Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      viewModel.getAnonymizedUsernameById(report.user),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: report.status == "DONE"
+                            ? Colors.grey
+                            : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      report.lokasi ?? '-',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: report.status == "DONE"
+                            ? Colors.grey
+                            : Colors.black54,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
+                      softWrap: false,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16), // Added space between content and time
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment:
+                    MainAxisAlignment.center, // Center vertically
                 children: [
                   Text(
-                    report.title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: report.isSolved ? Colors.grey : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    report.userName,
+                    timeText,
                     style: TextStyle(
                       fontSize: 14,
-                      color: report.isSolved ? Colors.grey : Colors.black87,
+                      color: report.status == "DONE"
+                          ? Colors.grey
+                          : const Color(0xFF3C39F2),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    report.description ?? '-',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: report.isSolved ? Colors.grey : Colors.black54,
+                  if (report.status == "DONE")
+                    const Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Icon(
+                        Icons.check,
+                        color: Colors.grey,
+                      ),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.fade,
-                    softWrap: false,
-                  ),
                 ],
               ),
-            ),
-            const SizedBox(width: 16), // Added space between content and time
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center, // Center vertically
-              children: [
-                Text(
-                  timeText,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color:
-                        report.isSolved ? Colors.grey : const Color(0xFF3C39F2),
-                  ),
-                ),
-                if (report.isSolved)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Icon(
-                      Icons.check,
-                      color: Colors.grey,
-                    ),
-                  ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

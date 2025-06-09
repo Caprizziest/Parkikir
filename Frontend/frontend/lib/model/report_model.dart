@@ -1,39 +1,45 @@
 class ReportModel {
-  final String id;
-  final String title;
-  final String userName;
-  final DateTime timestamp;
-  final String? description;
-  final bool isSolved;
+  final int? id;
+  final String gambar; //saved as base64 in the database
+  final String topic;
+  final String? lokasi;
+  final String status; // "DONE" or "UNDONE"
+  final DateTime? tanggal;
+  final int user;
 
   ReportModel({
-    required this.id,
-    required this.title,
-    required this.userName,
-    required this.timestamp,
-    this.description,
-    this.isSolved = false,
+    this.id,
+    required this.gambar,
+    required this.topic,
+    this.lokasi,
+    required this.status,
+    this.tanggal,
+    required this.user,
   });
 
   factory ReportModel.fromJson(Map<String, dynamic> json) {
     return ReportModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      userName: json['userName'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String),
-      description: json['description'] as String?,
-      isSolved: json['isSolved'] as bool,
+      id: json['id'] as int?,
+      gambar: json['gambar'] as String,
+      topic: json['topic'] as String,
+      lokasi: json['lokasi'] as String?,
+      status: json['status'] as String,
+      tanggal: json['tanggal'] != null
+          ? DateTime.parse(json['tanggal'] as String)
+          : null,
+      user: json['user'] as int,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
-      'userName': userName,
-      'timestamp': timestamp.toIso8601String(),
-      'description': description,
-      'isSolved': isSolved,
+      'gambar': gambar,
+      'topic': topic,
+      'lokasi': lokasi,
+      'status': status,
+      'tanggal': tanggal?.toIso8601String(),
+      'user': user,
     };
   }
 }
