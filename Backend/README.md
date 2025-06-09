@@ -26,6 +26,9 @@ Run on Django
 ```pip install daphne```
 ```pip install channels_redis``` **(Not Used for now)**
 
+- Ultralytics (AI Cam)
+```pip install ultralytics```
+
 - Swagger
 ```pip install drf-yasg```
 
@@ -39,3 +42,8 @@ Run on Django
 ### Migrate:
 ```python manage.py migrate```
 ```python manage.py seed_slotparkir```
+
+## Set Bounding Boxes
+```python```
+```from ultralytics import solutions```
+```solutions.ParkingPtsSelection()```
