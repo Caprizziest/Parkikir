@@ -90,13 +90,14 @@ class dashboard_view extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 12.0),
                             child: Row(
                               children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
+                                GestureDetector(
+                                  onTap: () {
+                                    context.push('/noticelist');
+                                  },
                                   child: const Icon(
                                     Icons.notifications,
                                     color: Colors.white,
-                                    size: 25,
+                                    size: 24,
                                   ),
                                 ),
                                 Container(
@@ -524,5 +525,3 @@ class dashboard_view extends StatelessWidget {
     );
   }
 }
-
-

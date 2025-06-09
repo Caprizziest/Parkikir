@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/notice_list_view_model.dart';
-import '../model/notice_model.dart';
 import 'package:go_router/go_router.dart';
 
 class NoticeListView extends ConsumerWidget {
@@ -10,65 +9,20 @@ class NoticeListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final noticesState = ref.watch(noticeListViewModelProvider);
+    final viewModel = ref.read(noticeListViewModelProvider.notifier);
 
     return Scaffold(
       body: Column(
         children: [
           // Custom app bar with blue background
-          Container(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top,
-            ),
-            color: const Color(0xFF4040FF),
-            child: SafeArea(
-              child: Container(
-                height: 56,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: const Icon(
-                        Icons.chevron_left,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                    const Expanded(
-                      child: Center(
-                        child: Text(
-                          'Notice',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 32),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          _buildAppBar(context),
 
           // Notice list
           Expanded(
             child: noticesState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => Center(
-                child: Text('Error: ${error.toString()}'),
-              ),
-              data: (notices) => ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: notices.length,
-                itemBuilder: (context, index) {
-                  final notice = notices[index];
-                  return _buildNoticeCard(context, notice);
-                },
-              ),
+              error: (error, stackTrace) => _buildErrorWidget(error, viewModel),
+              data: (notices) => _buildNoticeList(notices, viewModel),
             ),
           ),
         ],
@@ -76,13 +30,90 @@ class NoticeListView extends ConsumerWidget {
     );
   }
 
-  Widget _buildNoticeCard(BuildContext context, NoticeModel notice) {
+  Widget _buildAppBar(BuildContext context) {
+    return Container(
+      color: const Color(0xFF4040FF),
+      child: SafeArea(
+        child: Container(
+          height: 56,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () => context.pop(),
+                child: const Icon(
+                  Icons.chevron_left,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              ),
+              const Expanded(
+                child: Text(
+                  'Notice List',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 32),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget(Object error, NoticeListViewModel viewModel) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Error: ${error.toString()}'),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => viewModel.refreshNotices(),
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoticeList(List notices, NoticeListViewModel viewModel) {
+    if (notices.isEmpty) {
+      return const Center(
+        child: Text(
+          'No notices available',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => viewModel.refreshNotices(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: notices.length,
+        itemBuilder: (context, index) {
+          final notice = notices[index];
+          return _buildNoticeCard(context, notice, viewModel);
+        },
+      ),
+    );
+  }
+
+  Widget _buildNoticeCard(
+      BuildContext context, dynamic notice, NoticeListViewModel viewModel) {
     return GestureDetector(
-      // Tambahkan onTap untuk navigasi ke detail
-      onTap: () {
-        // Navigasi ke detail hanya dengan noticeId
-        context.push('/noticedetail/${notice.noticeId}');
-      },
+      onTap: () => viewModel.navigateToNoticeDetail(context, notice.noticeId),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
@@ -92,7 +123,6 @@ class NoticeListView extends ConsumerWidget {
             color: const Color(0xFFE8E8E8),
             width: 1,
           ),
-          // Tambahkan shadow untuk efek tap
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.1),
@@ -106,7 +136,7 @@ class NoticeListView extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Ikon megaphone/speaker
+              // Notice icon
               Container(
                 width: 40,
                 height: 40,
@@ -122,13 +152,13 @@ class NoticeListView extends ConsumerWidget {
               ),
               const SizedBox(width: 16),
 
-              // Konten teks
+              // Content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      notice.tanggal,
+                      viewModel.formatNoticeDate(notice.tanggal),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -137,7 +167,7 @@ class NoticeListView extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      notice.description ?? 'Parkiran ditutup sementara',
+                      viewModel.formatNoticeDescription(notice.description),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black54,
@@ -147,7 +177,7 @@ class NoticeListView extends ConsumerWidget {
                 ),
               ),
 
-              // Tambahkan ikon chevron right untuk indikasi bisa di-tap
+              // Chevron icon
               const Icon(
                 Icons.chevron_right,
                 color: Colors.grey,
