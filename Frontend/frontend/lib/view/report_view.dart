@@ -107,201 +107,238 @@ class _report_viewState extends State<report_view> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Make a Report'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            context.go('/');
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'See or stuck in a frustrating parking situation? Report it here!',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-
-              // Topic Dropdown
-              Container(
-                width: double.infinity,
+      body: Column(
+        children: [
+          Container(
+            color: const Color(0xFF4040FF),
+            child: SafeArea(
+              child: Container(
+                height: 56, // Standard app bar height
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4338CA),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    key: const Key('topicDropdown'),
-                    dropdownColor: Colors.white,
-                    icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-                    hint: const Text(
-                      'Select Topic',
-                      style: TextStyle(color: Colors.white),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.go('/'),
+                      child: const Icon(
+                        Icons.chevron_left,
+                        color: Colors.white,
+                        size: 32,
+                      ),
                     ),
-                    value: _selectedTopic,
-                    isExpanded: true,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedTopic = newValue;
-                      });
-                    },
-                    selectedItemBuilder: (BuildContext context) {
-                      return _topics.map<Widget>((String item) {
-                        return Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            item,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        );
-                      }).toList();
-                    },
-                    items: _topics.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: const TextStyle(color: Colors.black), // visible in white dropdown
+                    const Expanded(
+                      child: Text(
+                        'Make a Report',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
                         ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Image Upload Area
-              GestureDetector(
-                onTap: _showImageSourceActionSheet,
-                child: Container(
-                  height: 200,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: _image == null
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF4338CA),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 32,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Take or Select Image',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            _image!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                        ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Description Field
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: TextField(
-                  controller: _descriptionController,
-                  maxLength: 50,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    hintText: 'Description (Optional)',
-                    contentPadding: EdgeInsets.all(16),
-                    border: InputBorder.none,
-                    counterText: '',
-                  ),
-                  onChanged: (text) {
-                    setState(() {});
-                  },
-                ),
-              ),
-
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  '${_descriptionController.text.length}/50',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Info Text
-              const Text(
-                'Parkiri is here to help take action on parking violations that make the roads messy. Just fill out the form!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 14,
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Submit Button
-              Container(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle submit
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFBBB7FA),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Submit',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                    const SizedBox(width: 32), // Balance the back button
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+          // Expanded untuk konten body lainnya
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'See or stuck in a frustrating parking situation? Report it here!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Topic Dropdown
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4338CA),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          key: const Key('topicDropdown'),
+                          dropdownColor: Colors.white,
+                          icon: const Icon(Icons.keyboard_arrow_down,
+                              color: Colors.white),
+                          hint: const Text(
+                            'Select Topic',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          value: _selectedTopic,
+                          isExpanded: true,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedTopic = newValue;
+                            });
+                          },
+                          selectedItemBuilder: (BuildContext context) {
+                            return _topics.map<Widget>((String item) {
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              );
+                            }).toList();
+                          },
+                          items: _topics
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: const TextStyle(
+                                    color: Colors
+                                        .black), // visible in white dropdown
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Image Upload Area
+                    GestureDetector(
+                      onTap: _showImageSourceActionSheet,
+                      child: Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: _image == null
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF4338CA),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 32,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  const Text(
+                                    'Take or Select Image',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(
+                                  _image!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Description Field
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: TextField(
+                        controller: _descriptionController,
+                        maxLength: 50,
+                        maxLines: 3,
+                        decoration: const InputDecoration(
+                          hintText: 'Description (Optional)',
+                          contentPadding: EdgeInsets.all(16),
+                          border: InputBorder.none,
+                          counterText: '',
+                        ),
+                        onChanged: (text) {
+                          setState(() {});
+                        },
+                      ),
+                    ),
+
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${_descriptionController.text.length}/50',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Info Text
+                    const Text(
+                      'ParkirKi is here to help take action on parking violations that make the roads messy. Just fill out the form!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Submit Button
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Handle submit
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFBBB7FA),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
