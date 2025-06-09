@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../viewmodel/notice_detail_view_model.dart';
-import '../model/notice_model.dart';
-import '../model/slot_parkir_model.dart';
 
 class NoticeDetailView extends ConsumerWidget {
   final int noticeId;
@@ -14,21 +12,21 @@ class NoticeDetailView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final noticeDetailState =
         ref.watch(noticeDetailViewModelProvider(noticeId));
+    final viewModel =
+        ref.read(noticeDetailViewModelProvider(noticeId).notifier);
 
     return Scaffold(
       body: Column(
         children: [
           // Custom app bar with blue background
           Container(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top,
-            ),
             color: const Color(0xFF4040FF),
             child: SafeArea(
               child: Container(
-                height: 56,
+                height: 56, // Standard app bar height
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
                       onTap: () => context.pop(),
@@ -39,18 +37,18 @@ class NoticeDetailView extends ConsumerWidget {
                       ),
                     ),
                     const Expanded(
-                      child: Center(
-                        child: Text(
-                          'Notice Detail',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      child: Text(
+                        'Notice Details',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 32),
+                    const SizedBox(width: 32), // Balance the back button
                   ],
                 ),
               ),
@@ -62,62 +60,160 @@ class NoticeDetailView extends ConsumerWidget {
             child: noticeDetailState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stackTrace) => Center(
-                child: Text('Error: ${error.toString()}'),
-              ),
-              data: (noticeDetail) => SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Date
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red[300],
+                    ),
+                    const SizedBox(height: 16),
                     Text(
-                      noticeDetail.tanggal,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                      'Terjadi kesalahan',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[700],
                       ),
                     ),
                     const SizedBox(height: 8),
-
-                    // Title
                     Text(
-                      noticeDetail.judul,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-
-                    // Event subtitle
-                    Text(
-                      noticeDetail.event,
-                      style: const TextStyle(
+                      'Error: ${error.toString()}',
+                      style: TextStyle(
                         fontSize: 14,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[600],
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
-
-                    // Parking map (only show if there are closed parking slots)
-                    if (noticeDetail.hasClosedParking) ...[
-                      _buildParkingMap(context, noticeDetail),
-                      const SizedBox(height: 24),
-                    ],
-
-                    // Description
-                    Text(
-                      noticeDetail.description,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                        height: 1.5,
-                      ),
+                    ElevatedButton(
+                      onPressed: () => viewModel.refresh(),
+                      child: const Text('Coba Lagi'),
                     ),
                   ],
+                ),
+              ),
+              data: (state) => RefreshIndicator(
+                onRefresh: viewModel.refresh,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Date with icon
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today,
+                            size: 20,
+                            color: Colors.grey[600],
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            state.noticeDetail.tanggal,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Title
+                      Text(
+                        state.noticeDetail.judul,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Event subtitle with icon
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.event,
+                            size: 16,
+                            color: Colors.grey[600],
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              state.noticeDetail.event,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Parking summary card (always show, with different content)
+                      _buildParkingSummaryCard(viewModel, state),
+                      const SizedBox(height: 16),
+
+                      // Parking map (only show if there are closed parking slots)
+                      if (state.hasClosedParking) ...[
+                        _buildParkingMap(context, viewModel, state),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Description section
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.grey[200]!,
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  size: 20,
+                                  color: Colors.blue[600],
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Informasi Detail',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.blue[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              state.noticeDetail.description,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black87,
+                                height: 1.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -127,7 +223,69 @@ class NoticeDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildParkingMap(BuildContext context, NoticeModel noticeDetail) {
+  Widget _buildParkingSummaryCard(
+      NoticeDetailViewModel viewModel, NoticeDetailState state) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: state.hasClosedParking ? Colors.red[50] : Colors.green[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: state.hasClosedParking ? Colors.red[200]! : Colors.green[200]!,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color:
+                  state.hasClosedParking ? Colors.red[100] : Colors.green[100],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              state.hasClosedParking ? Icons.warning : Icons.check_circle,
+              color:
+                  state.hasClosedParking ? Colors.red[600] : Colors.green[600],
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Status Parkir',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  viewModel.getClosedParkingSummary(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: state.hasClosedParking
+                        ? Colors.red[700]
+                        : Colors.green[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildParkingMap(BuildContext context, NoticeDetailViewModel viewModel,
+      NoticeDetailState state) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -136,15 +294,39 @@ class NoticeDetailView extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
+          Row(
+            children: [
+              Icon(
+                Icons.local_parking,
+                size: 20,
+                color: Colors.grey[700],
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Peta Parkir',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[700],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
           // Legend
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: Row(
               children: [
-                _buildLegendItem(Colors.grey.shade800, 'Tersedia'),
+                _buildLegendItem(
+                    viewModel.getLegendColor('available'), 'Tersedia'),
                 const SizedBox(width: 16),
-                _buildLegendItem(Colors.red, '*Tidak dapat digunakan'),
+                _buildLegendItem(viewModel.getLegendColor('closed'),
+                    '*Tidak dapat digunakan'),
               ],
             ),
           ),
@@ -164,10 +346,8 @@ class NoticeDetailView extends ConsumerWidget {
                 boundaryMargin: const EdgeInsets.all(50),
                 constrained: false,
                 child: NoticeParkingMap(
-                  closedSlots: noticeDetail.parkiranTertutup
-                          ?.map((p) => p.slotparkir.slotparkirid)
-                          .toList() ??
-                      [],
+                  viewModel: viewModel,
+                  state: state,
                 ),
               ),
             ),
@@ -205,116 +385,14 @@ class NoticeDetailView extends ConsumerWidget {
 
 // Parking map specifically for notice detail view (non-interactive)
 class NoticeParkingMap extends StatelessWidget {
-  final List<String> closedSlots;
+  final NoticeDetailViewModel viewModel;
+  final NoticeDetailState state;
 
   const NoticeParkingMap({
     Key? key,
-    required this.closedSlots,
+    required this.viewModel,
+    required this.state,
   }) : super(key: key);
-
-  // All parking spots data (same as in booking page)
-  final Map<String, List<ParkingSpotData>> parkingData = const {
-    'aRow': [
-      ParkingSpotData('A1', Offset(339.6, 90.6)),
-      ParkingSpotData('A2', Offset(366.7, 90.6)),
-      ParkingSpotData('A3', Offset(393.8, 90.6)),
-      ParkingSpotData('A4', Offset(421, 90.6)),
-      ParkingSpotData('A5', Offset(448.1, 90.6)),
-      ParkingSpotData('A6', Offset(475.2, 90.6)),
-      ParkingSpotData('A7', Offset(502.3, 90.6)),
-    ],
-    'bRow': [
-      ParkingSpotData('B1', Offset(593.6, 41.4)),
-      ParkingSpotData('B2', Offset(593.6, 66)),
-      ParkingSpotData('B3', Offset(593.6, 90.6)),
-      ParkingSpotData('B4', Offset(593.6, 115.2)),
-      ParkingSpotData('B5', Offset(593.6, 139.8)),
-      ParkingSpotData('B6', Offset(593.6, 164.3)),
-      ParkingSpotData('B7', Offset(593.6, 188.9)),
-      ParkingSpotData('B8', Offset(593.6, 213.5)),
-    ],
-    'cRow': [
-      ParkingSpotData('C1', Offset(285.4, 135.9)),
-      ParkingSpotData('C2', Offset(312.5, 135.9)),
-      ParkingSpotData('C3', Offset(339.6, 135.9)),
-      ParkingSpotData('C4', Offset(366.7, 135.9)),
-      ParkingSpotData('C5', Offset(393.9, 135.9)),
-      ParkingSpotData('C6', Offset(421, 135.9)),
-      ParkingSpotData('C7', Offset(448.1, 135.9)),
-      ParkingSpotData('C8', Offset(475.2, 135.9)),
-      ParkingSpotData('C9', Offset(502.3, 135.9)),
-    ],
-    'dRow': [
-      ParkingSpotData('D1', Offset(204.1, 247.2)),
-      ParkingSpotData('D2', Offset(231.2, 247.2)),
-      ParkingSpotData('D3', Offset(258.3, 247.2)),
-      ParkingSpotData('D4', Offset(285.4, 247.2)),
-      ParkingSpotData('D5', Offset(312.5, 247.2)),
-      ParkingSpotData('D6', Offset(339.6, 247.2)),
-      ParkingSpotData('D7', Offset(366.7, 247.2)),
-      ParkingSpotData('D8', Offset(393.9, 247.2)),
-      ParkingSpotData('D9', Offset(421, 247.2)),
-      ParkingSpotData('D10', Offset(448.1, 247.2)),
-      ParkingSpotData('D11', Offset(475.2, 247.2)),
-      ParkingSpotData('D12', Offset(502.3, 247.2)),
-      ParkingSpotData('D13', Offset(529.4, 247.2)),
-    ],
-    'eRow': [
-      ParkingSpotData('E1', Offset(287.1, 10.8)),
-      ParkingSpotData('E2', Offset(268.1, 28.3)),
-      ParkingSpotData('E3', Offset(249.0, 45.8)),
-      ParkingSpotData('E4', Offset(230.0, 63.4)),
-      ParkingSpotData('E5', Offset(211.0, 80.9)),
-      ParkingSpotData('E6', Offset(192.0, 98.4)),
-      ParkingSpotData('E7', Offset(172.9, 115.9)),
-      ParkingSpotData('E8', Offset(153.9, 133.4)),
-      ParkingSpotData('E9', Offset(134.9, 150.9)),
-      ParkingSpotData('E10', Offset(115.9, 168.5)),
-      ParkingSpotData('E11', Offset(96.8, 186.0)),
-      ParkingSpotData('E12', Offset(77.0, 203.5)),
-      ParkingSpotData('E13', Offset(57.1, 221)),
-      ParkingSpotData('E14', Offset(37.3, 238.6)),
-    ],
-    'fRow': [
-      ParkingSpotData('F1', Offset(47.1, 291.2)),
-      ParkingSpotData('F2', Offset(64.2, 309.3)),
-      ParkingSpotData('F3', Offset(82, 327.9)),
-      ParkingSpotData('F4', Offset(99.7, 346.5)),
-      ParkingSpotData('F5', Offset(117.4, 365)),
-      ParkingSpotData('F6', Offset(135.6, 384.3)),
-      ParkingSpotData('F7', Offset(153.3, 402.9)),
-      ParkingSpotData('F8', Offset(171, 421.5)),
-      ParkingSpotData('F9', Offset(188.8, 440.1)),
-      ParkingSpotData('F10', Offset(231, 456.8)),
-      ParkingSpotData('F11', Offset(256.1, 456.8)),
-      ParkingSpotData('F12', Offset(281.2, 456.8)),
-    ],
-    'gRow': [
-      ParkingSpotData('G1', Offset(274, 301.5)),
-      ParkingSpotData('G2', Offset(274, 326.1)),
-      ParkingSpotData('G3', Offset(274, 350.7)),
-    ],
-    'hRow': [
-      ParkingSpotData('H1', Offset(425.2, 349.4)),
-      ParkingSpotData('H2', Offset(425.2, 374)),
-      ParkingSpotData('H3', Offset(425.2, 398.6)),
-      ParkingSpotData('H4', Offset(425.2, 423.1)),
-      ParkingSpotData('H5', Offset(425.2, 447.7)),
-      ParkingSpotData('H6', Offset(425.2, 472.3)),
-      ParkingSpotData('H7', Offset(425.2, 496.9)),
-      ParkingSpotData('H8', Offset(425.2, 521.5)),
-      ParkingSpotData('H9', Offset(425.2, 546.1)),
-      ParkingSpotData('H10', Offset(425.2, 570.7)),
-      ParkingSpotData('H11', Offset(425.2, 595.2)),
-      ParkingSpotData('H12', Offset(425.2, 619.8)),
-      ParkingSpotData('H13', Offset(425.2, 644.4)),
-      ParkingSpotData('H14', Offset(425.2, 669)),
-      ParkingSpotData('H15', Offset(331.1, 434.8)),
-      ParkingSpotData('H16', Offset(331.1, 480.1)),
-      ParkingSpotData('H17', Offset(331.1, 525.4)),
-      ParkingSpotData('H18', Offset(331.1, 570.7)),
-    ],
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -327,17 +405,15 @@ class NoticeParkingMap extends StatelessWidget {
         ),
 
         // Add all parking spots on top of the layout
-        ...parkingData.entries.expand((entry) {
+        ...state.parkingData.entries.expand((entry) {
           return entry.value.map((spot) {
-            bool isClosed = closedSlots.contains(spot.id);
-
-            Color spotColor = isClosed ? Colors.red : Colors.grey.shade800;
+            Color spotColor = viewModel.getSpotColor(spot.id);
 
             return Positioned(
               left: spot.position.dx,
               top: spot.position.dy,
               child: Transform.rotate(
-                angle: _getRotationAngle(entry.key, spot.id),
+                angle: viewModel.getRotationAngle(entry.key, spot.id),
                 alignment: Alignment.center,
                 child: Container(
                   width: 44,
@@ -364,34 +440,9 @@ class NoticeParkingMap extends StatelessWidget {
       ],
     );
   }
-
-  double _getRotationAngle(String rowKey, String spotId) {
-    if (rowKey == 'eRow') return 41.8 * (3.1415926535 / 180);
-    if (rowKey == 'fRow') {
-      final idNum = int.tryParse(spotId.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-      if (idNum >= 1 && idNum <= 9) return -38.1 * (3.1415926535 / 180);
-      if (idNum >= 10 && idNum <= 12) return 90 * (3.1415926535 / 180);
-    }
-    if (rowKey == 'aRow' || rowKey == 'cRow' || rowKey == 'dRow') {
-      return 90 * (3.1415926535 / 180);
-    }
-    if (rowKey == 'hRow') {
-      final idNum = int.tryParse(spotId.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-      if (idNum >= 15 && idNum <= 18) return 90 * (3.1415926535 / 180);
-    }
-    return 0.0;
-  }
 }
 
-// Simple data class for parking spots (non-interactive version)
-class ParkingSpotData {
-  final String id;
-  final Offset position;
-
-  const ParkingSpotData(this.id, this.position);
-}
-
-// Custom painter for the parking layout (same as booking page)
+// Custom painter for the parking layout - Complete implementation
 class RPSCustomPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
