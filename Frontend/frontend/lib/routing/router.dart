@@ -1,6 +1,7 @@
 // app_routing.dart
 import 'package:flutter/material.dart';
 import 'package:frontend/view/bookingparkir_view.dart';
+import 'package:frontend/view/history_view.dart';
 import 'package:frontend/view/pembayaran_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/view/dashboard.dart';
@@ -48,6 +49,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/noticelist',
       builder: (context, state) => const NoticeListView(),
+    ),
+    GoRoute(
+      path: '/history',
+      builder: (context, state) => const HistoryView(),
     ),
     GoRoute(
       path: '/noticedetail/:noticeId',
