@@ -501,10 +501,15 @@ class dashboard_view extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.history,
-                        color: Colors.grey.shade400,
-                        size: 28,
+                      GestureDetector(
+                        onTap: () {
+                          context.push('/history');
+                        },
+                        child: Icon(
+                          Icons.history,
+                          color: Colors.grey.shade400,
+                          size: 28,
+                        ),
                       ),
                       Text(
                         'History',
