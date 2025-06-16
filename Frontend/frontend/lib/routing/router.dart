@@ -12,9 +12,11 @@ import 'package:frontend/view/report_list_view.dart';
 import 'package:frontend/view/notice_list_view.dart';
 import 'package:frontend/view/notice_detail_view.dart';
 import 'package:frontend/view/report_detail_view.dart';
+import 'package:frontend/view/profile_view.dart';
+import 'package:frontend/view/main_shell.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/dashboard',
   routes: [
     GoRoute(
       path: '/login',
@@ -28,8 +30,32 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/',
-      builder: (context, state) => const dashboard_view(),
+      builder: (context, state) => const DashboardView(),
     ),
+
+    // Shell route for main navigation
+    ShellRoute(
+      builder: (context, state, child) => MainShell(child: child),
+      routes: [
+        GoRoute(
+          path: '/dashboard',
+          name: 'dashboard',
+          builder: (context, state) => const DashboardView(),
+        ),
+        GoRoute(
+          path: '/history',
+          name: 'history',
+          builder: (context, state) => const HistoryView(),
+        ),
+        GoRoute(
+          path: '/profile',
+          name: 'profile',
+          builder: (context, state) => const ProfileView(),
+        ),
+      ],
+    ),
+
+    // Routes outside shell (no navbar)
     GoRoute(
       path: '/report',
       builder: (context, state) => const report_view(),
@@ -49,10 +75,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/noticelist',
       builder: (context, state) => const NoticeListView(),
-    ),
-    GoRoute(
-      path: '/history',
-      builder: (context, state) => const HistoryView(),
     ),
     GoRoute(
       path: '/noticedetail/:noticeId',
