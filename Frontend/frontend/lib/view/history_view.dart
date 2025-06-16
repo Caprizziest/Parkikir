@@ -2,19 +2,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/history_view_model.dart';
-import 'package:go_router/go_router.dart';
+import '../viewmodel/navigation_view_model.dart';
 
-class HistoryView extends ConsumerWidget {
+class HistoryView extends ConsumerStatefulWidget {
   const HistoryView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HistoryView> createState() => _HistoryViewState();
+}
+
+class _HistoryViewState extends ConsumerState<HistoryView> {
+  @override
+  void initState() {
+    super.initState();
+    // Set current tab to history when history is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(navigationViewModelProvider.notifier)
+          .setCurrentTab(NavigationTab.history);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final historyState = ref.watch(historyViewModelProvider);
     final viewModel = ref.read(historyViewModelProvider.notifier);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      body: Column(
+    return Container(
+      color: const Color(0xFFF5F5F5),
+      child: Column(
         children: [
           // Custom app bar with blue background
           _buildAppBar(context),
@@ -34,36 +50,21 @@ class HistoryView extends ConsumerWidget {
 
   Widget _buildAppBar(BuildContext context) {
     return Container(
-      color: const Color(0xFF4040FF),
+      color: const Color(0xFF4B4BEE),
       child: SafeArea(
-        child: Container(
+        bottom: false,
+        child: SizedBox(
           height: 56,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () => context.pop(),
-                child: const Icon(
-                  Icons.chevron_left,
-                  color: Colors.white,
-                  size: 32,
-                ),
+          child: Center(
+            child: Text(
+              'History',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.3,
               ),
-              const Expanded(
-                child: Text(
-                  'History',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 32),
-            ],
+            ),
           ),
         ),
       ),
