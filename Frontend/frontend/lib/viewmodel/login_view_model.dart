@@ -16,11 +16,10 @@ class LoginViewModel extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
   bool _disposed = false;
-
   LoginViewModel({LoginRepository? repository, TokenService? tokenService})
       : _repository = repository ??
             LoginRepository(
-              service: LoginService(baseUrl: 'http://192.168.123.3:8000/api'),
+              service: LoginService(),
             ),
         _tokenService = tokenService ?? TokenService() {
     usernameController.addListener(_updateFormState);

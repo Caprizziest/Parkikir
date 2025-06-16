@@ -3,9 +3,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import '../config/api_config.dart';
 
 class ParkingWebSocketService {
-  static const String _baseUrl = 'ws://192.168.123.3:8000/ws/parkiran/';
   WebSocket? _webSocket;
   StreamController<Map<String, dynamic>>? _streamController;
   Timer? _reconnectTimer;
@@ -24,11 +24,10 @@ class ParkingWebSocketService {
 
     _isConnecting = true;
     _shouldReconnect = true;
-
     try {
-      debugPrint('Connecting to WebSocket: $_baseUrl');
+      debugPrint('Connecting to WebSocket: ${ApiConfig.parkingWebSocketUrl}');
 
-      _webSocket = await WebSocket.connect(_baseUrl);
+      _webSocket = await WebSocket.connect(ApiConfig.parkingWebSocketUrl);
       _streamController ??= StreamController<Map<String, dynamic>>.broadcast();
 
       debugPrint('WebSocket connected successfully');
