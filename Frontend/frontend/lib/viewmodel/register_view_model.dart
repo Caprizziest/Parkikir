@@ -10,8 +10,7 @@ class RegisterViewModel extends ChangeNotifier {
   final TextEditingController passwordController = TextEditingController();
   bool obscureText = true;
   bool isLoading = false;
-  final RegisterService _service =
-      RegisterService(baseUrl: 'http://127.0.0.1:8000/api');
+  final RegisterService _service = RegisterService();
   String? usernameError;
   String? emailError;
   String? passwordError;

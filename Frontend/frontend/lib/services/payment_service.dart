@@ -2,28 +2,26 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../config/api_config.dart';
 
 class PaymentService {
-  final String baseUrl;
   final http.Client client;
 
-  PaymentService({
-    required this.baseUrl,
-    http.Client? client,
-  }) : client = client ?? http.Client();
-
+  PaymentService({http.Client? client}) : client = client ?? http.Client();
   Future<Map<String, dynamic>> createPayment(int bookingId, int userId) async {
-    final url = Uri.parse('$baseUrl/payment/create/');
+    final url = Uri.parse(ApiConfig.paymentCreateUrl);
 
     try {
-      final response = await client.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'booking_id': bookingId,
-          'user_id': userId,
-        }),
-      );
+      final response = await client
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'booking_id': bookingId,
+              'user_id': userId,
+            }),
+          )
+          .timeout(ApiConfig.connectionTimeout);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
