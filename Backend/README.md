@@ -38,6 +38,8 @@ Run on Django
 ### Run:
 ```python manage.py runserver```
 ```python -m daphne parkirki.asgi:application``` **(For Django Channels)**
+```python -m daphne -b 0.0.0.0 -p 8000 parkirki.asgi:application``` **(For fetching, change to device's IPv4 and add to allowed host. Change baseurls and wsbaseurls to IPv4)**
+
 
 ### Migrate:
 ```python manage.py migrate```
