@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class ParkingWebSocketService {
-  static const String _baseUrl = 'ws://localhost:8000/ws/parkiran/';
+  static const String _baseUrl = 'ws://192.168.123.3:8000/ws/parkiran/';
   WebSocket? _webSocket;
   StreamController<Map<String, dynamic>>? _streamController;
   Timer? _reconnectTimer;

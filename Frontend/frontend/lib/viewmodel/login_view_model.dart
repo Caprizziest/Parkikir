@@ -20,7 +20,7 @@ class LoginViewModel extends ChangeNotifier {
   LoginViewModel({LoginRepository? repository, TokenService? tokenService})
       : _repository = repository ??
             LoginRepository(
-              service: LoginService(baseUrl: 'http://127.0.0.1:8000/api'),
+              service: LoginService(baseUrl: 'http://192.168.123.3:8000/api'),
             ),
         _tokenService = tokenService ?? TokenService() {
     usernameController.addListener(_updateFormState);
