@@ -29,10 +29,6 @@ final GoRouter appRouter = GoRouter(
       name: 'register',
       builder: (context, state) => const RegisterView(),
     ),
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const DashboardView(),
-    ),
 
     // Shell route for main navigation
     ShellRoute(
@@ -41,6 +37,10 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/dashboard',
           name: 'dashboard',
+          builder: (context, state) => const DashboardView(),
+        ),
+        GoRoute(
+          path: '/',
           builder: (context, state) => const DashboardView(),
         ),
         GoRoute(

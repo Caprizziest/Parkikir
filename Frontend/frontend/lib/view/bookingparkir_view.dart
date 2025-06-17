@@ -28,7 +28,12 @@ class _bookingparkirState extends ConsumerState<bookingparkir> {
   @override
   void dispose() {
     // Gunakan bookingparkirViewModelProvider
-    ref.read(bookingparkirViewModelProvider.notifier).disconnect();
+    try {
+      ref.read(bookingparkirViewModelProvider.notifier).disconnect();
+    } catch (e) {
+      // Handle any potential errors during disconnect
+      debugPrint('Error during disconnect: $e');
+    }
     super.dispose();
   }
 
