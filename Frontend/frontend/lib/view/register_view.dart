@@ -34,205 +34,220 @@ class RegisterView extends ConsumerWidget {
     }
 
     return Scaffold(
+      // Untuk memastikan layout tidak overflow saat keyboard muncul.
+      // Jika ini true, Flutter akan secara otomatis menyesuaikan layout.
+      // body: SafeArea(...),
+      // resizeToAvoidBottomInset: true, // Defaultnya sudah true, jadi tidak perlu eksplisit jika tidak mengubahnya.
+
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
-              // Logo
-              Center(
-                child: Image.asset(
-                  'logo.png',
-                  height: 120,
-                ),
-              ),
-              const SizedBox(height: 40),
-              // Create Account title
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Create Account',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 1),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      width: 45,
-                      height: 3,
-                      color: const Color(0xFF4B4BEE),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 13),
-              // Username
-              const Text(
-                'Username',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-              TextField(
-                controller: viewModel.usernameController,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                decoration: _inputDecoration(),
-              ),
-              SizedBox(
-                height: 20,
-                child: viewModel.usernameError != null
-                    ? Text(
-                        viewModel.usernameError!,
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                          fontFamily: 'Poppins',
-                        ),
-                      )
-                    : null,
-              ),
-              // Email
-              const Text(
-                'Email',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-              TextField(
-                controller: viewModel.emailController,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                decoration: _inputDecoration(),
-              ),
-              SizedBox(
-                height: 20,
-                child: viewModel.emailError != null
-                    ? Text(
-                        viewModel.emailError!,
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                          fontFamily: 'Poppins',
-                        ),
-                      )
-                    : null,
-              ),
-              // Password
-              const Text(
-                'Password',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-              TextField(
-                controller: viewModel.passwordController,
-                obscureText: viewModel.obscureText,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                decoration: _inputDecoration(
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      viewModel.obscureText
-                          ? PhosphorIcons.eyeClosed(PhosphorIconsStyle.bold)
-                          : PhosphorIcons.eye(PhosphorIconsStyle.bold),
-                      size: 24,
-                      color: Colors.black.withOpacity(0.6),
-                    ),
-                    onPressed: viewModel.togglePasswordVisibility,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisSize: MainAxisSize.min, // Bisa ditambahkan jika ada masalah dengan Column mencoba mengisi tinggi
+              children: [
+                const SizedBox(height: 40),
+                // Logo
+                Center(
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: 120,
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Spacer(),
-              // Register button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: viewModel.isFormValid
-                      ? () async {
-                          try {
-                            final errorMsg = await viewModel.register();
-                            if (errorMsg == null && context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Registration successful!',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: 'Poppins',
-                                      )),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 204, 252, 10),
-                                ),
-                              );
-                              context.go('/login');
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Error: ${e.toString()}'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
+                const SizedBox(height: 40),
+                // Create Account title
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Create Account',
+                      style:
+                          TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 1),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        width: 45,
+                        height: 3,
+                        color: const Color(0xFF4B4BEE),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 13),
+                // Username
+                const Text(
+                  'Username',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                TextField(
+                  controller: viewModel.usernameController,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w400),
+                  decoration: _inputDecoration(),
+                ),
+                SizedBox(
+                  height: 20,
+                  child: viewModel.usernameError != null
+                      ? Text(
+                          viewModel.usernameError!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Poppins',
+                          ),
+                        )
+                      : null,
+                ),
+                // Email
+                const Text(
+                  'Email',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                TextField(
+                  controller: viewModel.emailController,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w400),
+                  decoration: _inputDecoration(),
+                ),
+                SizedBox(
+                  height: 20,
+                  child: viewModel.emailError != null
+                      ? Text(
+                          viewModel.emailError!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Poppins',
+                          ),
+                        )
+                      : null,
+                ),
+                // Password
+                const Text(
+                  'Password',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                TextField(
+                  controller: viewModel.passwordController,
+                  obscureText: viewModel.obscureText,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w400),
+                  decoration: _inputDecoration(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        viewModel.obscureText
+                            ? PhosphorIcons.eyeClosed(PhosphorIconsStyle.bold)
+                            : PhosphorIcons.eye(PhosphorIconsStyle.bold),
+                        size: 24,
+                        color: Colors.black.withOpacity(0.6),
+                      ),
+                      onPressed: viewModel.togglePasswordVisibility,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Ganti Spacer() dengan SizedBox() atau hilangkan sepenuhnya jika tidak diperlukan.
+                // Jika ingin ada ruang kosong di atas tombol, bisa tambahkan SizedBox dengan height tertentu.
+                // Misalnya:
+                const SizedBox(
+                    height: 30), // Memberikan ruang di atas tombol "Register"
+                // Atau bisa juga tidak menambahkan apa-apa jika desain tidak membutuhkan ruang ekstra.
+
+                // Register button
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: viewModel.isFormValid
+                        ? () async {
+                            try {
+                              final errorMsg = await viewModel.register();
+                              if (errorMsg == null && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Registration successful!',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Poppins',
+                                        )),
+                                    backgroundColor:
+                                        Color.fromARGB(255, 204, 252, 10),
+                                  ),
+                                );
+                                context.go('/login');
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error: ${e.toString()}'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             }
                           }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4B4BEE),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF4B4BEE),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 0,
+                      disabledBackgroundColor:
+                          const Color(0xFF4B4BEE).withOpacity(0.4),
+                      disabledForegroundColor: Colors.white,
                     ),
-                    elevation: 0,
-                    disabledBackgroundColor:
-                        const Color(0xFF4B4BEE).withOpacity(0.4),
-                    disabledForegroundColor: Colors.white,
+                    child: viewModel.isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            'Register',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
                   ),
-                  child: viewModel.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Register',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600),
-                        ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Login prompt
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Already have an account? ',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Use GoRouter to navigate back to login page
-                      context.go('/login');
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF4B4BEE),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(50, 30),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      'Login Here!',
+                const SizedBox(height: 20),
+                // Login prompt
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Already have an account? ',
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-            ],
+                    TextButton(
+                      onPressed: () {
+                        // Use GoRouter to navigate back to login page
+                        context.go('/login');
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF4B4BEE),
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(50, 30),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text(
+                        'Login Here!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
