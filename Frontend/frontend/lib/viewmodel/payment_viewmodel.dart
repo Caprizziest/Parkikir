@@ -1,28 +1,33 @@
-// payment_viewmodel.dart - Updated with better error handling
+// payment_view_model.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/payment_service.dart';
+import '../services/booking_service.dart';
 import '../services/token_service.dart';
 import '../repository/payment_repository.dart';
+import '../repository/booking_repository.dart';
 import '../model/payment_model.dart';
+import '../model/booking_model.dart';
 
 // Payment state enum
 enum PaymentState {
   initial,
-  loading,
+  creatingBooking,
+  processingPayment,
   success,
   error,
-  unauthorized,
 }
 
 // Payment state class
 class PaymentViewState {
   final PaymentState state;
+  final BookingModel? booking;
   final PaymentModel? paymentData;
   final String? errorMessage;
   final bool isProcessing;
 
   const PaymentViewState({
     this.state = PaymentState.initial,
+    this.booking,
     this.paymentData,
     this.errorMessage,
     this.isProcessing = false,
@@ -30,12 +35,14 @@ class PaymentViewState {
 
   PaymentViewState copyWith({
     PaymentState? state,
+    BookingModel? booking,
     PaymentModel? paymentData,
     String? errorMessage,
     bool? isProcessing,
   }) {
     return PaymentViewState(
       state: state ?? this.state,
+      booking: booking ?? this.booking,
       paymentData: paymentData ?? this.paymentData,
       errorMessage: errorMessage ?? this.errorMessage,
       isProcessing: isProcessing ?? this.isProcessing,
@@ -45,27 +52,59 @@ class PaymentViewState {
 
 // Payment ViewModel
 class PaymentViewModel extends StateNotifier<PaymentViewState> {
+  final BookingRepository bookingRepository;
   final PaymentRepository paymentRepository;
 
-  PaymentViewModel({required this.paymentRepository}) 
-      : super(const PaymentViewState());
+  PaymentViewModel({
+    required this.bookingRepository,
+    required this.paymentRepository,
+  }) : super(const PaymentViewState());
 
-  // Create payment
-  Future<void> createPayment(int bookingId, int userId) async {
+  // Create booking and then payment
+  Future<void> createBookingAndPayment({
+    required String slotId,
+    required double totalPrice,
+  }) async {
+    // Step 1: Create booking
     state = state.copyWith(
-      state: PaymentState.loading,
+      state: PaymentState.creatingBooking,
       isProcessing: true,
     );
 
     try {
-      final result = await paymentRepository.createPayment(bookingId, userId);
-      
-      if (result['success'] == true) {
+      final bookingResult = await bookingRepository.createBooking(
+        slotId: slotId,
+        totalPrice: totalPrice,
+      );
+
+      if (bookingResult['success'] != true) {
+        state = state.copyWith(
+          state: PaymentState.error,
+          errorMessage: bookingResult['message'] ?? 'Failed to create booking',
+          isProcessing: false,
+        );
+        return;
+      }
+
+      final booking = bookingResult['booking'] as BookingModel;
+
+      state = state.copyWith(
+        booking: booking,
+        state: PaymentState.processingPayment,
+      );
+
+      // Step 2: Create payment
+      final paymentResult = await paymentRepository.createPayment(
+        booking.id,
+        booking.userId,
+      );
+
+      if (paymentResult['success'] == true) {
         final paymentData = PaymentModel(
-          token: result['token'],
-          redirectUrl: result['redirect_url'],
-          orderId: result['order_id'],
-          totalHarga: result['totalharga'],
+          token: paymentResult['token'],
+          redirectUrl: paymentResult['redirect_url'],
+          orderId: paymentResult['order_id'],
+          totalHarga: paymentResult['totalharga'],
         );
 
         state = state.copyWith(
@@ -73,17 +112,10 @@ class PaymentViewModel extends StateNotifier<PaymentViewState> {
           paymentData: paymentData,
           isProcessing: false,
         );
-      } else if (result['code'] == 'UNAUTHORIZED') {
-        // Handle unauthorized specifically
-        state = state.copyWith(
-          state: PaymentState.unauthorized,
-          errorMessage: result['message'] ?? 'Authentication required',
-          isProcessing: false,
-        );
       } else {
         state = state.copyWith(
           state: PaymentState.error,
-          errorMessage: result['message'] ?? 'Payment creation failed',
+          errorMessage: paymentResult['message'] ?? 'Payment creation failed',
           isProcessing: false,
         );
       }
@@ -101,20 +133,35 @@ class PaymentViewModel extends StateNotifier<PaymentViewState> {
     state = const PaymentViewState();
   }
 
-  // Retry payment creation
-  Future<void> retryPayment(int bookingId, int userId) async {
-    await createPayment(bookingId, userId);
+  // Retry the entire process
+  Future<void> retryBookingAndPayment({
+    required String slotId,
+    required double totalPrice,
+  }) async {
+    await createBookingAndPayment(
+      slotId: slotId,
+      totalPrice: totalPrice,
+    );
   }
 }
 
-// Updated Providers
+// Providers
 final tokenServiceProvider = Provider<TokenService>((ref) {
   return TokenService();
 });
 
-final paymentServiceProvider = Provider<PaymentService>((ref) {
+final bookingServiceProvider = Provider<BookingService>((ref) {
   final tokenService = ref.watch(tokenServiceProvider);
-  return PaymentService(tokenService: tokenService);
+  return BookingService(tokenService: tokenService);
+});
+
+final paymentServiceProvider = Provider<PaymentService>((ref) {
+  return PaymentService();
+});
+
+final bookingRepositoryProvider = Provider<BookingRepository>((ref) {
+  final bookingService = ref.watch(bookingServiceProvider);
+  return BookingRepository(bookingService: bookingService);
 });
 
 final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
@@ -123,6 +170,10 @@ final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
 });
 
 final paymentViewModelProvider = StateNotifierProvider<PaymentViewModel, PaymentViewState>((ref) {
+  final bookingRepository = ref.watch(bookingRepositoryProvider);
   final paymentRepository = ref.watch(paymentRepositoryProvider);
-  return PaymentViewModel(paymentRepository: paymentRepository);
+  return PaymentViewModel(
+    bookingRepository: bookingRepository,
+    paymentRepository: paymentRepository,
+  );
 });

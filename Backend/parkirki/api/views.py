@@ -16,6 +16,7 @@ from django.conf import settings
 import jwt
 import midtransclient
 import time
+import logging
 
 
 from django.contrib.auth.models import User
@@ -225,18 +226,93 @@ def update_slot_status(request, pk):
     return Response({"status": slot.status})
 
 # Booking
+logger = logging.getLogger(__name__)
+
 @swagger_auto_schema(methods=['post'], request_body=BookingSerializer)
 @api_view(['GET', 'POST'])
 def booking_list_create(request):
     if request.method == 'GET':
-        data = models.Booking.objects.all()
-        return Response(BookingSerializer(data, many=True).data)
+        try:
+            data = models.Booking.objects.all()
+            return Response(BookingSerializer(data, many=True).data)
+        except Exception as e:
+            logger.error(f"Error fetching bookings: {str(e)}")
+            return Response({
+                'status': 'error',
+                'message': 'Failed to retrieve bookings'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     elif request.method == 'POST':
+        logger.info(f"Booking creation attempt with data: {request.data}")
         serializer = BookingSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+
+        if not serializer.is_valid():
+            # Log detailed validation errors
+            logger.warning(f"Validation errors: {serializer.errors}")
+
+            # Format errors with more context
+            detailed_errors = []
+            for field, errors in serializer.errors.items():
+                error_details = {
+                    'field': field,
+                    'errors': [],
+                    'code': None
+                }
+
+                if isinstance(errors, dict):
+                    # Handle nested serializer errors
+                    for sub_field, sub_errors in errors.items():
+                        error_details['errors'].append({
+                            'field': f"{field}.{sub_field}",
+                            'message': str(sub_errors),
+                            'code': getattr(sub_errors, 'code', None)
+                        })
+                else:
+                    # Handle list of errors
+                    if not isinstance(errors, list):
+                        errors = [errors]
+
+                    for error in errors:
+                        error_details['errors'].append({
+                            'message': str(error),
+                            'code': getattr(error, 'code', None)
+                        })
+
+                detailed_errors.append(error_details)
+
+            return Response({
+                'status': 'error',
+                'message': 'Validation failed',
+                'validation_errors': detailed_errors,
+                'received_data': request.data  # For debugging
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            instance = serializer.save()
+
+            # Build response matching Flutter's expected format
+            response_data = {
+                'id': instance.id,
+                'slot_id': instance.slotparkir.slotparkirid,  # Use the actual ID string
+                'user_id': instance.user_id,
+                'status': instance.status,
+                'created_at': instance.tanggal.isoformat(),  # or use auto_now_add.DateTimeField
+                'total_price': instance.totalharga,
+            }
+
+            logger.info(f"Booking created successfully: {response_data}")
+            return Response({
+                'status': 'success',
+                'data': response_data
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            logger.error(f"Error saving booking: {str(e)}")
+            return Response({
+                'status': 'error',
+                'message': 'Failed to create booking',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @swagger_auto_schema(method='put', request_body=BookingSerializer)
 @api_view(['GET', 'PUT', 'DELETE'])

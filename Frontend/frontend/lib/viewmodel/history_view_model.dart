@@ -17,9 +17,13 @@ class HistoryViewModel extends StateNotifier<AsyncValue<List<BookingModel>>> {
     return [
       BookingModel(
         slotId: 'D1',
+        userId: 1,
+        id: 1,
         description: "You've Booked slot D1",
         bookingDate: DateTime.now(),
         status: 'booked',
+        createdAt: DateTime.now(),
+        totalPrice: 10.000
       ),
     ];
   }
