@@ -112,7 +112,7 @@ class NoticeDetailView extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            state.noticeDetail.tanggal,
+                            state.formattedDateRange,
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
