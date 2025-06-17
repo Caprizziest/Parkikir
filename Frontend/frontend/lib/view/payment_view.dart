@@ -1,9 +1,10 @@
-// payment_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../viewmodel/payment_viewmodel.dart';
+import '../services/token_storage.dart';
+import 'dart:convert';
 
 class PaymentView extends ConsumerStatefulWidget {
   final String selectedSpot;
@@ -20,22 +21,56 @@ class PaymentView extends ConsumerStatefulWidget {
 }
 
 class _PaymentViewState extends ConsumerState<PaymentView> {
-  // Mock data - replace with actual user data
-  final int mockBookingId = 1;
-  final int mockUserId = 1;
+  final int mockBookingId = 3; // Can still be hardcoded or dynamic
 
   @override
   void initState() {
     super.initState();
-    // Reset payment state when entering the page
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(paymentViewModelProvider.notifier).resetState();
     });
   }
 
-  void _handlePayment() {
-    ref.read(paymentViewModelProvider.notifier)
-        .createPayment(mockBookingId, mockUserId);
+  /// Decode JWT and extract claims
+  Map<String, dynamic> parseJwt(String token) {
+    final parts = token.split('.');
+    if (parts.length != 3) {
+      throw Exception('Invalid JWT');
+    }
+
+    final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+    return jsonDecode(payload);
+  }
+
+  /// Handle payment logic with decoded user_id
+  void _handlePayment() async {
+    try {
+      final token = await tokenStorage.getAccessToken();
+      if (token == null) {
+        _handleUnauthorized();
+        return;
+      }
+
+      final payload = parseJwt(token);
+      final userId = payload['user_id'];
+      if (userId == null) {
+        throw Exception('Invalid token: user_id not found');
+      }
+
+      ref.read(paymentViewModelProvider.notifier).createPayment(
+            mockBookingId,
+            userId,
+          );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error processing token: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _handlePaymentSuccess(String redirectUrl) async {
@@ -44,24 +79,45 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not launch payment URL'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        _showSnackBar('Could not launch payment URL');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error launching payment: ${e.toString()}'),
-            backgroundColor: Colors.red,
+      _showSnackBar('Error launching payment: ${e.toString()}');
+    }
+  }
+
+  void _handleUnauthorized() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Session Expired'),
+          content: const Text(
+            'Your session has expired. Please login again to continue with the payment.',
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.go('/login');
+              },
+              child: const Text('Login'),
+            ),
+          ],
         );
-      }
+      },
+    );
+  }
+
+  void _showSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -69,10 +125,11 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
   Widget build(BuildContext context) {
     final paymentState = ref.watch(paymentViewModelProvider);
 
-    // Listen to state changes for navigation
     ref.listen<PaymentViewState>(paymentViewModelProvider, (previous, next) {
       if (next.state == PaymentState.success && next.paymentData != null) {
         _handlePaymentSuccess(next.paymentData!.redirectUrl);
+      } else if (next.state == PaymentState.unauthorized) {
+        _handleUnauthorized();
       } else if (next.state == PaymentState.error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -81,7 +138,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
             action: SnackBarAction(
               label: 'Retry',
               textColor: Colors.white,
-              onPressed: () => _handlePayment(),
+              onPressed: _handlePayment,
             ),
           ),
         );
@@ -135,8 +192,8 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                   _buildSummaryRow('Location', 'Parkiran Mobil UC'),
                   _buildSummaryRow('Parking Spot', widget.selectedSpot),
                   _buildSummaryRow(
-                    'Price', 
-                    'Rp. ${widget.price.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}'
+                    'Price',
+                    'Rp. ${widget.price.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
                   ),
                   const Divider(height: 24),
                   Row(
@@ -163,9 +220,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                 ],
               ),
             ),
-            
             const SizedBox(height: 24),
-            
             // Payment Method Section
             const Text(
               'Payment Method',
@@ -176,7 +231,6 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
               ),
             ),
             const SizedBox(height: 12),
-            
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -210,9 +264,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                 ],
               ),
             ),
-            
             const Spacer(),
-            
             // Error State
             if (paymentState.state == PaymentState.error)
               Container(
@@ -240,7 +292,6 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                   ],
                 ),
               ),
-            
             // Payment Button
             SizedBox(
               width: double.infinity,
