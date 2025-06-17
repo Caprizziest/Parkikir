@@ -65,6 +65,7 @@ dev_dependencies:
   mockito: ^5.4.2
   build_runner: ^2.4.6
   http: ^0.13.5
+  jwt_decode: ^0.3.1
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -110,4 +111,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-
