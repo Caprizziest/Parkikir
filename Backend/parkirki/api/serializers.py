@@ -107,11 +107,21 @@ class LaporanSerializer(serializers.ModelSerializer):
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notice
+        # Pastikan Anda memasukkan semua fields yang ingin di-serialize/deserialize
+        # Jika Anda benar-benar ingin semua, '__all__' sudah benar.
+        # Atau, daftar spesifik: fields = ['noticeid', 'tanggalfrom', 'tanggaluntil', 'event', 'judul', 'description']
         fields = '__all__'
 
-    def validate_tanggal(self, value):
+    # Validasi untuk tanggalfrom
+    def validate_tanggalfrom(self, value):
         if not value:
-            raise serializers.ValidationError("Tanggal wajib diisi.")
+            raise serializers.ValidationError("Tanggal mulai wajib diisi.")
+        return value
+
+    # Validasi untuk tanggaluntil
+    def validate_tanggaluntil(self, value):
+        if not value:
+            raise serializers.ValidationError("Tanggal selesai wajib diisi.")
         return value
 
     def validate_event(self, value):
@@ -123,6 +133,19 @@ class NoticeSerializer(serializers.ModelSerializer):
         if not value or len(value.strip()) < 3:
             raise serializers.ValidationError("Judul terlalu pendek atau kosong.")
         return value
+
+    # Validasi level objek untuk memastikan tanggalfrom <= tanggaluntil
+    def validate(self, data):
+        tanggal_from = data.get('tanggalfrom')
+        tanggal_until = data.get('tanggaluntil')
+
+        # Hanya lakukan validasi ini jika kedua tanggal ada
+        if tanggal_from and tanggal_until:
+            if tanggal_from > tanggal_until:
+                raise serializers.ValidationError(
+                    {"tanggaluntil": "Tanggal selesai tidak boleh lebih awal dari tanggal mulai."}
+                )
+        return data
 
 class ParkiranTertutupSerializer(serializers.ModelSerializer):
     class Meta:
