@@ -35,199 +35,209 @@ class LoginView extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
-              // Logo
-              Center(
-                child: Image.asset(
-                  'assets/logo.png',
-                  height: 120,
-                ),
-              ),
-              const SizedBox(height: 40),
-              // Log In Title with underline
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Log In',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 1),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      width: 45,
-                      height: 3,
-                      color: const Color(0xFF4B4BEE),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 13),
-              // Username Field
-              const Text(
-                'Username',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              TextField(
-                controller: viewModel.usernameController,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                decoration: _inputDecoration(),
-              ),
-              const SizedBox(height: 20),
-              // Password Field
-              const Text(
-                'Password',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              TextField(
-                controller: viewModel.passwordController,
-                obscureText: viewModel.obscureText,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                decoration: _inputDecoration(
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      viewModel.obscureText
-                          ? PhosphorIcons.eyeClosed(PhosphorIconsStyle.bold)
-                          : PhosphorIcons.eye(PhosphorIconsStyle.bold),
-                      size: 24,
-                      color: Colors.black.withOpacity(0.6),
-                    ),
-                    onPressed: viewModel.togglePasswordVisibility,
+        // --- PERUBAHAN UTAMA UNTUK SCROLL DIMULAI DI SINI ---
+        child: SingleChildScrollView(
+          // Bungkus konten utama agar dapat digulir
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 40),
+                // Logo
+                Center(
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: 120,
                   ),
                 ),
-              ),
-              // Forgot Password and Error Message Row
-              // Forgot Password and Error Message Row
-              Row(
-                children: [
-                  if (viewModel.errorMessage != null)
-                    Expanded(
-                      child: Text(
-                        viewModel.errorMessage!,
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                          fontFamily: 'Poppins',
-                        ),
+                const SizedBox(height: 40),
+                // Log In Title with underline
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Log In',
+                      style:
+                          TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 1),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        width: 45,
+                        height: 3,
+                        color: const Color(0xFF4B4BEE),
                       ),
                     )
-                  else
-                    const Spacer(),
-                  TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF4B4BEE),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(50, 30),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        fontSize: 14,
+                  ],
+                ),
+                const SizedBox(height: 13),
+                // Username Field
+                const Text(
+                  'Username',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                TextField(
+                  controller: viewModel.usernameController,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w400),
+                  decoration: _inputDecoration(),
+                ),
+                const SizedBox(height: 20),
+                // Password Field
+                const Text(
+                  'Password',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                TextField(
+                  controller: viewModel.passwordController,
+                  obscureText: viewModel.obscureText,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w400),
+                  decoration: _inputDecoration(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        viewModel.obscureText
+                            ? PhosphorIcons.eyeClosed(PhosphorIconsStyle.bold)
+                            : PhosphorIcons.eye(PhosphorIconsStyle.bold),
+                        size: 24,
+                        color: Colors.black.withOpacity(0.6),
                       ),
+                      onPressed: viewModel.togglePasswordVisibility,
                     ),
                   ),
-                ],
-              ),
-              const Spacer(),
-              // Login Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: viewModel.isFormValid && !viewModel.isLoading
-                      ? () async {
-                          final success = await viewModel.login();
-                          if (success && context.mounted) {
-                            context.go('/');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Login successful!',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'Poppins',
-                                    )),
-                                backgroundColor:
-                                    Color.fromARGB(255, 204, 252, 10),
-                              ),
-                            );
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4B4BEE),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 0,
-                    disabledBackgroundColor:
-                        const Color(0xFF4B4BEE).withOpacity(0.4),
-                    disabledForegroundColor: Colors.white,
-                  ),
-                  child: viewModel.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
+                ),
+                // Forgot Password and Error Message Row
+                Row(
+                  children: [
+                    if (viewModel.errorMessage != null)
+                      Expanded(
+                        child: Text(
+                          viewModel.errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Poppins',
                           ),
                         ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Create Account
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Don\'t have account? ',
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Use GoRouter to navigate to register page
-                      context.go('/register');
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF4B4BEE),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(50, 30),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      'Create Here!',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                      )
+                    else
+                      // MENGGANTI Spacer() dengan SizedBox() di dalam Row ini juga
+                      const SizedBox
+                          .shrink(), // Atau SizedBox(width: 0) jika ingin space nol
+                    TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF4B4BEE),
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(50, 30),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text(
+                        'Forgot Password?',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
                       ),
                     ),
+                  ],
+                ),
+                // MENGGANTI Spacer() di sini dengan SizedBox()
+                // Ini adalah Spacer utama yang menyebabkan masalah layout dengan SingleChildScrollView
+                const SizedBox(
+                    height: 30), // Memberikan jarak tetap di atas tombol login
+
+                // Login Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: viewModel.isFormValid && !viewModel.isLoading
+                        ? () async {
+                            final success = await viewModel.login();
+                            if (success && context.mounted) {
+                              context.go('/');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Login successful!',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Poppins',
+                                      )),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 204, 252, 10),
+                                ),
+                              );
+                            }
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF4B4BEE),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 0,
+                      disabledBackgroundColor:
+                          const Color(0xFF4B4BEE).withOpacity(0.4),
+                      disabledForegroundColor: Colors.white,
+                    ),
+                    child: viewModel.isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 20),
-            ],
+                ),
+                const SizedBox(height: 20),
+                // Create Account
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Don\'t have account? ',
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        context.go('/register');
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF4B4BEE),
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(50, 30),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text(
+                        'Create Here!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
+        // --- PERUBAHAN UTAMA UNTUK SCROLL BERAKHIR DI SINI ---
       ),
     );
   }

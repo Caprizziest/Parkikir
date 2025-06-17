@@ -14,9 +14,10 @@ import 'package:frontend/view/notice_detail_view.dart';
 import 'package:frontend/view/report_detail_view.dart';
 import 'package:frontend/view/profile_view.dart';
 import 'package:frontend/view/main_shell.dart';
+import 'package:frontend/view/payment_view.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/dashboard',
+  initialLocation: '/register',
   routes: [
     GoRoute(
       path: '/login',
@@ -88,14 +89,16 @@ final GoRouter appRouter = GoRouter(
       path: '/bookingparkir',
       builder: (context, state) => const bookingparkir(),
     ),
-    GoRoute(
-      path: '/pembayaran',
-      builder: (context, state) {
-        // Receive the extra data passed from previous screen
-        final bookingData = state.extra as Map<String, dynamic>?;
-        return pembayaran(bookingData: bookingData);
-      },
-    ),
+GoRoute(
+  path: '/pembayaran',
+  builder: (context, state) {
+    final extra = state.extra as Map<String, dynamic>?;
+    return PaymentView(
+      selectedSpot: extra?['selectedSpot'] ?? '',
+      price: extra?['price'] ?? 0.0,
+    );
+  },
+),
   ],
 
   // Error page
