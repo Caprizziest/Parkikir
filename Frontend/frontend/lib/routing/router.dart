@@ -17,7 +17,7 @@ import 'package:frontend/view/main_shell.dart';
 import 'package:frontend/view/payment_view.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/dashboard',
+  initialLocation: '/register',
   routes: [
     GoRoute(
       path: '/login',

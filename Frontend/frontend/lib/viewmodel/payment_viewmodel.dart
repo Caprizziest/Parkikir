@@ -1,6 +1,7 @@
-// payment_view_model.dart
+// payment_viewmodel.dart - Updated with better error handling
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/payment_service.dart';
+import '../services/token_service.dart';
 import '../repository/payment_repository.dart';
 import '../model/payment_model.dart';
 
@@ -10,6 +11,7 @@ enum PaymentState {
   loading,
   success,
   error,
+  unauthorized,
 }
 
 // Payment state class
@@ -71,6 +73,13 @@ class PaymentViewModel extends StateNotifier<PaymentViewState> {
           paymentData: paymentData,
           isProcessing: false,
         );
+      } else if (result['code'] == 'UNAUTHORIZED') {
+        // Handle unauthorized specifically
+        state = state.copyWith(
+          state: PaymentState.unauthorized,
+          errorMessage: result['message'] ?? 'Authentication required',
+          isProcessing: false,
+        );
       } else {
         state = state.copyWith(
           state: PaymentState.error,
@@ -98,9 +107,14 @@ class PaymentViewModel extends StateNotifier<PaymentViewState> {
   }
 }
 
-// Providers
+// Updated Providers
+final tokenServiceProvider = Provider<TokenService>((ref) {
+  return TokenService();
+});
+
 final paymentServiceProvider = Provider<PaymentService>((ref) {
-  return PaymentService();
+  final tokenService = ref.watch(tokenServiceProvider);
+  return PaymentService(tokenService: tokenService);
 });
 
 final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
