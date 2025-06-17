@@ -44,7 +44,7 @@ class RegisterView extends ConsumerWidget {
               // Logo
               Center(
                 child: Image.asset(
-                  'logo.png',
+                  'assets/logo.png',
                   height: 120,
                 ),
               ),
