@@ -3,6 +3,7 @@ import api.views as views
 
 urlpatterns = [
     path('users/', views.getData, name='get_users'),
+    path('users/<int:id>/', views.user_detail, name='user-detail'),
     path('register/', views.register, name='register'),
     path('email-verify/', views.verify_email, name="email-verify"),
     path('login/', views.login, name='login'),
