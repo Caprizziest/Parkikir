@@ -92,7 +92,21 @@ class ReportDetailViewModel extends StateNotifier<AsyncValue<ReportModel?>> {
       state = AsyncValue.data(report);
     } catch (e, stackTrace) {
       print('Error fetching report detail: $e');
-      state = AsyncValue.error(e, stackTrace);
+
+      // Check if it's a token-related error
+      if (e.toString().contains('Session expired') ||
+          e.toString().contains('Please login again') ||
+          e.toString().contains('401') ||
+          e.toString().contains('token not valid')) {
+        // This is a session/token error - user needs to login again
+        state = AsyncValue.error(
+            'Your session has expired. Please login again.', stackTrace);
+      } else {
+        // Other types of errors
+        state = AsyncValue.error(
+            'Failed to load report details. Please check your connection and try again.',
+            stackTrace);
+      }
     }
   }
 
