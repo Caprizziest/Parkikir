@@ -84,7 +84,7 @@ class _bookingparkirState extends ConsumerState<bookingparkir> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
-            context.go('/');
+            context.pop();
           },
         ),
         title: const Column(
