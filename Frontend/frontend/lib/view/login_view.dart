@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:frontend/viewmodel/login_view_model.dart';
+import 'package:frontend/viewmodel/auth_view_model.dart';
 
 class LoginView extends ConsumerWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -163,7 +164,12 @@ class LoginView extends ConsumerWidget {
                         ? () async {
                             final success = await viewModel.login();
                             if (success && context.mounted) {
-                              context.go('/');
+                              // Update auth state
+                              ref
+                                  .read(authViewModelProvider)
+                                  .setAuthenticated();
+                              // Navigate to dashboard
+                              context.go('/dashboard');
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Login successful!',

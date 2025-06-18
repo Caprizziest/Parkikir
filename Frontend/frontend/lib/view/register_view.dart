@@ -11,7 +11,8 @@ class RegisterView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(registerViewModelProvider);
 
-    InputDecoration _inputDecoration({Widget? suffixIcon}) {
+    InputDecoration _inputDecoration(
+        {Widget? suffixIcon, bool hasError = false}) {
       return InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -19,33 +20,58 @@ class RegisterView extends ConsumerWidget {
             const EdgeInsets.symmetric(horizontal: 20, vertical: 19),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
+          borderSide: BorderSide(
+              color: hasError ? Colors.red : const Color(0xFFE0E0E0),
+              width: 2.0),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 2.0),
+          borderSide: BorderSide(
+              color: hasError ? Colors.red : const Color(0xFFE0E0E0),
+              width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFF4B4BEE), width: 2.0),
+          borderSide: BorderSide(
+              color: hasError ? Colors.red : const Color(0xFF4B4BEE),
+              width: 2.0),
         ),
         suffixIcon: suffixIcon,
       );
     }
 
-    return Scaffold(
-      // Untuk memastikan layout tidak overflow saat keyboard muncul.
-      // Jika ini true, Flutter akan secara otomatis menyesuaikan layout.
-      // body: SafeArea(...),
-      // resizeToAvoidBottomInset: true, // Defaultnya sudah true, jadi tidak perlu eksplisit jika tidak mengubahnya.
-      body: SafeArea(
+    void _handleRegister() async {
+      final result = await viewModel.register();
 
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              result.message,
+              style: const TextStyle(
+                color: Colors.black,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            backgroundColor: result.isSuccess
+                ? const Color.fromARGB(255, 204, 252, 10)
+                : Colors.red,
+          ),
+        );
+
+        if (result.isSuccess) {
+          context.go('/login');
+        }
+      }
+    }
+
+    return Scaffold(
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              // mainAxisSize: MainAxisSize.min, // Bisa ditambahkan jika ada masalah dengan Column mencoba mengisi tinggi
               children: [
                 const SizedBox(height: 40),
                 // Logo
@@ -86,7 +112,8 @@ class RegisterView extends ConsumerWidget {
                   controller: viewModel.usernameController,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.w400),
-                  decoration: _inputDecoration(),
+                  decoration: _inputDecoration(
+                      hasError: viewModel.usernameError != null),
                 ),
                 SizedBox(
                   height: 20,
@@ -108,9 +135,11 @@ class RegisterView extends ConsumerWidget {
                 ),
                 TextField(
                   controller: viewModel.emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.w400),
-                  decoration: _inputDecoration(),
+                  decoration:
+                      _inputDecoration(hasError: viewModel.emailError != null),
                 ),
                 SizedBox(
                   height: 20,
@@ -136,6 +165,7 @@ class RegisterView extends ConsumerWidget {
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.w400),
                   decoration: _inputDecoration(
+                    hasError: viewModel.passwordError != null,
                     suffixIcon: IconButton(
                       icon: Icon(
                         viewModel.obscureText
@@ -148,48 +178,27 @@ class RegisterView extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                // Ganti Spacer() dengan SizedBox() atau hilangkan sepenuhnya jika tidak diperlukan.
-                // Jika ingin ada ruang kosong di atas tombol, bisa tambahkan SizedBox dengan height tertentu.
-                // Misalnya:
-                const SizedBox(
-                    height: 30), // Memberikan ruang di atas tombol "Register"
-                // Atau bisa juga tidak menambahkan apa-apa jika desain tidak membutuhkan ruang ekstra.
-
+                SizedBox(
+                  height: 20,
+                  child: viewModel.passwordError != null
+                      ? Text(
+                          viewModel.passwordError!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Poppins',
+                          ),
+                        )
+                      : null,
+                ),
+                const SizedBox(height: 30),
                 // Register button
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: viewModel.isFormValid
-                        ? () async {
-                            try {
-                              final errorMsg = await viewModel.register();
-                              if (errorMsg == null && context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Registration successful!',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: 'Poppins',
-                                        )),
-                                    backgroundColor:
-                                        Color.fromARGB(255, 204, 252, 10),
-                                  ),
-                                );
-                                context.go('/login');
-                              }
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: ${e.toString()}'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            }
-                          }
+                    onPressed: viewModel.isFormValid && !viewModel.isLoading
+                        ? _handleRegister
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4B4BEE),
@@ -225,10 +234,7 @@ class RegisterView extends ConsumerWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
-                        // Use GoRouter to navigate back to login page
-                        context.go('/login');
-                      },
+                      onPressed: () => context.go('/login'),
                       style: TextButton.styleFrom(
                         foregroundColor: const Color(0xFF4B4BEE),
                         padding: EdgeInsets.zero,

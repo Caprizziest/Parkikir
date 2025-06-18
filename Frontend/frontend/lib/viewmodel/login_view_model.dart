@@ -10,18 +10,24 @@ class LoginViewModel extends ChangeNotifier {
   final TextEditingController passwordController = TextEditingController();
   final LoginRepository _repository;
   final TokenService _tokenService;
+  final VoidCallback? _onAuthSuccess;
 
   // State variables
   bool obscureText = true;
   bool isLoading = false;
   String? errorMessage;
   bool _disposed = false;
-  LoginViewModel({LoginRepository? repository, TokenService? tokenService})
-      : _repository = repository ??
+
+  LoginViewModel({
+    LoginRepository? repository,
+    TokenService? tokenService,
+    VoidCallback? onAuthSuccess,
+  })  : _repository = repository ??
             LoginRepository(
               service: LoginService(),
             ),
-        _tokenService = tokenService ?? TokenService() {
+        _tokenService = tokenService ?? TokenService(),
+        _onAuthSuccess = onAuthSuccess {
     usernameController.addListener(_updateFormState);
     passwordController.addListener(_updateFormState);
   }
@@ -48,13 +54,16 @@ class LoginViewModel extends ChangeNotifier {
         username: usernameController.text,
         password: passwordController.text,
       );
-
       final result = await _repository.login(loginData);
 
       // if success simpan token , else tampilkan error
       if (result['success'] == true) {
         await _tokenService.saveAccessToken(result['access_token']);
         await _tokenService.saveRefreshToken(result['refresh_token']);
+
+        // Trigger auth success callback
+        _onAuthSuccess?.call();
+
         return true;
       } else {
         errorMessage = "Invalid username or password";
