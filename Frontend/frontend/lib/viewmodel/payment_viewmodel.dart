@@ -7,6 +7,13 @@ import '../repository/payment_repository.dart';
 import '../repository/booking_repository.dart';
 import '../model/payment_model.dart';
 import '../model/booking_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../config/api_config.dart'; // Adjust the path based on your project structure
+
+
+final http.Client client = http.Client();
+final TokenService tokenService = TokenService();
 
 // Payment state enum
 enum PaymentState {
@@ -93,7 +100,19 @@ class PaymentViewModel extends StateNotifier<PaymentViewState> {
         state: PaymentState.processingPayment,
       );
 
-      // Step 2: Create payment
+      // Step 2: Update slot status to UNAVAILABLE
+      try {
+        await _updateSlotStatus(slotId, 'UNAVAILABLE');
+      } catch (e) {
+        state = state.copyWith(
+          state: PaymentState.error,
+          errorMessage: 'Failed to update slot status: ${e.toString()}',
+          isProcessing: false,
+        );
+        return;
+      }
+
+      // Step 3: Create payment
       final paymentResult = await paymentRepository.createPayment(
         booking.id,
         booking.userId,
@@ -125,6 +144,34 @@ class PaymentViewModel extends StateNotifier<PaymentViewState> {
         errorMessage: 'An unexpected error occurred: ${e.toString()}',
         isProcessing: false,
       );
+    }
+  }
+
+  // Helper method to update slotparkir status via PATCH request
+  Future<void> _updateSlotStatus(String slotId, String status) async {
+    final url = Uri.parse('${ApiConfig.baseUrl}/slotparkir/$slotId/status/');
+    final token = await tokenService.getAccessToken();
+
+    if (token == null) {
+      throw Exception('User not authenticated');
+    }
+
+    try {
+      final response = await client.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'status': status}),
+      );
+
+      if (response.statusCode != 200) {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['error'] ?? 'Failed to update slot status');
+      }
+    } catch (e) {
+      rethrow; // Forward the exception to calling context
     }
   }
 

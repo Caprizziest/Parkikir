@@ -18,7 +18,7 @@ class UserState {
     String? errorMessage,
     bool? isLoading,
   }) {
-    return UserState(
+    return UserState( 
       user: user ?? this.user,
       errorMessage: errorMessage ?? this.errorMessage,
       isLoading: isLoading ?? this.isLoading,

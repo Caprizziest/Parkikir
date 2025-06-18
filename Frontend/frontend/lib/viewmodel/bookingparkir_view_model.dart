@@ -1,9 +1,10 @@
-// viewmodels/bookingparkir_viewmodel.dart
+// lib/viewmodel/bookingparkir_viewmodel.dart (Updated with widget integration)
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../model/slot_parkir_model.dart';
 import '../repository/parking_repository.dart';
+import '../services/widget_service.dart'; // Add this import
 
 enum ParkingState {
   initial,
@@ -13,12 +14,10 @@ enum ParkingState {
   error,
 }
 
-// Define a more comprehensive state for your ViewModel
 class BookingparkirDataState {
   final ParkingState status;
   final List<SlotParkir> slots;
   final String? errorMessage;
-  // Add other stats if you want them to be part of the main state
   final int totalSlots;
   final int availableSlots;
 
@@ -50,25 +49,49 @@ class BookingparkirDataState {
 class BookingparkirViewModel extends StateNotifier<BookingparkirDataState> {
   final ParkingRepository _repository;
   StreamSubscription<List<SlotParkir>>? _slotsSubscription;
+  Timer? _widgetUpdateTimer;
 
   BookingparkirViewModel({ParkingRepository? repository})
       : _repository = repository ?? ParkingRepository(),
-        super(BookingparkirDataState(
-            status: ParkingState.initial)); // Initial state
+        super(BookingparkirDataState(status: ParkingState.initial)) {
+    // Setup periodic widget updates
+    _setupWidgetUpdates();
+  }
 
-  // Getters now access properties of the current state object
+  // Getters
   List<SlotParkir> get slots => state.slots;
   String? get errorMessage => state.errorMessage;
   bool get isConnected => _repository.isConnected;
   bool get isLoading => state.status == ParkingState.loading;
   bool get hasError => state.status == ParkingState.error;
-
   int get totalSlots => state.totalSlots;
   int get availableSlots => state.availableSlots;
-  // You'll need to calculate unavailableSlots/occupancyRate based on totalSlots and availableSlots
   int get unavailableSlots => totalSlots - availableSlots;
   double get occupancyRate =>
       totalSlots > 0 ? (unavailableSlots / totalSlots) * 100 : 0.0;
+
+  void _setupWidgetUpdates() {
+    // Update widget every 5 minutes
+    _widgetUpdateTimer = Timer.periodic(const Duration(minutes: 5), (_) {
+      _updateWidget();
+    });
+  }
+
+  Future<void> _updateWidget() async {
+    try {
+      // Only update if we have active widgets
+      final hasWidgets = await WidgetService.hasActiveWidgets();
+      if (hasWidgets && state.status == ParkingState.connected) {
+        await WidgetService.updateWidget(
+          availableSlots: state.availableSlots,
+          totalSlots: state.totalSlots,
+        );
+        debugPrint('Widget updated: ${state.availableSlots}/${state.totalSlots}');
+      }
+    } catch (e) {
+      debugPrint('Failed to update widget: $e');
+    }
+  }
 
   Future<void> initializeConnection() async {
     if (state.status == ParkingState.loading) return;
@@ -117,10 +140,13 @@ class BookingparkirViewModel extends StateNotifier<BookingparkirDataState> {
 
     state = state.copyWith(
       slots: newSlots,
-      status: ParkingState.connected, // Ensure status is connected
+      status: ParkingState.connected,
       totalSlots: newTotal,
       availableSlots: newAvailable,
     );
+
+    // Update widget immediately when data changes
+    _updateWidget();
   }
 
   void _onStreamError(error) {
@@ -136,8 +162,10 @@ class BookingparkirViewModel extends StateNotifier<BookingparkirDataState> {
     debugPrint('Stream completed');
   }
 
-  // No need for _updateStatistics as data is updated directly in _onSlotsUpdate
-  // void _updateStatistics() { ... }
+  // Manual widget update method
+  Future<void> forceUpdateWidget() async {
+    await _updateWidget();
+  }
 
   SlotParkir? getSlotById(String slotId) {
     try {
@@ -177,6 +205,7 @@ class BookingparkirViewModel extends StateNotifier<BookingparkirDataState> {
   @override
   void dispose() {
     _slotsSubscription?.cancel();
+    _widgetUpdateTimer?.cancel();
     _repository.stopConnection();
     super.dispose();
   }
@@ -187,17 +216,7 @@ final bookingparkirViewModelProvider =
   (ref) => BookingparkirViewModel(),
 );
 
-// Update how you access slots and error messages in bookingparkir.dart
-// For example, in bookingparkir.dart, you'd watch the main provider:
-// final bookingparkirData = ref.watch(bookingparkirViewModelProvider);
-// final slots = bookingparkirData.slots;
-// final errorMessage = bookingparkirData.errorMessage;
-// final parkingState = bookingparkirData.status;
-
-// You can remove the separate `parkingSlotsProvider` and `parkingErrorMessageProvider`
-// if you prefer to get everything from the main ViewModel's state object.
-// Or keep them if you want more granular rebuilds based on just slots or just error messages.
-// If you keep them, they should look like this:
+// Additional providers remain the same...
 final parkingSlotsProvider = Provider<List<SlotParkir>>((ref) {
   return ref.watch(
       bookingparkirViewModelProvider.select((dataState) => dataState.slots));
@@ -207,6 +226,7 @@ final parkingErrorMessageProvider = Provider<String?>((ref) {
   return ref.watch(bookingparkirViewModelProvider
       .select((dataState) => dataState.errorMessage));
 });
+
 final totalSlotsProvider = Provider<int>((ref) {
   final bookingparkirViewModel =
       ref.watch(bookingparkirViewModelProvider.notifier);
@@ -229,4 +249,11 @@ final occupancyRateProvider = Provider<double>((ref) {
   final bookingparkirViewModel =
       ref.watch(bookingparkirViewModelProvider.notifier);
   return bookingparkirViewModel.occupancyRate;
+});
+
+// Widget update provider for manual updates
+final widgetUpdateProvider = Provider<VoidCallback>((ref) {
+  final bookingparkirViewModel =
+      ref.watch(bookingparkirViewModelProvider.notifier);
+  return () => bookingparkirViewModel.forceUpdateWidget();
 });
