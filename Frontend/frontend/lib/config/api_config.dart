@@ -1,7 +1,9 @@
 class ApiConfig {
   // Base URL
+
   static const String baseUrl = 'http://192.168.108.199:8000/api';
   static const String wsBaseUrl = 'ws://192.168.108.199:8000/ws';
+
 
   // API Endpoints - centralized
   static const String loginEndpoint = '/login/';

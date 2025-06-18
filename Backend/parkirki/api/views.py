@@ -355,6 +355,22 @@ def laporan_list_create(request):
         return Response(serializer.errors, status=400)
 
 @swagger_auto_schema(
+    methods=['get'],
+    operation_description="Retrieve a single report by its ID",
+    responses={
+        200: LaporanSerializer, # Documenting the successful response
+        404: "Not Found"      # Documenting the not found response
+    }
+)
+@api_view(['GET'])
+def laporan_detail(request, pk):
+    try:
+        laporan = models.Laporan.objects.get(pk=pk)
+    except models.Laporan.DoesNotExist:
+        return Response(status=404)
+    return Response(LaporanSerializer(laporan).data)
+
+@swagger_auto_schema(
     method='patch',
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,

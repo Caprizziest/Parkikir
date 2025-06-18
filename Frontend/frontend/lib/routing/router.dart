@@ -1,5 +1,6 @@
 // app_routing.dart
 import 'package:flutter/material.dart';
+import 'package:frontend/view/add_notice_view.dart';
 import 'package:frontend/view/bookingparkir_view.dart';
 import 'package:frontend/view/history_view.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,6 @@ import 'package:frontend/view/main_shell.dart';
 import 'package:frontend/view/payment_view.dart';
 import 'package:frontend/view/success_view.dart';
 import 'package:frontend/view/splash_screen.dart';
-
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -82,6 +82,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const NoticeListView(),
     ),
     GoRoute(
+      path: '/addnotice',
+      builder: (context, state) => const AddNoticeView(),
+    ),
+    GoRoute(
       path: '/noticedetail/:noticeId',
       name: 'noticeDetail',
       builder: (context, state) {
@@ -93,16 +97,16 @@ final GoRouter appRouter = GoRouter(
       path: '/bookingparkir',
       builder: (context, state) => const bookingparkir(),
     ),
-GoRoute(
-  path: '/pembayaran',
-  builder: (context, state) {
-    final extra = state.extra as Map<String, dynamic>?;
-    return PaymentView(
-      selectedSpot: extra?['selectedSpot'] ?? '',
-      price: extra?['price'] ?? 0.0,
-    );
-  },
-),
+    GoRoute(
+      path: '/pembayaran',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return PaymentView(
+          selectedSpot: extra?['selectedSpot'] ?? '',
+          price: extra?['price'] ?? 0.0,
+        );
+      },
+    ),
     GoRoute(
       path: '/success',
       builder: (context, state) => const SuccessView(),
