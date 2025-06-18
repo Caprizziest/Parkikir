@@ -221,7 +221,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                   ),
                   SizedBox(width: 12),
                   Text(
-                    'Midtrans Payment Gateway',
+                    'Payment Gateway',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
