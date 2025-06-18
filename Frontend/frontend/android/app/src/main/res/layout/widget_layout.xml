@@ -18,11 +18,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="ParkirKi"
+            android:text="ParkirKi'"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="poppins" />
 
         <ImageButton
             android:id="@+id/refresh_button"
@@ -48,9 +48,9 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textColor="#FFFFFF"
-            android:textSize="48sp"
+            android:textSize="60sp"
             android:textStyle="bold"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="poppins" />
 
         <TextView
             android:id="@+id/total_slots"
@@ -58,9 +58,9 @@
             android:layout_height="wrap_content"
             android:text="/0"
             android:textColor="#B3FFFFFF"
-            android:textSize="24sp"
+            android:textSize="36sp"
             android:textStyle="bold"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="poppins" />
 
     </LinearLayout>
 
@@ -69,7 +69,7 @@
         android:layout_height="wrap_content"
         android:text="Slots Available"
         android:textColor="#FFFFFF"
-        android:textSize="12sp"
+        android:textSize="18sp"
         android:fontFamily="sans-serif-medium"
         android:layout_marginBottom="4dp" />
 
@@ -91,8 +91,8 @@
             android:layout_height="wrap_content"
             android:text="Parkiran Mobil UC"
             android:textColor="#B3FFFFFF"
-            android:textSize="10sp"
-            android:fontFamily="sans-serif" />
+            android:textSize="14sp"
+            android:fontFamily="poppins" />
 
     </LinearLayout>
 
@@ -103,7 +103,7 @@
         android:text="No data"
         android:textColor="#80FFFFFF"
         android:textSize="9sp"
-        android:fontFamily="sans-serif"
+        android:fontFamily="poppins"
         android:layout_marginTop="8dp" />
 
 </LinearLayout>
