@@ -5,6 +5,7 @@ import '../model/report_model.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:convert';
+import 'dart:typed_data';
 
 class ReportDetailView extends ConsumerWidget {
   final int reportId;
@@ -22,10 +23,10 @@ class ReportDetailView extends ConsumerWidget {
           Expanded(
             child: reportState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => _buildErrorState(error),
+              error: (error, stackTrace) => _buildErrorState(context, error),
               data: (report) {
                 if (report == null) {
-                  return _buildErrorState('Report not found');
+                  return _buildErrorState(context, 'Report not found');
                 }
                 return _buildReportDetail(context, ref, report);
               },
@@ -74,7 +75,7 @@ class ReportDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(Object error) {
+  Widget _buildErrorState(BuildContext context, Object error) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -94,14 +95,41 @@ class ReportDetailView extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            error.toString(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              error.toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
             ),
           ),
+          const SizedBox(height: 16),
+          // Show different buttons based on error type
+          if (error.toString().contains('session') ||
+              error.toString().contains('login')) ...[
+            ElevatedButton(
+              onPressed: () {
+                // Navigate to login page
+                context.go('/login');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4040FF),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Login Again'),
+            ),
+          ] else ...[
+            ElevatedButton(
+              onPressed: () {
+                // Retry loading the report
+                context.pop(); // Go back to previous page
+              },
+              child: const Text('Go Back'),
+            ),
+          ],
         ],
       ),
     );
@@ -276,7 +304,10 @@ class ReportDetailView extends ConsumerWidget {
             Container(
               width: double.infinity,
               height: 300,
-              child: _buildImageContent(report.gambar),
+              child: Builder(
+                builder: (context) =>
+                    _buildImageContent(context, report.gambar),
+              ),
             ),
           ],
         ),
@@ -284,32 +315,54 @@ class ReportDetailView extends ConsumerWidget {
     );
   }
 
-  Widget _buildImageContent(String? gambar) {
-    // Check if gambar contains Data URI
-    if (gambar != null &&
-        gambar.isNotEmpty &&
-        gambar.startsWith('data:image/')) {
+  Widget _buildImageContent(BuildContext context, String? gambar) {
+    // Check if gambar is not null and not empty
+    if (gambar != null && gambar.isNotEmpty) {
       try {
-        // Extract base64 part from Data URI
-        final base64String = gambar.split(',')[1];
+        // Handle different base64 formats
+        String base64String;
+
+        if (gambar.startsWith('data:image/')) {
+          // Data URI format: data:image/jpeg;base64,/9j/4Q...
+          base64String = gambar.split(',')[1];
+        } else {
+          // Plain base64 format: /9j/4Q...
+          base64String = gambar;
+        }
+
+        // Clean the base64 string (remove any whitespace/newlines)
+        base64String = base64String.replaceAll(RegExp(r'\s+'), '');
+
+        // Decode base64 to bytes
         final bytes = base64Decode(base64String);
 
-        return Image.memory(
-          bytes,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildPlaceholderImage();
+        print('Successfully decoded image, size: ${bytes.length} bytes');
+
+        return GestureDetector(
+          onTap: () {
+            // Show fullscreen image dialog
+            _showFullscreenImage(context, bytes);
           },
+          child: Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+            errorBuilder: (context, error, stackTrace) {
+              print('Error displaying image: $error');
+              return _buildPlaceholderImage();
+            },
+          ),
         );
       } catch (e) {
-        print('Error loading image from Data URI: $e');
+        print('Error loading image from base64: $e');
+        print(
+            'Image data preview: ${gambar.length > 50 ? gambar.substring(0, 50) : gambar}...');
         return _buildPlaceholderImage();
       }
     }
 
-    // Show placeholder if no image or invalid format
+    // Show placeholder if no image
     return _buildPlaceholderImage();
   }
 
@@ -355,7 +408,7 @@ class ReportDetailView extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'No image available',
+            'Image not available or failed to load',
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey[500],
@@ -443,5 +496,52 @@ class ReportDetailView extends ConsumerWidget {
     } else {
       return DateFormat('MMM dd, yyyy').format(dateTime);
     }
+  }
+
+  void _showFullscreenImage(BuildContext context, Uint8List bytes) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              Center(
+                child: InteractiveViewer(
+                  panEnabled: true,
+                  minScale: 0.5,
+                  maxScale: 4.0,
+                  child: Image.memory(
+                    bytes,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 40,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

@@ -28,10 +28,16 @@ class ReportModel {
         print('Error parsing id: $e');
         id = null;
       }
-
       String? gambar;
       try {
         gambar = json['gambar'] as String?;
+        if (gambar != null && gambar.isNotEmpty) {
+          print('Gambar field found, length: ${gambar.length}');
+          print(
+              'Gambar preview: ${gambar.length > 50 ? gambar.substring(0, 50) : gambar}...');
+        } else {
+          print('Gambar field is null or empty');
+        }
       } catch (e) {
         print('Error parsing gambar: $e');
         gambar = null;
