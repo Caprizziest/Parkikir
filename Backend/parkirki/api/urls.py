@@ -18,6 +18,7 @@ urlpatterns = [
 
     path('laporan/', views.laporan_list_create, name='laporan-list-create'),
     path('laporan/<int:pk>/status/', views.update_laporan_status, name='laporan-update-status'),
+    path('laporan/<int:pk>/', views.laporan_detail, name='laporan-detail'),
 
     path('notice/', views.notice_list_create, name='notice-list-create'),
     path('tertutup/', views.tertutup_list_create, name='tertutup-list-create'),
