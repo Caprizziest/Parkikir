@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/navigation_view_model.dart';
+import '../viewmodel/bookingparkir_view_model.dart';
+import '../viewmodel/user_view_model.dart'; // Import the new UserViewModel
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -33,16 +34,39 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   void initState() {
     super.initState();
-    // Set current tab to home when dashboard is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(navigationViewModelProvider.notifier)
           .setCurrentTab(NavigationTab.home);
+      ref.read(bookingparkirViewModelProvider.notifier).initializeConnection();
+      ref
+          .read(userViewModelProvider.notifier)
+          .fetchAndSetUsername(); // Fetch username
     });
   }
 
   @override
+  void dispose() {
+    // Optionally, disconnect when the dashboard is disposed if you don't need real-time updates elsewhere
+    // ref.read(bookingparkirViewModelProvider.notifier).disconnect();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bookingparkirData = ref.watch(bookingparkirViewModelProvider);
+    final userData =
+        ref.watch(userViewModelProvider); // Watch the UserViewModel
+
+    final availableSlots = bookingparkirData.availableSlots;
+    final totalSlots = bookingparkirData.totalSlots;
+    final parkingStatus = bookingparkirData.status;
+
+    final userName =
+        userData.user?.username ?? 'User'; // Get username or default to 'User'
+    final userLoading = userData.isLoading;
+    final userError = userData.errorMessage;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -132,17 +156,21 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           children: [
                             // Hello User - centered
                             RichText(
-                              text: const TextSpan(
-                                style: TextStyle(
+                              text: TextSpan(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w400,
                                 ),
                                 children: [
-                                  TextSpan(text: 'Hello '),
+                                  const TextSpan(text: 'Hello '),
                                   TextSpan(
-                                    text: 'User',
-                                    style: TextStyle(
+                                    text: userLoading
+                                        ? '...'
+                                        : (userError.isNotEmpty
+                                            ? 'User'
+                                            : userName), // Display loading, error, or username
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.w900,
                                     ),
                                   ),
@@ -157,9 +185,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                               crossAxisAlignment: CrossAxisAlignment.baseline,
                               textBaseline: TextBaseline.alphabetic,
                               children: [
-                                const Text(
-                                  '15',
-                                  style: TextStyle(
+                                Text(
+                                  // Display available slots
+                                  parkingStatus == ParkingState.loading
+                                      ? '...' // Show loading indicator
+                                      : availableSlots.toString(),
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 130,
                                     fontWeight: FontWeight.w700,
@@ -169,7 +200,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   ),
                                 ),
                                 Text(
-                                  '/50',
+                                  // Display total slots
+                                  parkingStatus == ParkingState.loading
+                                      ? '/...' // Show loading indicator
+                                      : '/$totalSlots',
                                   style: TextStyle(
                                     color: Colors.white.withOpacity(0.7),
                                     fontSize: 43,
