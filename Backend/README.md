@@ -1,51 +1,76 @@
-# Backend
-Backend
-Run on Django
+# 🛠️ Backend – ParkirKi’
 
-### Requirement:
-- Install all run
-```pip install -r requirements.txt```
+Backend ini dibangun menggunakan framework **Django** dan menyediakan API serta WebSocket untuk aplikasi ParkirKi’. Backend bertugas menangani otentikasi pengguna, pengelolaan data parkir, laporan pelanggaran, booking slot, serta integrasi dengan sistem pembayaran dan AI detection.
 
-- Django
-```pip install django```
+---
 
-- Django Rest Framework
-```pip install djangorestframework```
+## 📋 Requirements
 
-- Json Web Token (JWT)
-```pip install djangorestframework-simplejwt```
+Sebelum menjalankan backend, pastikan semua dependensi berikut terpasang:
 
-- MySQL connection
-```pip install pymysql```
+### 🔧 Dasar
 
-- Django Cors
-```pip install django-cors-headers```
+| Paket                           | Kegunaan                                            |
+| ------------------------------- | --------------------------------------------------- |
+| `Django`                        | Framework utama backend                             |
+| `djangorestframework`           | Untuk membangun REST API                            |
+| `djangorestframework-simplejwt` | Autentikasi menggunakan JSON Web Token              |
+| `pymysql`                       | Driver koneksi Django ke MySQL                      |
+| `django-cors-headers`           | Mengatur Cross-Origin Resource Sharing (CORS)       |
+| `channels`, `daphne`            | Mendukung WebSocket (real-time connection)          |
+| `drf-yasg`                      | Dokumentasi API otomatis (Swagger UI)               |
+| `ultralytics`                   | Integrasi AI untuk deteksi kendaraan                |
+| `sentry-sdk[django]`            | Pelacakan error/logging otomatis menggunakan Sentry |
 
-- Django Channels
-```pip install channels```
-```pip install daphne```
-```pip install channels_redis``` **(Not Used for now)**
+### ✅ Instalasi Semua Sekaligus
 
-- Ultralytics (AI Cam)
-```pip install ultralytics```
+```bash
+pip install -r requirements.txt
+```
+Atau satu per satu jika diperlukan:
+ ```bash
+pip install django
+pip install djangorestframework
+pip install djangorestframework-simplejwt
+pip install pymysql
+pip install django-cors-headers
+pip install channels daphne
+# channels_redis (tidak digunakan saat ini)
+pip install ultralytics
+pip install drf-yasg
+pip install "sentry-sdk[django]"
+pip install midtransclient
+```
 
-- Swagger
-```pip install drf-yasg```
+## 🚀 Cara Menjalankan Backend
+1. Jalankan Server Django (HTTP)
+```bash
+python manage.py runserver
+```
 
-- [Sentry error tracking](https://sentry.io/)
-```pip install "sentry-sdk[django]"```
+2. Jalankan Django dengan Daphne (untuk WebSocket)
+```bash
+python -m daphne -b 0.0.0.0 -p 8000 parkirki.asgi:application
+```
 
-### Run:
-```python manage.py runserver```
-```python -m daphne parkirki.asgi:application``` **(For Django Channels)**
-```python -m daphne -b 0.0.0.0 -p 8000 parkirki.asgi:application``` **(For fetching, change to device's IPv4 and add to allowed host. Change baseurls and wsbaseurls to IPv4)**
+## 📌 Jika Anda menggunakan IP lokal untuk testing di perangkat Android, pastikan:
 
+- Tambahkan IP ke `ALLOWED_HOSTS` di `settings.py`
 
-### Migrate:
-```python manage.py migrate```
-```python manage.py seed_slotparkir```
+- Ubah baseurl dan wsbaseurl di frontend menjadi IP lokal Anda
 
-## Set Bounding Boxes
-```python```
-```from ultralytics import solutions```
-```solutions.ParkingPtsSelection()```
+## 🧱 Migrasi dan Data Awal
+Lakukan migrasi database sebelum menjalankan server:
+
+```bash
+python manage.py migrate
+```
+
+## 📦 AI Bounding Box Configuration (Untuk Kamera Parkir)
+Aplikasi ini menggunakan modul dari ultralytics untuk konfigurasi titik parkir (bounding box) secara visual. Jalankan perintah berikut di Python:
+
+```python
+from ultralytics import solutions
+solutions.ParkingPtsSelection()
+```
+🧠 Fungsi: membuka antarmuka visual untuk memilih area parkir yang ingin dideteksi oleh kamera.
