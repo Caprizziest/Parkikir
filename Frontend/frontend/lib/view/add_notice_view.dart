@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../viewmodel/add_notice_view_model.dart';
 import 'select_parking_spot_dialog.dart';
 import '../model/slot_parkir_model.dart'; // Tetap diperlukan untuk dialog
+import 'package:go_router/go_router.dart';
 
 class AddNoticeView extends ConsumerStatefulWidget {
   final int? noticeId;
@@ -160,7 +161,7 @@ class _AddNoticeViewState extends ConsumerState<AddNoticeView> {
       body: Column(
         children: [
           Container(
-            color: const Color(0xFF4338CA),
+            color: const Color(0xFF4040FF),
             child: SafeArea(
               child: Container(
                 height: 56,
@@ -168,7 +169,8 @@ class _AddNoticeViewState extends ConsumerState<AddNoticeView> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () => context.go(
+                          '/noticelist'), // Atau context.push('/noticelist')
                       child: const Icon(
                         Icons.chevron_left,
                         color: Colors.white,

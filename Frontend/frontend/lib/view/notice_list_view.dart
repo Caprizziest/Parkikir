@@ -1,33 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../viewmodel/notice_list_view_model.dart';
+import '../viewmodel/notice_list_view_model.dart'; // Import the new viewmodel
 import 'package:go_router/go_router.dart';
-import '../model/notice_model.dart'; // Import NoticeModel
+import '../model/notice_model.dart';
+import '../viewmodel/user_view_model.dart'; // Import UserViewModel
 
 class NoticeListView extends ConsumerWidget {
   const NoticeListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the state from NoticeListViewModel
     final noticesState = ref.watch(noticeListViewModelProvider);
-    final viewModel = ref.read(noticeListViewModelProvider.notifier);
+    // Read the notifier for methods that change state or perform actions
+    final noticeListViewModel = ref.read(noticeListViewModelProvider.notifier);
+    final userState = ref.watch(userViewModelProvider); // Watch UserViewModel
 
     return Scaffold(
       body: Column(
         children: [
-          // Custom app bar with blue background
           _buildAppBar(context),
-
-          // Notice list
           Expanded(
             child: noticesState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => _buildErrorWidget(error, viewModel),
-              data: (notices) => _buildNoticeList(notices, viewModel),
+              error: (error, stackTrace) => _buildErrorWidget(
+                  context, error, noticeListViewModel), // Pass context
+              data: (notices) => _buildNoticeList(
+                  context, notices, noticeListViewModel), // Pass context
             ),
           ),
         ],
       ),
+      floatingActionButton: userState.user?.isStaff == true
+          ? FloatingActionButton(
+              onPressed: () {
+                context.go('/addnotice'); // Navigate directly from view
+              },
+              backgroundColor: const Color(0xFF4040FF),
+              child: const Icon(Icons.add, color: Colors.white, size: 32),
+            )
+          : null,
     );
   }
 
@@ -69,7 +81,8 @@ class NoticeListView extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorWidget(Object error, NoticeListViewModel viewModel) {
+  Widget _buildErrorWidget(
+      BuildContext context, Object error, NoticeListViewModel viewModel) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -86,8 +99,12 @@ class NoticeListView extends ConsumerWidget {
   }
 
   Widget _buildNoticeList(
-      List<NoticeModel> notices, NoticeListViewModel viewModel) {
-    if (notices.isEmpty) {
+    BuildContext context,
+    List<NoticeModel> notices,
+    NoticeListViewModel viewModel,
+  ) {
+    if (viewModel.shouldShowEmptyState()) {
+      // Using viewModel's helper
       return const Center(
         child: Text(
           'No notices available',
@@ -100,7 +117,7 @@ class NoticeListView extends ConsumerWidget {
     }
 
     return RefreshIndicator(
-      onRefresh: () => viewModel.refreshNotices(),
+      onRefresh: () => viewModel.handleRefresh(), // Call viewModel method
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: notices.length,
@@ -138,7 +155,6 @@ class NoticeListView extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Notice icon
               Container(
                 width: 40,
                 height: 40,
@@ -153,13 +169,10 @@ class NoticeListView extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 16),
-
-              // Content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Use the new formatNoticeDateRange from viewModel
                     Text(
                       viewModel.formatNoticeDateRange(notice),
                       style: const TextStyle(
@@ -179,8 +192,6 @@ class NoticeListView extends ConsumerWidget {
                   ],
                 ),
               ),
-
-              // Chevron icon
               const Icon(
                 Icons.chevron_right,
                 color: Colors.grey,
