@@ -39,6 +39,7 @@ pip install channels daphne
 pip install ultralytics
 pip install drf-yasg
 pip install "sentry-sdk[django]"
+pip install midtransclient
 ```
 
 ## 🚀 Cara Menjalankan Backend
@@ -54,7 +55,7 @@ python -m daphne -b 0.0.0.0 -p 8000 parkirki.asgi:application
 
 ## 📌 Jika Anda menggunakan IP lokal untuk testing di perangkat Android, pastikan:
 
-- Tambahkan IP ke ALLOWED_HOSTS di settings.py
+- Tambahkan IP ke `ALLOWED_HOSTS` di `settings.py`
 
 - Ubah baseurl dan wsbaseurl di frontend menjadi IP lokal Anda
 
@@ -73,5 +74,3 @@ from ultralytics import solutions
 solutions.ParkingPtsSelection()
 ```
 🧠 Fungsi: membuka antarmuka visual untuk memilih area parkir yang ingin dideteksi oleh kamera.
-
-© 2025 ParkirKi’ Backend – UC Makassar IMT '23
