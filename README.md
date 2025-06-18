@@ -103,8 +103,8 @@ ParkirKi’ menggunakan arsitektur client-server. Frontend (Flutter) berkomunika
 
 ## ⚙️ Instalasi & Setup
 
-- **[Backend (Django)](Backend\README.md)**
-- **[Frontend (Flutter)](Frontend\README.md)**
+- **[Backend (Django)](Backend/README.md)**
+- **[Frontend (Flutter)](Frontend/README.md)**
 
 ---
 
