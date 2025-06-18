@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
+import '../viewmodel/report_view_model.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -45,14 +47,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class report_view extends StatefulWidget {
+class report_view extends ConsumerStatefulWidget {
   const report_view({Key? key}) : super(key: key);
 
   @override
-  State<report_view> createState() => _report_viewState();
+  ConsumerState<report_view> createState() => _report_viewState();
 }
 
-class _report_viewState extends State<report_view> {
+class _report_viewState extends ConsumerState<report_view> {
   final TextEditingController _descriptionController = TextEditingController();
   String? _selectedTopic;
   File? _image;
@@ -64,6 +66,13 @@ class _report_viewState extends State<report_view> {
     'Penggunaan slot khusus tanpa izin',
     'Penggunaan slot parkir lebih dari satu',
   ];
+
+  // Add this method to check if all fields are filled
+  bool get _isFormValid {
+    return _selectedTopic != null &&
+        _image != null &&
+        _descriptionController.text.trim().isNotEmpty;
+  }
 
   Future<void> _getImage(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
@@ -110,7 +119,7 @@ class _report_viewState extends State<report_view> {
       body: Column(
         children: [
           Container(
-            color: const Color(0xFF4040FF),
+            color: const Color(0xFF4B4BEE),
             child: SafeArea(
               child: Container(
                 height: 56, // Standard app bar height
@@ -119,7 +128,7 @@ class _report_viewState extends State<report_view> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
-                      onTap: () => context.go('/'),
+                      onTap: () => context.pop(),
                       child: const Icon(
                         Icons.chevron_left,
                         color: Colors.white,
@@ -160,14 +169,12 @@ class _report_viewState extends State<report_view> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 24),
-
-                    // Topic Dropdown
+                    const SizedBox(height: 24), // Topic Dropdown
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF4338CA),
+                        color: const Color(0xFF4B4BEE),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: DropdownButtonHideUnderline(
@@ -232,7 +239,7 @@ class _report_viewState extends State<report_view> {
                                   Container(
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF4338CA),
+                                      color: const Color(0xFF4B4BEE),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
@@ -276,13 +283,14 @@ class _report_viewState extends State<report_view> {
                         maxLength: 50,
                         maxLines: 3,
                         decoration: const InputDecoration(
-                          hintText: 'Description (Optional)',
+                          hintText: 'Incident Location',
                           contentPadding: EdgeInsets.all(16),
                           border: InputBorder.none,
                           counterText: '',
                         ),
                         onChanged: (text) {
-                          setState(() {});
+                          setState(
+                              () {}); // This will trigger rebuild and check _isFormValid
                         },
                       ),
                     ),
@@ -306,30 +314,76 @@ class _report_viewState extends State<report_view> {
                         fontSize: 14,
                       ),
                     ),
-
-                    const SizedBox(height: 24),
-
-                    // Submit Button
+                    const SizedBox(height: 24), // Submit Button
                     Container(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Handle submit
-                        },
+                        onPressed: _isFormValid
+                            ? () async {
+                                final reportViewModel =
+                                    ref.read(reportViewModelProvider.notifier);
+
+                                final success =
+                                    await reportViewModel.submitReport(
+                                  imageFile: _image!,
+                                  topic: _selectedTopic!,
+                                  lokasi: _descriptionController.text.trim(),
+                                );
+
+                                if (success && mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Report submitted successfully!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  // Navigate back to previous screen
+                                  context.pop();
+                                } else if (mounted) {
+                                  final errorMessage = ref
+                                      .read(reportViewModelProvider)
+                                      .errorMessage;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Failed to submit report: $errorMessage'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
+                            : null, // Disable button if form is not valid
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFBBB7FA),
+                          backgroundColor: const Color(0xFF4B4BEE),
+                          disabledBackgroundColor:
+                              const Color(0xFF4B4BEE).withOpacity(0.4),
+                          disabledForegroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Submit',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final reportState =
+                                ref.watch(reportViewModelProvider);
+
+                            if (reportState.isLoading) {
+                              return const CircularProgressIndicator(
+                                color: Colors.white,
+                              );
+                            }
+
+                            return const Text(
+                              'Submit',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),

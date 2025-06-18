@@ -4,6 +4,7 @@ import '../viewmodel/report_detail_view_model.dart';
 import '../model/report_model.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:convert';
 
 class ReportDetailView extends ConsumerWidget {
   final int reportId;
@@ -109,7 +110,7 @@ class ReportDetailView extends ConsumerWidget {
   Widget _buildReportDetail(
       BuildContext context, WidgetRef ref, ReportModel report) {
     final anonymizedUsername =
-        ref.watch(anonymizedUsernameProvider(report.user));
+        ref.watch(anonymizedUsernameDetailProvider(report.user));
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -275,57 +276,92 @@ class ReportDetailView extends ConsumerWidget {
             Container(
               width: double.infinity,
               height: 300,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.grey[100]!,
-                    Colors.grey[200]!,
-                  ],
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.image_outlined,
-                      size: 48,
-                      color: Colors.grey[400],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Report Image',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Image will be loaded from API',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                ],
-              ),
+              child: _buildImageContent(report.gambar),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildImageContent(String? gambar) {
+    // Check if gambar contains Data URI
+    if (gambar != null &&
+        gambar.isNotEmpty &&
+        gambar.startsWith('data:image/')) {
+      try {
+        // Extract base64 part from Data URI
+        final base64String = gambar.split(',')[1];
+        final bytes = base64Decode(base64String);
+
+        return Image.memory(
+          bytes,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildPlaceholderImage();
+          },
+        );
+      } catch (e) {
+        print('Error loading image from Data URI: $e');
+        return _buildPlaceholderImage();
+      }
+    }
+
+    // Show placeholder if no image or invalid format
+    return _buildPlaceholderImage();
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.grey[100]!,
+            Colors.grey[200]!,
+          ],
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(
+                color: Colors.grey.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Icon(
+              Icons.image_outlined,
+              size: 48,
+              color: Colors.grey[400],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Report Image',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'No image available',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -50,22 +50,82 @@ class ReportListView extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
-
-          // Report list
+          ), // Report list
           Expanded(
             child: reportsState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stackTrace) => Center(
-                child: Text('Error: ${error.toString()}'),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red[300],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Failed to load reports',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Text(
+                        error.toString(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Show different buttons based on error type
+                    if (error.toString().contains('session') ||
+                        error.toString().contains('login')) ...[
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigate to login page
+                          context.go('/login');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4040FF),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Login Again'),
+                      ),
+                    ] else ...[
+                      ElevatedButton(
+                        onPressed: () {
+                          ref
+                              .read(reportListViewModelProvider.notifier)
+                              .refreshReports();
+                        },
+                        child: const Text('Try Again'),
+                      ),
+                    ],
+                  ],
+                ),
               ),
-              data: (reports) => ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: reports.length,
-                itemBuilder: (context, index) {
-                  final report = reports[index];
-                  return _buildReportCard(context, ref, report);
+              data: (reports) => RefreshIndicator(
+                onRefresh: () async {
+                  await ref
+                      .read(reportListViewModelProvider.notifier)
+                      .refreshReports();
                 },
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: reports.length,
+                  itemBuilder: (context, index) {
+                    final report = reports[index];
+                    return _buildReportCard(context, ref, report);
+                  },
+                ),
               ),
             ),
           ),
@@ -76,7 +136,6 @@ class ReportListView extends ConsumerWidget {
 
   Widget _buildReportCard(
       BuildContext context, WidgetRef ref, ReportModel report) {
-    final viewModel = ref.read(reportListViewModelProvider.notifier);
     final reportDate = report.tanggal ?? DateTime.now();
 
     final bool isToday = reportDate.day == DateTime.now().day &&
@@ -129,14 +188,20 @@ class ReportListView extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      viewModel.getAnonymizedUsernameById(report.user),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: report.status == "DONE"
-                            ? Colors.grey
-                            : Colors.black87,
-                      ),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final anonymizedUsername = ref.watch(
+                            anonymizedUsernameByUserIdProvider(report.user));
+                        return Text(
+                          anonymizedUsername,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: report.status == "DONE"
+                                ? Colors.grey
+                                : Colors.black87,
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 8),
                     Text(
