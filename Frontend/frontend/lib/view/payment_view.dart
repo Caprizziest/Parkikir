@@ -1,10 +1,9 @@
+// payment_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../viewmodel/payment_viewmodel.dart';
-import '../services/token_storage.dart';
-import 'dart:convert';
 
 class PaymentView extends ConsumerStatefulWidget {
   final String selectedSpot;
@@ -21,56 +20,20 @@ class PaymentView extends ConsumerStatefulWidget {
 }
 
 class _PaymentViewState extends ConsumerState<PaymentView> {
-  final int mockBookingId = 3; // Can still be hardcoded or dynamic
-
   @override
   void initState() {
     super.initState();
+    // Reset payment state when entering the page
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(paymentViewModelProvider.notifier).resetState();
     });
   }
 
-  /// Decode JWT and extract claims
-  Map<String, dynamic> parseJwt(String token) {
-    final parts = token.split('.');
-    if (parts.length != 3) {
-      throw Exception('Invalid JWT');
-    }
-
-    final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
-    return jsonDecode(payload);
-  }
-
-  /// Handle payment logic with decoded user_id
-  void _handlePayment() async {
-    try {
-      final token = await tokenStorage.getAccessToken();
-      if (token == null) {
-        _handleUnauthorized();
-        return;
-      }
-
-      final payload = parseJwt(token);
-      final userId = payload['user_id'];
-      if (userId == null) {
-        throw Exception('Invalid token: user_id not found');
-      }
-
-      ref.read(paymentViewModelProvider.notifier).createPayment(
-            mockBookingId,
-            userId,
-          );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error processing token: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+  void _handlePayment() {
+    ref.read(paymentViewModelProvider.notifier).createBookingAndPayment(
+      slotId: widget.selectedSpot,
+      totalPrice: widget.price,
+    );
   }
 
   void _handlePaymentSuccess(String redirectUrl) async {
@@ -79,45 +42,35 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        _showSnackBar('Could not launch payment URL');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not launch payment URL'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } catch (e) {
-      _showSnackBar('Error launching payment: ${e.toString()}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error launching payment: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
-  void _handleUnauthorized() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Session Expired'),
-          content: const Text(
-            'Your session has expired. Please login again to continue with the payment.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                context.go('/login');
-              },
-              child: const Text('Login'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showSnackBar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
-      );
+  String _getStateMessage(PaymentState state) {
+    switch (state) {
+      case PaymentState.creatingBooking:
+        return 'Creating booking...';
+      case PaymentState.processingPayment:
+        return 'Processing payment...';
+      default:
+        return 'Processing...';
     }
   }
 
@@ -125,20 +78,19 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
   Widget build(BuildContext context) {
     final paymentState = ref.watch(paymentViewModelProvider);
 
+    // Listen to state changes for navigation
     ref.listen<PaymentViewState>(paymentViewModelProvider, (previous, next) {
       if (next.state == PaymentState.success && next.paymentData != null) {
         _handlePaymentSuccess(next.paymentData!.redirectUrl);
-      } else if (next.state == PaymentState.unauthorized) {
-        _handleUnauthorized();
       } else if (next.state == PaymentState.error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next.errorMessage ?? 'Payment failed'),
+            content: Text(next.errorMessage ?? 'Operation failed'),
             backgroundColor: Colors.red,
             action: SnackBarAction(
               label: 'Retry',
               textColor: Colors.white,
-              onPressed: _handlePayment,
+              onPressed: () => _handlePayment(),
             ),
           ),
         );
@@ -192,9 +144,14 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                   _buildSummaryRow('Location', 'Parkiran Mobil UC'),
                   _buildSummaryRow('Parking Spot', widget.selectedSpot),
                   _buildSummaryRow(
-                    'Price',
-                    'Rp. ${widget.price.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
+                    'Price', 
+                    'Rp. ${widget.price.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}'
                   ),
+                  if (paymentState.booking != null) ...[
+                    const SizedBox(height: 8),
+                    _buildSummaryRow('Booking ID', '#${paymentState.booking!.id}'),
+                    _buildSummaryRow('Status', paymentState.booking!.status.toUpperCase()),
+                  ],
                   const Divider(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,7 +177,9 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                 ],
               ),
             ),
+            
             const SizedBox(height: 24),
+            
             // Payment Method Section
             const Text(
               'Payment Method',
@@ -231,6 +190,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
               ),
             ),
             const SizedBox(height: 12),
+            
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -264,7 +224,43 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                 ],
               ),
             ),
+            
             const Spacer(),
+            
+            // Process Status Indicator
+            if (paymentState.isProcessing)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Color(0xFF3C39F2),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      _getStateMessage(paymentState.state),
+                      style: const TextStyle(
+                        color: Color(0xFF3C39F2),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
             // Error State
             if (paymentState.state == PaymentState.error)
               Container(
@@ -282,7 +278,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        paymentState.errorMessage ?? 'Payment failed',
+                        paymentState.errorMessage ?? 'Operation failed',
                         style: TextStyle(
                           color: Colors.red.shade700,
                           fontSize: 14,
@@ -292,6 +288,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                   ],
                 ),
               ),
+            
             // Payment Button
             SizedBox(
               width: double.infinity,
@@ -307,10 +304,10 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                   ),
                 ),
                 child: paymentState.isProcessing
-                    ? const Row(
+                    ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
@@ -318,10 +315,10 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                               strokeWidth: 2,
                             ),
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Text(
-                            'Processing...',
-                            style: TextStyle(
+                            _getStateMessage(paymentState.state),
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -329,7 +326,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                         ],
                       )
                     : const Text(
-                        'Proceed to Payment',
+                        'Book & Proceed to Payment',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

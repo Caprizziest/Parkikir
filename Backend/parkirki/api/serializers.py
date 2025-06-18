@@ -61,17 +61,27 @@ class BookingSerializer(serializers.ModelSerializer):
         ('ACTIVE', 'ACTIVE'),
         ('INACTIVE', 'INACTIVE'),
     )
-    
+
     status = serializers.ChoiceField(choices=STATUS_CHOICES)
 
     class Meta:
         model = models.Booking
-        fields = '__all__'   
+        fields = ['slotparkir', 'user', 'tanggal', 'status', 'totalharga', 'created_at']
+        read_only_fields = ['created_at']
     
     def validate_totalharga(self, value):
         if value < 0:
             raise serializers.ValidationError("Total harga tidak boleh negatif.")
         return value
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Ensure slotparkir is represented as its ID string
+        if instance.slotparkir:
+            data['slotparkir'] = instance.slotparkir.slotparkirid
+        else:
+            data['slotparkir'] = None
+        return data
 
 class Base64BinaryField(serializers.Field):
     def to_internal_value(self, data):

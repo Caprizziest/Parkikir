@@ -24,6 +24,7 @@ class Booking(models.Model):
     tanggal = models.DateField()
     status = models.CharField(max_length=45)
     totalharga = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)  # Add this line
 
     def __str__(self):
         return f"Booking {self.id} for {self.user.username}"
