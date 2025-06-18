@@ -9,6 +9,7 @@ class ApiConfig {
   static const String refreshTokenEndpoint = '/token/refresh/';
   static const String logoutEndpoint = '/logout/';
   static const String paymentCreateEndpoint = '/payment/create/';
+  static const String userDetailEndpoint = '/users/';
 
   // WebSocket Endpoints
   static const String parkingWebSocketEndpoint = '/parkiran/';
@@ -19,6 +20,8 @@ class ApiConfig {
   static String get refreshTokenUrl => '$baseUrl$refreshTokenEndpoint';
   static String get logoutUrl => '$baseUrl$logoutEndpoint';
   static String get paymentCreateUrl => '$baseUrl$paymentCreateEndpoint';
+  static String userDetailUrl(int userId) =>
+      '$baseUrl$userDetailEndpoint$userId/';
 
   // WebSocket URLs
   static String get parkingWebSocketUrl =>
