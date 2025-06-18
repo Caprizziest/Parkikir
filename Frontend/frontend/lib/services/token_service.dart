@@ -27,7 +27,7 @@ class TokenService {
     await prefs.remove('refresh_token');
   }
 
-    // ✅ New Method: Get User ID from Access Token
+  // ✅ New Method: Get User ID from Access Token
   Future<int?> getUserId() async {
     final token = await getAccessToken();
     if (token == null || JwtDecoder.isExpired(token)) {
@@ -44,5 +44,23 @@ class TokenService {
     }
 
     return null; // Invalid or missing user_id
+  }
+
+  // function untuk ambil refresh token
+  Future<String?> getRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('refresh_token');
+  }
+
+  // function untuk cek apakah token masih valid
+  Future<bool> isTokenValid() async {
+    final token = await getAccessToken();
+    if (token == null) return false;
+
+    try {
+      return !JwtDecoder.isExpired(token);
+    } catch (e) {
+      return false;
+    }
   }
 }

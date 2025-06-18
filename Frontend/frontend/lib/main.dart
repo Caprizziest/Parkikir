@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:frontend/routing/router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';  
+import 'app_wrapper.dart';
 // import 'viewmodel/bookingparkir_view_model.dart';
 // import 'view/pembayaran_view.dart'; // Pastikan ini juga ada jika diperlukan
 
@@ -26,17 +26,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      title: 'ParkirKi',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF4B4BEE),
-        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        fontFamily: 'Poppins',
-      ),
-      routerConfig:
-          appRouter, // appRouter Anda sudah ada di file routing/router.dart
-    );
+    return const AppWrapper();
   }
 }
 

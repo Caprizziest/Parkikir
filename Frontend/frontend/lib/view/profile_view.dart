@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/navigation_view_model.dart';
+import '../viewmodel/auth_view_model.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -276,10 +277,13 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
                 // Handle actual logout logic here
-                context.go('/login');
+                await ref.read(authViewModelProvider).logout();
+                if (context.mounted) {
+                  context.go('/login');
+                }
               },
               child: const Text(
                 'Logout',
