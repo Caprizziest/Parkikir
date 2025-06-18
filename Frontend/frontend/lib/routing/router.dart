@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/bookingparkir_view.dart';
 import 'package:frontend/view/history_view.dart';
-import 'package:frontend/view/pembayaran_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/view/dashboard.dart';
 import 'package:frontend/view/report_view.dart';
@@ -15,10 +14,17 @@ import 'package:frontend/view/report_detail_view.dart';
 import 'package:frontend/view/profile_view.dart';
 import 'package:frontend/view/main_shell.dart';
 import 'package:frontend/view/payment_view.dart';
+import 'package:frontend/view/splash_screen.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/register',
+  initialLocation: '/',
   routes: [
+    // Splash screen sebagai initial route
+    GoRoute(
+      path: '/',
+      name: 'splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
     GoRoute(
       path: '/login',
       name: 'login',
@@ -37,10 +43,6 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/dashboard',
           name: 'dashboard',
-          builder: (context, state) => const DashboardView(),
-        ),
-        GoRoute(
-          path: '/',
           builder: (context, state) => const DashboardView(),
         ),
         GoRoute(
@@ -89,16 +91,16 @@ final GoRouter appRouter = GoRouter(
       path: '/bookingparkir',
       builder: (context, state) => const bookingparkir(),
     ),
-GoRoute(
-  path: '/pembayaran',
-  builder: (context, state) {
-    final extra = state.extra as Map<String, dynamic>?;
-    return PaymentView(
-      selectedSpot: extra?['selectedSpot'] ?? '',
-      price: extra?['price'] ?? 0.0,
-    );
-  },
-),
+    GoRoute(
+      path: '/pembayaran',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return PaymentView(
+          selectedSpot: extra?['selectedSpot'] ?? '',
+          price: extra?['price'] ?? 0.0,
+        );
+      },
+    ),
   ],
 
   // Error page
