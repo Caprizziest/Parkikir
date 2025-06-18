@@ -44,7 +44,8 @@ class Laporan(models.Model):
 
 class Notice(models.Model):
     noticeid = models.AutoField(primary_key=True)
-    tanggal = models.CharField(max_length=45)
+    tanggalfrom = models.DateTimeField(auto_now_add=True)
+    tanggaluntil = models.DateTimeField(auto_now_add=True)
     event = models.CharField(max_length=45)
     judul = models.CharField(max_length=45)
     description = models.CharField(max_length=45, null=True, blank=True)

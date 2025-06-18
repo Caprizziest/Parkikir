@@ -38,8 +38,8 @@ class RegisterView extends ConsumerWidget {
       // Jika ini true, Flutter akan secara otomatis menyesuaikan layout.
       // body: SafeArea(...),
       // resizeToAvoidBottomInset: true, // Defaultnya sudah true, jadi tidak perlu eksplisit jika tidak mengubahnya.
-
       body: SafeArea(
+
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),

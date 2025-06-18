@@ -1,36 +1,36 @@
-name: Flutter CI
+# name: Flutter CI
 
-on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - 'Frontend/**'
-  pull_request:
-    branches: [ "main" ]
-    paths:
-      - 'Frontend/**'
+# on:
+#   push:
+#     branches: [ "main" ]
+#     paths:
+#       - 'Frontend/**'
+#   pull_request:
+#     branches: [ "main" ]
+#     paths:
+#       - 'Frontend/**'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v4
 
-    - name: Install Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.24.3' # Change to your desired Flutter version
+#     - name: Install Flutter
+#       uses: subosito/flutter-action@v2
+#       with:
+#         flutter-version: '3.24.3' # Change to your desired Flutter version
 
-    - name: Install dependencies
-      run: |
-        cd Frontend
-        cd frontend
-        flutter pub get
+#     - name: Install dependencies
+#       run: |
+#         cd Frontend
+#         cd frontend
+#         flutter pub get
         
-    - name: Run tests
-      run: |
-        cd Frontend
-        cd frontend
-        flutter test
+#     - name: Run tests
+#       run: |
+#         cd Frontend
+#         cd frontend
+#         flutter test

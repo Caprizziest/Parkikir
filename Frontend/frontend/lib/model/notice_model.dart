@@ -2,7 +2,8 @@ import "parkiran_tertutup_model.dart";
 
 class NoticeModel {
   final int noticeId;
-  final String tanggal;
+  final DateTime dateFrom;
+  final DateTime dateUntil;
   final String event;
   final String judul;
   final String description;
@@ -10,7 +11,8 @@ class NoticeModel {
 
   NoticeModel({
     required this.noticeId,
-    required this.tanggal,
+    required this.dateFrom,
+    required this.dateUntil,
     required this.event,
     required this.judul,
     required this.description,
@@ -19,11 +21,15 @@ class NoticeModel {
 
   factory NoticeModel.fromJson(Map<String, dynamic> json) {
     return NoticeModel(
-      noticeId: json['noticeid'] as int,
-      tanggal: json['tanggal'] as String,
+      noticeId: json['noticeid'] as int, // Dihapus '?'
+      dateFrom: DateTime.parse(json['tanggalfrom']
+          as String), // Sesuaikan dengan nama field di backend
+      dateUntil: DateTime.parse(json['tanggaluntil']
+          as String), // Sesuaikan dengan nama field di backend
       event: json['event'] as String,
       judul: json['judul'] as String,
-      description: json['description'] ?? '',
+      description: json['description'] as String? ??
+          '', // description bisa null di backend
       parkiranTertutup: json['parkiran_tertutup'] != null
           ? (json['parkiran_tertutup'] as List)
               .map((item) => ParkiranTertutup.fromJson(item))
@@ -35,7 +41,10 @@ class NoticeModel {
   Map<String, dynamic> toJson() {
     return {
       'noticeid': noticeId,
-      'tanggal': tanggal,
+      'tanggalfrom':
+          dateFrom.toIso8601String(), // Sesuaikan dengan nama field di backend
+      'tanggaluntil':
+          dateUntil.toIso8601String(), // Sesuaikan dengan nama field di backend
       'event': event,
       'judul': judul,
       'description': description,
@@ -47,17 +56,6 @@ class NoticeModel {
   bool get hasClosedParking =>
       parkiranTertutup != null && parkiranTertutup!.isNotEmpty;
 
-  // Helper method untuk parsing tanggal jika diperlukan
-  DateTime? get parsedDate {
-    try {
-      // Assuming tanggal is in format like "15 - 19 Mei 2025" or similar
-      // You might need to adjust this parsing logic based on your actual date format
-      return DateTime.tryParse(tanggal);
-    } catch (e) {
-      return null;
-    }
-  }
-
   @override
   String toString() {
     return 'Notice $noticeId - $judul';
@@ -68,7 +66,8 @@ class NoticeModel {
     if (identical(this, other)) return true;
     return other is NoticeModel &&
         other.noticeId == noticeId &&
-        other.tanggal == tanggal &&
+        other.dateFrom == dateFrom &&
+        other.dateUntil == dateUntil &&
         other.event == event &&
         other.judul == judul &&
         other.description == description;
@@ -77,9 +76,36 @@ class NoticeModel {
   @override
   int get hashCode {
     return noticeId.hashCode ^
-        tanggal.hashCode ^
+        dateFrom.hashCode ^
+        dateUntil.hashCode ^
         event.hashCode ^
         judul.hashCode ^
         description.hashCode;
+  }
+}
+
+class NoticeCreateModel {
+  final DateTime dateFrom;
+  final DateTime dateUntil;
+  final String event;
+  final String judul;
+  final String description;
+
+  NoticeCreateModel({
+    required this.dateFrom,
+    required this.dateUntil,
+    required this.event,
+    required this.judul,
+    required this.description,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tanggalfrom': dateFrom.toIso8601String(),
+      'tanggaluntil': dateUntil.toIso8601String(),
+      'event': event,
+      'judul': judul,
+      'description': description,
+    };
   }
 }

@@ -16,26 +16,138 @@ final noticeDetailViewModelProvider = StateNotifierProvider.family<
 class NoticeDetailState {
   final NoticeModel noticeDetail;
   final List<String> closedSlots;
-  final bool hasClosedParking;
   final Map<String, List<ParkingSpotData>> parkingData;
 
   NoticeDetailState({
     required this.noticeDetail,
     required this.closedSlots,
-    required this.hasClosedParking,
     required this.parkingData,
   });
+
+  // Getter untuk menentukan apakah ada parkir tertutup
+  bool get hasClosedParking => closedSlots.isNotEmpty;
+
+  // Getter yang baru ditambahkan untuk memformat rentang tanggal
+  String get formattedDateRange {
+    final dateFrom = noticeDetail.dateFrom;
+    final dateUntil = noticeDetail.dateUntil;
+
+    // Helper untuk memformat DateTime ke String yang mudah dibaca
+    String formatDateTime(DateTime date) {
+      // Anda bisa menggunakan paket intl untuk lokalisasi yang lebih baik
+      // Misalnya: return DateFormat('d MMMM yyyy', 'id_ID').format(date);
+      // Untuk tujuan ini, kita buat manual agar tidak perlu tambahan dependency
+      final now = DateTime
+          .now(); // Digunakan untuk menentukan apakah tahun perlu ditampilkan
+
+      String monthName = '';
+      switch (date.month) {
+        case 1:
+          monthName = 'Januari';
+          break;
+        case 2:
+          monthName = 'Februari';
+          break;
+        case 3:
+          monthName = 'Maret';
+          break;
+        case 4:
+          monthName = 'April';
+          break;
+        case 5:
+          monthName = 'Mei';
+          break;
+        case 6:
+          monthName = 'Juni';
+          break;
+        case 7:
+          monthName = 'Juli';
+          break;
+        case 8:
+          monthName = 'Agustus';
+          break;
+        case 9:
+          monthName = 'September';
+          break;
+        case 10:
+          monthName = 'Oktober';
+          break;
+        case 11:
+          monthName = 'November';
+          break;
+        case 12:
+          monthName = 'Desember';
+          break;
+      }
+
+      if (date.year == now.year &&
+          date.month == now.month &&
+          date.day == now.day) {
+        return 'Hari ini, ${date.day} $monthName ${date.year}';
+      } else if (date.year == now.year) {
+        return '${date.day} $monthName';
+      }
+      return '${date.day} $monthName ${date.year}';
+    }
+
+    // Periksa apakah tanggal from dan until sama (hanya membandingkan tanggal, abaikan waktu)
+    if (dateFrom.year == dateUntil.year &&
+        dateFrom.month == dateUntil.month &&
+        dateFrom.day == dateUntil.day) {
+      return formatDateTime(dateFrom); // Tampilkan satu tanggal saja
+    } else {
+      // Jika berbeda, tampilkan rentang tanggal
+      // Cek apakah bulan dan tahun sama untuk format yang lebih singkat
+      if (dateFrom.month == dateUntil.month &&
+          dateFrom.year == dateUntil.year) {
+        return '${dateFrom.day} - ${formatDateTime(dateUntil)}';
+      } else if (dateFrom.year == dateUntil.year) {
+        return '${dateFrom.day} ${_getMonthName(dateFrom.month)} - ${formatDateTime(dateUntil)}';
+      }
+      return '${formatDateTime(dateFrom)} - ${formatDateTime(dateUntil)}';
+    }
+  }
+
+  // Helper function untuk mendapatkan nama bulan
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1:
+        return 'Januari';
+      case 2:
+        return 'Februari';
+      case 3:
+        return 'Maret';
+      case 4:
+        return 'April';
+      case 5:
+        return 'Mei';
+      case 6:
+        return 'Juni';
+      case 7:
+        return 'Juli';
+      case 8:
+        return 'Agustus';
+      case 9:
+        return 'September';
+      case 10:
+        return 'Oktober';
+      case 11:
+        return 'November';
+      case 12:
+        return 'Desember';
+      default:
+        return '';
+    }
+  }
 
   NoticeDetailState copyWith({
     NoticeModel? noticeDetail,
     List<String>? closedSlots,
-    bool? hasClosedParking,
     Map<String, List<ParkingSpotData>>? parkingData,
   }) {
     return NoticeDetailState(
       noticeDetail: noticeDetail ?? this.noticeDetail,
       closedSlots: closedSlots ?? this.closedSlots,
-      hasClosedParking: hasClosedParking ?? this.hasClosedParking,
       parkingData: parkingData ?? this.parkingData,
     );
   }
@@ -180,7 +292,6 @@ class NoticeDetailViewModel
       final noticeState = NoticeDetailState(
         noticeDetail: noticeDetail,
         closedSlots: closedSlots,
-        hasClosedParking: closedSlots.isNotEmpty,
         parkingData: _parkingData,
       );
 
@@ -191,15 +302,20 @@ class NoticeDetailViewModel
   }
 
   NoticeModel _getNoticeData() {
+    // Current date for simulation, adjusts to current year if needed
+    final int currentYear = DateTime.now().year;
+
     switch (noticeId) {
       case 1:
         return NoticeModel(
           noticeId: 1,
-          tanggal: '15 Mei 2025',
+          dateFrom: DateTime(currentYear, 5, 15), // Tanggal 15 Mei
+          dateUntil:
+              DateTime(currentYear, 5, 15), // Tanggal 15 Mei (sama dengan from)
           judul: 'Parkiran Ditutup Sementara',
           event: 'Event Pertandingan Basket',
           description:
-              '''Sehubungan dengan diselenggarakannya pertandingan basket kampus pada tanggal 15 Mei 2025, sebagian area parkiran mobil akan digunakan untuk keperluan acara. 
+              '''Sehubungan dengan diselenggarakannya pertandingan basket kampus pada tanggal 15 Mei 2025, sebagian area parkiran mobil akan digunakan untuk keperluan acara.
 
 Kami menyarankan mahasiswa/i untuk mempertimbangkan opsi berikut:
 
@@ -263,7 +379,8 @@ Mohon pengertian dan kerja sama semuanya demi kelancaran acara. Terima kasih.'''
       case 2:
         return NoticeModel(
           noticeId: 2,
-          tanggal: '20 Mei 2025',
+          dateFrom: DateTime(currentYear, 5, 20), // Tanggal 20 Mei
+          dateUntil: DateTime(currentYear, 6, 3), // Tanggal 3 Juni (berbeda)
           judul: 'Penutupan Area Parkir untuk Renovasi',
           event: 'Renovasi Gedung Kampus',
           description:
@@ -302,11 +419,13 @@ Mohon maaf atas ketidaknyamanan ini. Terima kasih atas pengertian dan kerja sama
       case 3:
         return NoticeModel(
           noticeId: 3,
-          tanggal: '25 Mei 2025',
+          dateFrom: DateTime(currentYear, 5, 25), // Tanggal 25 Mei
+          dateUntil:
+              DateTime(currentYear, 5, 25), // Tanggal 25 Mei (sama dengan from)
           judul: 'Pembersihan Menyeluruh Area Parkir',
           event: 'Pembersihan Area Parkir',
           description:
-              '''Akan dilakukan pembersihan menyeluruh area parkir kampus pada tanggal 25 Mei 2025. 
+              '''Akan dilakukan pembersihan menyeluruh area parkir kampus pada tanggal 25 Mei 2025.
 
 Kegiatan pembersihan meliputi:
 • Pembersihan lantai dan marking parkir
@@ -321,7 +440,8 @@ Selama kegiatan ini berlangsung, tidak ada area parkir yang ditutup. Namun, moho
       default:
         return NoticeModel(
           noticeId: noticeId,
-          tanggal: 'Tanggal tidak tersedia',
+          dateFrom: DateTime(currentYear, 1, 1), // Default dateFrom
+          dateUntil: DateTime(currentYear, 1, 1), // Default dateUntil
           judul: 'Notice tidak ditemukan',
           event: 'Data tidak tersedia',
           description:

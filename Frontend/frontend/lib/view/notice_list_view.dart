@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/notice_list_view_model.dart';
 import 'package:go_router/go_router.dart';
+import '../model/notice_model.dart'; // Import NoticeModel
 
 class NoticeListView extends ConsumerWidget {
   const NoticeListView({Key? key}) : super(key: key);
@@ -84,7 +85,8 @@ class NoticeListView extends ConsumerWidget {
     );
   }
 
-  Widget _buildNoticeList(List notices, NoticeListViewModel viewModel) {
+  Widget _buildNoticeList(
+      List<NoticeModel> notices, NoticeListViewModel viewModel) {
     if (notices.isEmpty) {
       return const Center(
         child: Text(
@@ -111,7 +113,7 @@ class NoticeListView extends ConsumerWidget {
   }
 
   Widget _buildNoticeCard(
-      BuildContext context, dynamic notice, NoticeListViewModel viewModel) {
+      BuildContext context, NoticeModel notice, NoticeListViewModel viewModel) {
     return GestureDetector(
       onTap: () => viewModel.navigateToNoticeDetail(context, notice.noticeId),
       child: Container(
@@ -157,8 +159,9 @@ class NoticeListView extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Use the new formatNoticeDateRange from viewModel
                     Text(
-                      viewModel.formatNoticeDate(notice.tanggal),
+                      viewModel.formatNoticeDateRange(notice),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

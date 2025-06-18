@@ -13,6 +13,7 @@ from asgiref.sync import async_to_sync
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 import jwt
 import midtransclient
 import time
@@ -30,6 +31,13 @@ from App.models import Payment, Booking
 def getData(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+@swagger_auto_schema(methods=['get'], operation_description="Get user by ID")
+@api_view(['GET'])
+def user_detail(request, id):
+    user = get_object_or_404(User, pk=id)
+    serializer = UserSerializer(user)
     return Response(serializer.data)
 
 @swagger_auto_schema(
