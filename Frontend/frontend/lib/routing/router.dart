@@ -15,6 +15,7 @@ import 'package:frontend/view/report_detail_view.dart';
 import 'package:frontend/view/profile_view.dart';
 import 'package:frontend/view/main_shell.dart';
 import 'package:frontend/view/payment_view.dart';
+import 'package:frontend/view/success_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/register',
@@ -99,6 +100,10 @@ GoRoute(
     );
   },
 ),
+    GoRoute(
+      path: '/success',
+      builder: (context, state) => const SuccessView(),
+    ),
   ],
 
   // Error page

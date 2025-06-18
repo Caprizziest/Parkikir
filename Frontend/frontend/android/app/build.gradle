@@ -6,9 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.frontend"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    namespace  "com.example.frontend"
+    compileSdk 35
+    ndkVersion  flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
