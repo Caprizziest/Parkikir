@@ -1,7 +1,7 @@
 class ApiConfig {
   // Base URL
-  static const String baseUrl = 'http://10.1.49.143:8000/api';
-  static const String wsBaseUrl = 'ws://10.1.49.143:8000/ws';
+  static const String baseUrl = 'http://192.168.123.3:8000/api';
+  static const String wsBaseUrl = 'ws://192.168.123.3:8000/ws';
 
   // API Endpoints - centralized
   static const String loginEndpoint = '/login/';
@@ -12,8 +12,8 @@ class ApiConfig {
   static const String userDetailEndpoint = '/users/';
   static const String slotParkirListCreateEndpoint = '/slotparkir/';
   static String slotParkirDetailEndpoint(String pk) => '/slotparkir/$pk/';
-  static String slotParkirUpdateStatusEndpoint(String pk) => '/slotparkir/$pk/status/';
-
+  static String slotParkirUpdateStatusEndpoint(String pk) =>
+      '/slotparkir/$pk/status/';
 
   // WebSocket Endpoints
   static const String parkingWebSocketEndpoint = '/parkiran/';
@@ -26,9 +26,12 @@ class ApiConfig {
   static String get paymentCreateUrl => '$baseUrl$paymentCreateEndpoint';
   static String userDetailUrl(int userId) =>
       '$baseUrl$userDetailEndpoint$userId/';
-  static String get slotParkirListCreateUrl => '$baseUrl$slotParkirListCreateEndpoint';
-  static String slotParkirDetailUrl(String pk) => '$baseUrl${slotParkirDetailEndpoint(pk)}';
-  static String slotParkirUpdateStatusUrl(String pk) => '$baseUrl${slotParkirUpdateStatusEndpoint(pk)}';
+  static String get slotParkirListCreateUrl =>
+      '$baseUrl$slotParkirListCreateEndpoint';
+  static String slotParkirDetailUrl(String pk) =>
+      '$baseUrl${slotParkirDetailEndpoint(pk)}';
+  static String slotParkirUpdateStatusUrl(String pk) =>
+      '$baseUrl${slotParkirUpdateStatusEndpoint(pk)}';
 
   // WebSocket URLs
   static String get parkingWebSocketUrl =>
