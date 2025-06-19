@@ -109,6 +109,7 @@ ParkirKi’ menggunakan arsitektur client-server. Frontend (Flutter) berkomunika
 ---
 
 ## 🔎 Lebih lanjut
+- **[Architecture Decision Log](docs/README.md)**
 - **[Miro Board](https://miro.com/app/board/uXjVIGQvfNw=/?share_link_id=741279228190)**
 - **[Canva Poster](https://www.canva.com/design/DAGqh2viEr0/ixKX79Sk9LK34j9LlHy0QQ/edit?utm_content=DAGqh2viEr0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)**
 
