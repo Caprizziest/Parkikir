@@ -75,6 +75,16 @@ Target pengguna:
 
 ---
 
+## 👁️ Preview
+<div align="center">
+  
+![Image](https://github.com/user-attachments/assets/cf78fde7-3388-45c8-b14e-72bc2c2cf4da)
+
+![Image](https://github.com/user-attachments/assets/f43bfe8a-8477-4ffe-9742-a4e1c431b007)
+![Image](https://github.com/user-attachments/assets/3d1f1a47-6540-414b-8096-39647a557f67)
+</div>
+
+---
 ## 🛠 Teknologi yang Digunakan
 
 ### Frontend
